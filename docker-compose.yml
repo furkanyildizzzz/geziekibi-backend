@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  be_geziekibi:
+    container_name: 'be_geziekibi'
+    build: .
+    restart: always
+    volumes:
+      - .:/app/
+      - /app/node_modules
