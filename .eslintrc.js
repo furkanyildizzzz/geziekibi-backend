@@ -24,7 +24,7 @@ module.exports = {
       'error',
       {
         groups: ['builtin', 'external', 'internal', 'parent', 'sibling'],
-        'newlines-between': 'always',
+        //'newlines-between': 'always',
         alphabetize: {
           order: 'asc',
           caseInsensitive: true,
