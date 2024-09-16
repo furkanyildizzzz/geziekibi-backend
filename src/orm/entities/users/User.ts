@@ -19,7 +19,7 @@ export class User {
     nullable: true,
     unique: true,
   })
-  username;
+  username: string;
 
   @Column({
     nullable: true,

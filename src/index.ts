@@ -37,11 +37,21 @@ app.use('/', routes);
 
 app.use(errorHandler);
 
-const port = process.env.PORT || 4000;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
-
 (async () => {
-  await dbCreateConnection;
+  try {
+    console.log('Database connection starting');
+
+    // Call dbCreateConnection() and await its result
+    await dbCreateConnection();
+
+    console.log('Database connection established');
+
+    const port = process.env.PORT || 4000;
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  } catch (err) {
+    console.error('Failed to connect to the database', err);
+    process.exit(1); // Exit the process if the DB connection fails
+  }
 })();
