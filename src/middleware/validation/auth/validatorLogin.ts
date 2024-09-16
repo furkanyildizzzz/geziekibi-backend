@@ -12,8 +12,8 @@ export const validatorLogin = (req: Request, res: Response, next: NextFunction) 
   password = !password ? '' : password;
 
   if (!validator.isEmail(email)) errorsValidation.push({ email: 'Email is invalid' });
-  if (!validator.isEmpty(email)) errorsValidation.push({ email: 'Email field is required' });
-  if (!validator.isEmpty(password)) errorsValidation.push({ password: 'Password field is required' });
+  if (validator.isEmpty(email)) errorsValidation.push({ email: 'Email field is required' });
+  if (validator.isEmpty(password)) errorsValidation.push({ password: 'Password field is required' });
 
   if (errorsValidation.length !== 0) {
     const customError = new CustomError(400, 'Validation', 'Login validtaion error', null, null, errorsValidation);
