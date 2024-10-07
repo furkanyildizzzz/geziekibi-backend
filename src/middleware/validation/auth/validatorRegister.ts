@@ -5,13 +5,15 @@ import { ErrorValidation } from 'utils/response/custom-error/types';
 import validator from 'validator';
 
 export const validatorRegister = (req: Request, res: Response, next: NextFunction) => {
-  let { email, password, passwordConfirm } = req.body;
+  let { firstName, lastName, email, password, passwordConfirm } = req.body;
   const errorsValidation: ErrorValidation[] = [];
 
   email = !email ? '' : email;
   password = !password ? '' : password;
   passwordConfirm = !passwordConfirm ? '' : passwordConfirm;
 
+  if (validator.isEmpty(firstName)) errorsValidation.push({ firstName: 'First name is required' });
+  if (validator.isEmpty(lastName)) errorsValidation.push({ lastName: 'Last name is required' });
   if (!validator.isEmail(email)) errorsValidation.push({ email: 'Email is invalid' });
   if (validator.isEmpty(email)) errorsValidation.push({ email: 'Email is required' });
   if (validator.isEmpty(password)) errorsValidation.push({ password: 'Password is required' });

@@ -5,7 +5,7 @@ import { User } from 'orm/entities/users/User';
 import { CustomError } from 'utils/response/custom-error/CustomError';
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = req.body;
+  const { email, password, firstName, lastName } = req.body;
 
   const userRepository = getRepository(User);
   try {
@@ -22,6 +22,8 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
       const newUser = new User();
       newUser.email = email;
       newUser.password = password;
+      newUser.firstName = firstName;
+      newUser.lastName = lastName;
       newUser.hashPassword();
       await userRepository.save(newUser);
 

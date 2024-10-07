@@ -7,7 +7,6 @@ import { CustomError } from 'utils/response/custom-error/CustomError';
 export const validatorLogin = (req: Request, res: Response, next: NextFunction) => {
   let { email, password } = req.body;
   const errorsValidation: ErrorValidation[] = [];
-
   email = !email ? '' : email;
   password = !password ? '' : password;
 

@@ -15,16 +15,11 @@ export class User {
   @Column()
   password: string;
 
-  @Column({
-    nullable: true,
-    unique: true,
-  })
-  username: string;
+  @Column()
+  firstName: string;
 
-  @Column({
-    nullable: true,
-  })
-  name: string;
+  @Column()
+  lastName: string;
 
   @Column({
     default: 'STANDART' as Role,
