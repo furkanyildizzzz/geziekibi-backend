@@ -30,6 +30,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
       res.customSuccess(200, 'User successfully created');
     } catch (err) {
       const customError = new CustomError(400, 'Raw', `User '${email}' can't be created`, null, err);
+      return next(customError);
     }
   } catch (err) {
     const customError = new CustomError(400, 'Raw', 'Error', null, err);
