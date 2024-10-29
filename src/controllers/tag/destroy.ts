@@ -19,3 +19,16 @@ export const destroy = async (req: Request, res: Response, next: NextFunction) =
     return next(customError);
   }
 };
+
+export const destroyMultiple = async (req: Request, res: Response, next: NextFunction) => {
+  const { ids } = req.body;
+  const tagRepository = getRepository(Tag);
+  console.log({ ids });
+  try {
+    if (ids) await tagRepository.delete(ids);
+    return res.customSuccess(200, 'Tags successfully deleted');
+  } catch (error) {
+    const customError = new CustomError(400, 'Raw', 'Error', null, error);
+    return next(customError);
+  }
+};

@@ -7,7 +7,6 @@ export const edit = async (req: Request, res: Response, next: NextFunction) => {
   const { name } = req.body;
   const id = req.params.id;
   const tagRepository = getRepository(Tag);
-
   try {
     const tag = await tagRepository.findOne({ where: { id } });
     if (!tag) {

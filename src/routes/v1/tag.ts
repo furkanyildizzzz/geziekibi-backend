@@ -1,5 +1,5 @@
 import { create } from 'controllers/tag';
-import { destroy } from 'controllers/tag/destroy';
+import { destroy, destroyMultiple } from 'controllers/tag/destroy';
 import { edit } from 'controllers/tag/edit';
 import { list } from 'controllers/tag/list';
 import { show } from 'controllers/tag/show';
@@ -14,7 +14,8 @@ const router = Router();
 router.get('/', list);
 router.get('/:id([0-9]+)', show);
 router.post('/', [checkJwt, checkRole(['ADMINISTRATOR']), validatorCreateTag], create);
-router.patch('/:id([0-9]+)', [checkJwt, checkRole(['ADMINISTRATOR']), validatorEdit], edit);
+router.post('/:id([0-9]+)', [checkJwt, checkRole(['ADMINISTRATOR']), validatorEdit], edit);
 router.delete('/:id([0-9]+)', [checkJwt, checkRole(['ADMINISTRATOR'])], destroy);
+router.delete('/', [checkJwt, checkRole(['ADMINISTRATOR'])], destroyMultiple);
 
 export default router;
