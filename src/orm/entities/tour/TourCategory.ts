@@ -9,7 +9,7 @@ export class TourCategory {
   @Column()
   name: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   description: string;
 
   @OneToMany(() => Tour, (tour) => tour.category)
