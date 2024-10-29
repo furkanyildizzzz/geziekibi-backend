@@ -41,6 +41,9 @@ export class User {
   @UpdateDateColumn()
   updated_at: Date;
 
+  get name(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
   setLanguage(language: Language) {
     this.language = language;
   }
