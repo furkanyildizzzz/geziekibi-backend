@@ -15,7 +15,7 @@ export const edit = async (req: Request, res: Response, next: NextFunction) => {
       const customError = new CustomError(404, 'General', `Category with id:${id} not found`, ['Category not found']);
       return next(customError);
     }
-
+    console.log({ parentid });
     if (parentid) {
       const parent = await tourCategoryRepo.findOne({ where: { id: parentid } });
       if (!parent) {
@@ -34,6 +34,10 @@ export const edit = async (req: Request, res: Response, next: NextFunction) => {
 
       if (description !== undefined) {
         tourCategory.description = description;
+      }
+
+      if (parentid === null || parentid <= 0) {
+        tourCategory.parent = null;
       }
 
       await tourCategoryRepo.save(tourCategory);

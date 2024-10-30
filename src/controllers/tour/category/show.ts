@@ -7,7 +7,7 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
     const tourCategoryRepo = getRepository(TourCategory);
-    const tourCategory = await tourCategoryRepo.findOne(id, { relations: ['subCategories'] });
+    const tourCategory = await tourCategoryRepo.findOne(id, { relations: ['parent', 'subCategories'] });
     return res.customSuccess(200, 'Tour Category found', tourCategory);
   } catch (error) {
     const customError = new CustomError(400, 'Raw', 'Error', null, error);
