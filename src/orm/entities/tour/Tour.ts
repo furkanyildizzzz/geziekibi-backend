@@ -19,8 +19,11 @@ export class Tour {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: false })
   title: string;
+
+  @Column({ nullable: false })
+  spot: string;
 
   @Column({
     type: 'text',
