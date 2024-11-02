@@ -1,3 +1,21 @@
-export type TourType = 'YURTDISI' | 'YURTICI' | 'GUNUBIRLIK';
-export type PublishStatus = 'PUBLISH' | 'DRAFT' | 'UNPUBLISH';
-export type Currency = 'TRY' | 'USD' | 'EUR';
+export enum TourType {
+  YURTDISI = 'yurtdisi',
+  YURTICI = 'yurtici',
+  GUNUBIRLIK = 'gunubirlik',
+}
+export enum PublishStatus {
+  PUBLISH = 'publish',
+  DRAFT = 'draft',
+  UNPUBLISH = 'unpublish',
+}
+
+export enum Currency {
+  TRY = 'try',
+  USD = 'usd',
+  EUR = 'eur',
+}
+
+export enum ServiceType {
+  INCLUDED = 'included',
+  EXCLUDED = 'excluded',
+}
