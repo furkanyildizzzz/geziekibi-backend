@@ -10,11 +10,13 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
     const service = await serviceRepo.findOne(id);
 
     if (!service) {
-      const customError = new CustomError(404, 'General', `Service with id:${id} not found`, ['Service not found']);
+      const customError = new CustomError(404, 'General', `Tour Service with id:${id} not found`, [
+        'Service not found',
+      ]);
       return next(customError);
     }
 
-    return res.customSuccess(200, 'Service found', service);
+    return res.customSuccess(200, 'Tour Service found', service);
   } catch (error) {
     const customError = new CustomError(400, 'Raw', 'Error', null, error);
     return next(customError);

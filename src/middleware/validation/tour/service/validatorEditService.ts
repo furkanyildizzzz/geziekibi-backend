@@ -17,20 +17,20 @@ const validatorEditService = async (req: Request, res: Response, next: NextFunct
   try {
     const serviceRepo = getRepository(Service);
 
-    if (validator.isEmpty(name)) errorsValidation.push({ name: 'Service name cannot be empty' });
+    if (validator.isEmpty(name)) errorsValidation.push({ name: 'Tour Service name cannot be empty' });
     if (!validator.isLength(name, { min: 3 }))
       errorsValidation.push({ name: 'Name must be at least 3 characters length' });
 
     const service = await serviceRepo.findOne({ where: { name } });
     if (service && !validator.equals(String(service.id), id)) {
-      errorsValidation.push({ name: `Service ${name} already exists` });
+      errorsValidation.push({ name: `Tour Service ${name} already exists` });
     }
 
     if (errorsValidation.length) {
       const customError = new CustomError(
         400,
         'Validation',
-        'Validation error while editing service',
+        'Validation error while editing Tour Service',
         null,
         null,
         errorsValidation,

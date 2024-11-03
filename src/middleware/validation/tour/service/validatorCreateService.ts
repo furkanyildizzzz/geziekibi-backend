@@ -11,7 +11,7 @@ const validatorCreateService = (req: Request, res: Response, next: NextFunction)
 
   const errorsValidation: ErrorValidation[] = [];
 
-  if (validator.isEmpty(name)) errorsValidation.push({ name: 'Service name cannot be empty' });
+  if (validator.isEmpty(name)) errorsValidation.push({ name: 'Tour Service name cannot be empty' });
 
   if (errorsValidation.length) {
     const customError = new CustomError(

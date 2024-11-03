@@ -12,7 +12,9 @@ export const edit = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const service = await serviceRepo.findOne(id);
     if (!service) {
-      const customError = new CustomError(404, 'General', `Service with id:${id} not found`, ['Service not found']);
+      const customError = new CustomError(404, 'General', `Tour Service with id:${id} not found`, [
+        'Service not found',
+      ]);
       return next(customError);
     }
 
@@ -26,9 +28,9 @@ export const edit = async (req: Request, res: Response, next: NextFunction) => {
       }
 
       await serviceRepo.save(service);
-      return res.customSuccess(200, 'Service successfully saved', service);
+      return res.customSuccess(200, 'Tour Service successfully saved', service);
     } catch (error) {
-      const customError = new CustomError(400, 'General', 'Service update error', null, error);
+      const customError = new CustomError(400, 'General', 'Tour Service update error', null, error);
       return next(customError);
     }
   } catch (error) {

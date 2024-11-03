@@ -11,7 +11,7 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
   try {
     const service = await serviceRepo.findOne({ where: { name } });
     if (service) {
-      const customError = new CustomError(400, 'General', `Service '${name}' already exists`);
+      const customError = new CustomError(400, 'General', `Tour Service '${name}' already exists`);
       return next(customError);
     }
 
@@ -20,9 +20,9 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
       newService.name = name;
       newService.description = description;
       await serviceRepo.save(newService);
-      return res.customSuccess(200, 'Service created successfully', newService);
+      return res.customSuccess(200, 'Tour Service created successfully', newService);
     } catch (error) {
-      const customError = new CustomError(400, 'General', `Service '${name}' can't be created`, null, error);
+      const customError = new CustomError(400, 'General', `Tour Service '${name}' can't be created`, null, error);
       return next(customError);
     }
   } catch (error) {
