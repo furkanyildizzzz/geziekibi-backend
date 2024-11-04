@@ -16,7 +16,11 @@ export class TourPrice {
   @Column('decimal')
   price: number;
 
-  @Column({ default: 'TRY' as Currency })
+  @Column({
+    type: 'enum',
+    enum: Currency,
+    default: Currency.TRY,
+  })
   currency: Currency;
 
   @ManyToOne(() => Tour, (tour) => tour.prices)

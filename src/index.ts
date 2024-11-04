@@ -15,6 +15,10 @@ import { errorHandler } from 'middleware/errorHandler';
 import { getLanguage } from 'middleware/getLanguage';
 import { dbCreateConnection } from 'orm/dbCreateConnection';
 import routes from './routes/';
+import { setAuthCredentials } from './config/googleAuth';
+
+// Load Google Drive credentials
+// setAuthCredentials().catch(console.error);
 
 export const app = express();
 app.use(cors());

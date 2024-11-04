@@ -31,12 +31,16 @@ export class Tour {
   body: string;
 
   @Column({
-    default: 'YURTICI' as TourType,
+    type: 'enum',
+    enum: TourType,
+    default: TourType.YURTICI,
   })
   type: TourType;
 
   @Column({
-    default: 'DRAFT' as PublishStatus,
+    type: 'enum',
+    enum: PublishStatus,
+    default: PublishStatus.DRAFT,
   })
   publishStatus: PublishStatus;
 
@@ -65,16 +69,19 @@ export class Tour {
   @OneToMany(() => TourPrice, (price) => price.tour, { onDelete: 'SET NULL' })
   prices: TourPrice[];
 
-  @ManyToMany(() => TourService)
-  @JoinTable()
-  includedServices: TourService[];
+  // @ManyToMany(() => TourService)
+  // @JoinTable()
+  // includedServices: TourService[];
 
-  @ManyToMany(() => TourService)
-  @JoinTable()
-  excludedServices: TourService[];
+  // @ManyToMany(() => TourService)
+  // @JoinTable()
+  // excludedServices: TourService[];
 
   //{ onDelete: 'SET NULL' } ensures that if a category is deleted, the category field in associated tours will be set to null rather than being deleted
   @ManyToOne(() => TourCategory, (category) => category.tours, { onDelete: 'SET NULL' })
   @JoinTable()
   category: TourCategory;
+
+  @OneToMany(() => TourService, (tourService) => tourService.tour, { cascade: true })
+  tourServices: TourService[];
 }
