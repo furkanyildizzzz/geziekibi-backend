@@ -23,18 +23,18 @@ services:
     links:
       - db_postgres
 
-  be_geziekibi_test:
-    container_name: 'be_geziekibi_test'
-    command: sh -c "echo 'Test container ready' && tail -f /dev/null"
-    build: .
-    stdin_open: true
-    tty: true
-    depends_on:
-      - db_postgres
-    links:
-      - db_postgres
-    env_file:
-      - .env
-    volumes:
-      - .:/app/
-      - /app/node_modules
+  # be_geziekibi_test:
+  #   container_name: 'be_geziekibi_test'
+  #   command: sh -c "echo 'Test container ready' && tail -f /dev/null"
+  #   build: .
+  #   stdin_open: true
+  #   tty: true
+  #   depends_on:
+  #     - db_postgres
+  #   links:
+  #     - db_postgres
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - .:/app/
+  #     - /app/node_modules
