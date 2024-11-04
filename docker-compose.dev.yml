@@ -13,6 +13,9 @@ services:
       - ./database:/var/lib/postgresql/data/
 
   be_geziekibi:
+    build:
+      context: . # Use the current directory as the build context
+      dockerfile: Dockerfile # Specify the Dockerfile if not named "Dockerfile"
     entrypoint: /bin/sh './scripts/be-node-dev.sh'
     env_file:
       - .env
