@@ -1,18 +1,26 @@
 import { NextFunction, Request, Response } from 'express';
-import fs from 'fs';
-import { v2 as cloudinary, UploadApiResponse, UploadApiErrorResponse } from 'cloudinary';
 import { CustomError } from 'utils/response/custom-error/CustomError';
-import sharp from 'sharp';
+import { v2 } from '../../config/cloudinaryConfig';
 
-// Cloudinary configuration
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-interface CloudinaryFile extends Express.Multer.File {
-  buffer: Buffer;
-}
-
-export const uploadFile = async (req: Request, res: Response, next: NextFunction) => {};
+export const uploadFile = async (req: Request, res: Response, next: NextFunction) => {
+  if (req.file && req.file.buffer) {
+    const uploadStr = 'data:image/jpeg;base64,' + req.file.buffer.toString('base64');
+    console.log('CLOUDINARY_APICLOUDINARY_API_SECRET_KEY:', process.env.CLOUDINARY_API_SECRET);
+    return v2.uploader
+      .upload(uploadStr, { folder: 'tour/body' })
+      .then((result) => {
+        const imageUrl = result.url;
+        return res.customSuccess(200, 'Your image has been uploaded successfully to Cloudinary', { imageUrl });
+      })
+      .catch((err) => {
+        const customError = new CustomError(
+          500,
+          'General',
+          'Something went wrong while uploading to cloudinary',
+          null,
+          err,
+        );
+        return next(customError);
+      });
+  }
+};

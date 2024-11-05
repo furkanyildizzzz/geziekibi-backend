@@ -15,7 +15,7 @@ import { errorHandler } from 'middleware/errorHandler';
 import { getLanguage } from 'middleware/getLanguage';
 import { dbCreateConnection } from 'orm/dbCreateConnection';
 import routes from './routes/';
-import { setAuthCredentials } from './config/googleAuth';
+import { cloudinaryConfig } from 'config/cloudinaryConfig';
 
 // Load Google Drive credentials
 // setAuthCredentials().catch(console.error);
@@ -26,6 +26,7 @@ app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(getLanguage);
+cloudinaryConfig();
 
 try {
   const accessLogStream = fs.createWriteStream(path.join(__dirname, '../log/access.log'), {
