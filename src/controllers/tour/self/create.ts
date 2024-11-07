@@ -64,7 +64,7 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
         tourPrice.name = 'Yetişkin';
         tourPrice.description = 'Yetişkin';
         tourPrice.price = Number(price);
-        // await transactionalEntityManager.save(tourPrice);
+        await transactionalEntityManager.save(tourPrice);
         // await priceRepo.save(tourPrice);
         newTour.prices = [];
         newTour.prices.push(tourPrice);
