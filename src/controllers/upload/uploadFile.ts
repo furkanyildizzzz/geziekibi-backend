@@ -3,8 +3,9 @@ import { CustomError } from 'utils/response/custom-error/CustomError';
 import { v2 } from '../../config/cloudinaryConfig';
 
 export const uploadFile = async (req: Request, res: Response, next: NextFunction) => {
-  if (req.file && req.file.buffer) {
-    const uploadStr = 'data:image/jpeg;base64,' + req.file.buffer.toString('base64');
+  if (req.files) {
+    console.log('I am here!');
+    const uploadStr = 'data:image/jpeg;base64,' + req.files['file'][0].buffer.toString('base64');
     console.log('CLOUDINARY_APICLOUDINARY_API_SECRET_KEY:', process.env.CLOUDINARY_API_SECRET);
     return v2.uploader
       .upload(uploadStr, { folder: 'tour/body' })
