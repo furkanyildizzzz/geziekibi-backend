@@ -1,13 +1,41 @@
-// middleware/multer.js
 import path from 'path';
 import { NextFunction, Request, Response } from 'express';
 import multer from 'multer';
-// import DataURIParser from 'datauri/parser';
 
 const storage = multer.memoryStorage();
-const multerUploads = multer({ storage }).single('file');
-// const dUri = new DataURIParser();
-// Middleware wrapper for multer to handle `req`, `res`, and `next`
+
+const fileFilter = (req, file, cb) => {
+  if (file.fieldname === 'file') {
+    // if uploading resume
+    if (
+      file.mimetype === 'application/pdf' ||
+      file.mimetype === 'application/msword' ||
+      file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ) {
+      // check file type to be pdf, doc, or docx
+      cb(null, true);
+    } else {
+      cb(null, false); // else fails
+    }
+  } else {
+    // else uploading image
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+      // check file type to be png, jpeg, or jpg
+      cb(null, true);
+    } else {
+      cb(null, false); // else fails
+    }
+  }
+};
+
+const multerUploads = multer({ storage, fileFilter: fileFilter }).fields([
+  { name: 'file', maxCount: 1 },
+  { name: 'image', maxCount: 1 },
+  { name: 'gallery', maxCount: 5 },
+]);
+
+// const multerUploads = multer({ storage, fileFilter: fileFilter }).any();
+
 const uploadMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   multerUploads(req, res, (err: any) => {
     if (err) {
@@ -17,13 +45,4 @@ const uploadMiddleware = async (req: Request, res: Response, next: NextFunction)
   });
 };
 
-/**
- * @description This function converts the buffer to data URI
- * @param {Object} req containing the field object
- * @returns {String} The data URI from the string buffer
- */
-// const dataUri = (req: Request) => dUri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
-
-const getBase64 = (file) => '';
-
-export { uploadMiddleware, getBase64 };
+export { uploadMiddleware };
