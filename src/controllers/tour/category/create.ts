@@ -15,7 +15,8 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
       return next(customError);
     }
 
-    if (parentid) {
+    console.log({ parentid });
+    if (parentid > 0) {
       const parent = await tourCategoryRepo.findOne({ where: { id: parentid } });
       if (!parent) {
         const customError = new CustomError(400, 'General', 'Parent category not found');
