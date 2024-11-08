@@ -13,6 +13,7 @@ import { Tag } from '../tag/Tag';
 import { TourPrice } from './TourPrice';
 import { TourService } from './TourService';
 import { TourCategory } from './TourCategory';
+import { Image } from '../image/Image';
 
 @Entity('tours')
 export class Tour {
@@ -70,13 +71,13 @@ export class Tour {
   @JoinTable()
   prices: TourPrice[];
 
-  // @ManyToMany(() => TourService)
-  // @JoinTable()
-  // includedServices: TourService[];
+  // One-to-Many relationship with Image (Gallery Images)
+  @OneToMany(() => Image, (image) => image.tour, { nullable: true })
+  galleryImages: Image[];
 
-  // @ManyToMany(() => TourService)
-  // @JoinTable()
-  // excludedServices: TourService[];
+  // One-to-Many relationship with Image (Gallery Images)
+  @OneToMany(() => Image, (image) => image.primaryForTour, { nullable: true })
+  primaryImages: Image[];
 
   //{ onDelete: 'SET NULL' } ensures that if a category is deleted, the category field in associated tours will be set to null rather than being deleted
   @ManyToOne(() => TourCategory, (category) => category.tours, { onDelete: 'SET NULL' })

@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Language, Role } from './types';
 import bcrypt from 'bcryptjs';
+import { Image } from '../image/Image';
 
 @Entity('users')
 export class User {
@@ -40,6 +41,10 @@ export class User {
   @Column()
   @UpdateDateColumn()
   updated_at: Date;
+
+  // One-to-Many relationship with Image (A user can upload multiple images)
+  @OneToMany(() => Image, (image) => image.user)
+  images: Image[];
 
   get name(): string {
     return `${this.firstName} ${this.lastName}`;
