@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Currency } from './types';
 import { Tour } from './Tour';
 
@@ -23,6 +23,6 @@ export class TourPrice {
   })
   currency: Currency;
 
-  @ManyToOne(() => Tour, (tour) => tour.prices)
-  tour: Tour;
+  @ManyToMany(() => Tour, (tour) => tour.prices)
+  tour: Tour[];
 }

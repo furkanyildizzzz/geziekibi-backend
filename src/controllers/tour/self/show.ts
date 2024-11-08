@@ -1,20 +1,22 @@
 import { NextFunction, Request, Response } from 'express';
-import { TourCategory } from 'orm/entities/tour/TourCategory';
+import { Tour } from 'orm/entities/tour/Tour';
 import { getRepository } from 'typeorm';
 import { CustomError } from 'utils/response/custom-error/CustomError';
 
 export const show = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
-    const tourCategoryRepo = getRepository(TourCategory);
-    const tourCategory = await tourCategoryRepo.findOne(id, { relations: ['parent', 'subCategories'] });
+    const tourRepo = getRepository(Tour);
+    const tour = await tourRepo.findOne(id, {
+      relations: ['tags', 'prices', 'category', 'tourServices', 'tourServices.service'],
+    });
 
-    if (!tourCategory) {
-      const customError = new CustomError(404, 'General', `Category with id:${id} not found`, ['Category not found']);
+    if (!tour) {
+      const customError = new CustomError(404, 'General', `Tour with id:${id} not found`, ['Tour not found']);
       return next(customError);
     }
 
-    return res.customSuccess(200, 'Tour Category found', tourCategory);
+    return res.customSuccess(200, 'Tour found', tour);
   } catch (error) {
     const customError = new CustomError(400, 'Raw', 'Error', null, error);
     return next(customError);

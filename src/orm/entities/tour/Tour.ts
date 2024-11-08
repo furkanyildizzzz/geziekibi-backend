@@ -62,11 +62,12 @@ export class Tour {
   @CreateDateColumn()
   updated_at: Date;
 
-  @ManyToMany(() => Tag, (tag) => tag.tours, { onDelete: 'SET NULL' })
+  @ManyToMany(() => Tag, (tag) => tag.tours, { cascade: true })
   @JoinTable()
   tags: Tag[];
 
-  @OneToMany(() => TourPrice, (price) => price.tour, { onDelete: 'SET NULL' })
+  @ManyToMany(() => TourPrice, (price) => price.tour, { cascade: true })
+  @JoinTable()
   prices: TourPrice[];
 
   // @ManyToMany(() => TourService)

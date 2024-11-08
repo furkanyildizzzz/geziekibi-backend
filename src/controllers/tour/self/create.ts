@@ -11,7 +11,7 @@ import { CustomError } from 'utils/response/custom-error/CustomError';
 import { v2 } from '../../../config/cloudinaryConfig';
 
 export const create = async (req: Request, res: Response, next: NextFunction) => {
-  let { title, spot, body, type, publishStatus, publishDate, categoryId, price } = req.body;
+  let { title, spot, body, tourType, publishStatus, publishDate, categoryId, price } = req.body;
   const tags = JSON.parse(req.body.tags);
   let tourServices = JSON.parse(req.body.tourServices);
 
@@ -25,12 +25,12 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
   const serviceRepo = getRepository(Service);
   const priceRepo = getRepository(TourPrice);
   try {
+    console.log('I am here!');
     if (!(await categoryRepo.findOne(categoryId))) {
       const customError = new CustomError(400, 'General', `Category with id:'${categoryId}' not found`);
       return next(customError);
     }
 
-    console.log({ tags });
     if (tags.length) {
       if ((await tagRepo.findByIds(tags.map((t) => t.id))).length !== tags.length) {
         const customError = new CustomError(400, 'General', `One or more tags not found`);
@@ -38,7 +38,6 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
       }
     }
 
-    console.log({ tourServices });
     if (tourServices.length) {
       if ((await serviceRepo.findByIds(tourServices.map((s) => s.id))).length !== tourServices.length) {
         const customError = new CustomError(400, 'General', `One or more tourServices not found`);
@@ -49,11 +48,10 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
     try {
       await getManager().transaction(async (transactionalEntityManager) => {
         const newTour = new Tour();
-        console.log(new Date(publishDate));
         newTour.title = title;
         newTour.spot = spot;
         newTour.body = body;
-        newTour.type = type;
+        newTour.type = tourType;
         newTour.publishStatus = publishStatus;
         newTour.publishDate = publishDate;
 
@@ -101,10 +99,6 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
 
         const folderDate = `${year}-${month}-${day}_${hour}-${minute}`;
 
-        console.log({ body: req.body });
-        console.log({ files: req.files });
-        console.log({ image: req.files['image'] });
-        console.log({ gallery: req.files['gallery'] });
         if (req.files && req.files['image'] && req.files['image'].length) {
           const imageStr = 'data:image/jpeg;base64,' + req.files['image'][0].buffer.toString('base64');
           await v2.uploader
@@ -135,7 +129,12 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
           }
         }
 
-        await transactionalEntityManager.save(newTour);
+        await transactionalEntityManager.save(newTour).catch((error) => {
+          console.log({ DatabaseError: error });
+          const customError = new CustomError(400, 'Raw', 'Database error', null, error);
+          throw customError;
+        });
+
         return res.customSuccess(200, 'Tour created successfully', newTour);
       });
     } catch (error) {
