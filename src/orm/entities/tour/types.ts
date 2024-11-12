@@ -17,5 +17,6 @@ export enum Currency {
 
 export enum ServiceType {
   INCLUDED = 'included',
+  INHERIT = 'inherit',
   EXCLUDED = 'excluded',
 }

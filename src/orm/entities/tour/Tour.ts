@@ -36,7 +36,7 @@ export class Tour {
     enum: TourType,
     default: TourType.YURTICI,
   })
-  type: TourType;
+  tourType: TourType;
 
   @Column({
     type: 'enum',
@@ -47,13 +47,15 @@ export class Tour {
 
   @Column()
   @CreateDateColumn()
-  publishDate: Date;
+  startDate: Date;
 
   @Column()
-  image: string;
+  @CreateDateColumn()
+  endDate: Date;
 
-  @Column({ type: 'simple-array' })
-  gallery: string[];
+  @Column()
+  @CreateDateColumn()
+  publishDate: Date;
 
   @Column()
   @CreateDateColumn()
