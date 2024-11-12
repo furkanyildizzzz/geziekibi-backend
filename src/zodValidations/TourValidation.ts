@@ -1,4 +1,4 @@
-import { PublishStatus, TourType } from 'orm/entities/tour/types';
+import { PublishStatus, ServiceType, TourType } from 'orm/entities/tour/types';
 import { z } from 'zod';
 const fileSizeLimit = 5 * 1024 * 1024; // 5MB
 
@@ -7,36 +7,53 @@ export const TourValidationSchema = z.object({
   title: z.string().min(1, { message: 'Title is required' }),
   spot: z.string().min(1, { message: 'Spot is required' }),
   body: z.string().optional(), // 'text' type is generally optional in validation
-  type: z.nativeEnum(TourType).default(TourType.YURTICI),
+  tourType: z.nativeEnum(TourType).default(TourType.YURTICI),
   publishStatus: z.nativeEnum(PublishStatus).default(PublishStatus.DRAFT),
+  startDate: z
+    .string()
+    .refine((dateStr) => !isNaN(Date.parse(dateStr)), {
+      message: 'Invalid start date format',
+    })
+    .transform((dateStr) => new Date(dateStr)),
+  endDate: z
+    .string()
+    .refine((dateStr) => !isNaN(Date.parse(dateStr)), {
+      message: 'Invalid end date format',
+    })
+    .transform((dateStr) => new Date(dateStr)),
   publishDate: z
     .string()
     .refine((dateStr) => !isNaN(Date.parse(dateStr)), {
-      message: 'Invalid date format',
+      message: 'Invalid publish date format',
     })
     .transform((dateStr) => new Date(dateStr))
     .optional(),
-  image: z.any().optional(), // Allow any file object for image
-  gallery: z.array(z.any()).optional(), // Allow an array of any file objects for gallery
-  created_at: z.date().optional(), // Timestamps, typically set automatically
-  updated_at: z.date().optional(),
+  primaryImages: z.array(z.any()), // Allow an array of any file objects for gallery
+  galleryImages: z.array(z.any()).optional(), // Allow an array of any file objects for gallery
   tags: z.array(z.object({ id: z.number() })).optional(), // Assuming `tags` are referenced by `id`
   prices: z
     .array(
       z.object({
-        amount: z.number().positive({ message: 'Price amount must be positive' }),
+        name: z.string({ message: 'Price name required' }).trim(),
+        price: z.number().positive({ message: 'Price must be positive' }),
         currency: z.string().min(1, { message: 'Currency is required' }),
       }),
     )
     .optional(),
-  category: z.object({ id: z.number() }).optional(), // Category is referenced by `id`
-  tourServices: z
-    .array(
-      z.object({
-        name: z.string().min(1, { message: 'Service name is required' }),
+  category: z.object({ id: z.number(), name: z.string().optional() }).optional(), // Category is referenced by `id`
+  tourServices: z.array(
+    z.object({
+      id: z.preprocess((value) => (typeof value === 'string' ? parseInt(value) : value), z.number()),
+      type: z.nativeEnum(ServiceType, {
+        message: 'Servie type required',
       }),
-    )
-    .optional(),
+      service: z.object({
+        id: z.preprocess((value) => (typeof value === 'string' ? parseInt(value) : value), z.number()),
+        name: z.string({ message: 'dsada' }).min(1, { message: 'Service name is required' }),
+        description: z.string(),
+      }),
+    }),
+  ),
 });
 
 export const TourValidationSchemaPostman = z.object({

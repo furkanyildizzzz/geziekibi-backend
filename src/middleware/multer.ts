@@ -30,8 +30,8 @@ const fileFilter = (req, file, cb) => {
 
 const multerUploads = multer({ storage, fileFilter: fileFilter }).fields([
   { name: 'file', maxCount: 1 },
-  { name: 'image', maxCount: 1 },
-  { name: 'gallery', maxCount: 5 },
+  { name: 'primaryImages', maxCount: 1 },
+  { name: 'galleryImages', maxCount: 5 },
 ]);
 
 // const multerUploads = multer({ storage, fileFilter: fileFilter }).any();

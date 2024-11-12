@@ -8,7 +8,15 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
     const tourRepo = getRepository(Tour);
     const tour = await tourRepo.findOne(id, {
-      relations: ['tags', 'prices', 'category', 'tourServices', 'tourServices.service'],
+      relations: [
+        'tags',
+        'prices',
+        'category',
+        'tourServices',
+        'tourServices.service',
+        'primaryImages',
+        'galleryImages',
+      ],
     });
 
     if (!tour) {

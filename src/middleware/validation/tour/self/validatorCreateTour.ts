@@ -5,39 +5,32 @@ import { TourValidationSchema, TourValidationSchemaPostman } from 'zodValidation
 
 const validatorCreateTour = async (req: Request, res: Response, next: NextFunction) => {
   const { title, spot, body, type, publishStatus, publishDate, category, price } = req.body;
-  // const tags = JSON.parse(req.body.tags);
-  // const tourServices = JSON.parse(req.body.tourServices);
+  // try {
+  //   const result = TourValidationSchema.safeParse(req.body); // Assuming you send data in req.body
 
-  // Access uploaded files via req.files
-  // const image = req.files['image'] ? req.files['image'][0] : null;
-  // const gallery = req.files['gallery'] || [];
+  //   if (!result.success) {
+  //     // Create errorsValidation array
+  //     const errorsValidation: ErrorValidation[] = [];
+  //     result.error.errors.forEach((error) => {
+  //       errorsValidation.push({ [error.path.join('.')]: error.message }); // Join path to create key
+  //     });
 
-  try {
-    const result = TourValidationSchemaPostman.safeParse(req.body); // Assuming you send data in req.body
-
-    if (!result.success) {
-      // Create errorsValidation array
-      const errorsValidation: ErrorValidation[] = [];
-      result.error.errors.forEach((error) => {
-        errorsValidation.push({ [error.path.join('.')]: error.message }); // Join path to create key
-      });
-
-      if (errorsValidation.length) {
-        const customError = new CustomError(
-          400,
-          'Validation',
-          'Validation error while editing tour',
-          null,
-          null,
-          errorsValidation,
-        );
-        return next(customError);
-      }
-    }
-  } catch (error) {
-    const customError = new CustomError(400, 'Raw', 'Error', null, error);
-    return next(customError);
-  }
+  //     if (errorsValidation.length) {
+  //       const customError = new CustomError(
+  //         400,
+  //         'Validation',
+  //         'Validation error while editing tour',
+  //         null,
+  //         null,
+  //         errorsValidation,
+  //       );
+  //       return next(customError);
+  //     }
+  //   }
+  // } catch (error) {
+  //   const customError = new CustomError(400, 'Raw', 'Error', null, error);
+  //   return next(customError);
+  // }
 
   return next();
 };

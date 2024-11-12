@@ -10,6 +10,7 @@ const router = Router();
 router.get('/', list);
 router.get('/:id([0-9]+)', show);
 router.post('/', [checkJwt, checkRole(['ADMINISTRATOR']), uploadMiddleware, validatorCreateTour], create);
+router.post('/:id([0-9]+)', [checkJwt, checkRole(['ADMINISTRATOR']), uploadMiddleware, validatorCreateTour], create);
 router.delete('/:id([0-9]+)', [checkJwt, checkRole(['ADMINISTRATOR'])], destroy);
 
 export default router;
