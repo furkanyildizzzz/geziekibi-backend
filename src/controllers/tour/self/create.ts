@@ -13,9 +13,9 @@ import { Image } from 'orm/entities/image/Image';
 
 export const create = async (req: Request, res: Response, next: NextFunction) => {
   console.log({ files: req.files });
-  // console.log({ file: req.file });
-  // console.log({ primaryImages: req.files['primaryImages'] });
-  // console.log({ galleryImages: req.files['galleryImages'] });
+  console.log({ file: req.file });
+  console.log({ primaryImages: req.files['primaryImages'] });
+  console.log({ galleryImages: req.files['galleryImages'] });
 
   let { title, spot, body, tourType, publishStatus, publishDate, startDate, endDate } = req.body;
   const tags = JSON.parse(req.body.tags);
