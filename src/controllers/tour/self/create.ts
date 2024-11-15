@@ -33,7 +33,7 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
   const tourServiceRepo = getRepository(TourService);
   try {
     if (id) {
-      if (!(await tourRepo.findOne(id))) {
+      if (!(await tourRepo.findOne({ where: { id: Number(id) } }))) {
         const customError = new CustomError(400, 'General', `Tour with id:'${id}' not found`);
         return next(customError);
       }
@@ -62,7 +62,7 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
 
     try {
       await getManager().transaction(async (transactionalEntityManager) => {
-        const newTour = Number(id) > 0 ? await tourRepo.findOne(id) : new Tour();
+        const newTour = Number(id) > 0 ? await tourRepo.findOne({ where: { id: Number(id) } }) : new Tour();
         newTour.title = title;
         newTour.spot = spot;
         newTour.body = body;
@@ -75,7 +75,7 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
         if (id) {
           newTour.updated_at = new Date();
         }
-        const tourCategory = await categoryRepo.findOne({ id: category.id });
+        const tourCategory = await categoryRepo.findOne({ where: { id: category.id } });
         newTour.category = tourCategory;
 
         const tourTags: Tag[] = await tagRepo.findByIds(tags.map((t) => t.id));
@@ -85,13 +85,13 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
         tourServices = tourServices.filter((s) => (s.type as ServiceType) !== ServiceType.INHERIT);
         for (let index = 0; index < tourServices.length; index++) {
           const s = tourServices[index];
-          const tourService = await tourServiceRepo.findOne({ id: s.id });
+          const tourService = await tourServiceRepo.findOne({ where: { id: s.id } });
           if (tourService) {
             tourService.type = s.type as ServiceType;
             newTourServices.push(tourService);
           } else {
             const newTourService = new TourService();
-            const service = await serviceRepo.findOne({ id: s.service.id });
+            const service = await serviceRepo.findOne({ where: { id: s.service.id } });
             newTourService.service = service;
             // tourService.tour = newTour;
             newTourService.type = s.type as ServiceType;

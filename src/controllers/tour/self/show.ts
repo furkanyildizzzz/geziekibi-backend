@@ -7,7 +7,8 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
     const tourRepo = getRepository(Tour);
-    const tour = await tourRepo.findOne(id, {
+    const tour = await tourRepo.findOne({
+      where: { id: Number(id) },
       relations: [
         'tags',
         'prices',

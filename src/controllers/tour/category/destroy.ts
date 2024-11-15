@@ -7,7 +7,7 @@ export const destroy = async (req: Request, res: Response, next: NextFunction) =
   const id = req.params.id;
   const tourCategoryRepository = getRepository(TourCategory);
   try {
-    const tourCategory = await tourCategoryRepository.findOne(id);
+    const tourCategory = await tourCategoryRepository.findOne({ where: { id: Number(id) } });
     if (!tourCategory) {
       const customError = new CustomError(404, 'General', 'Not Found', [`Category with id:${id} not found`]);
       return next(customError);

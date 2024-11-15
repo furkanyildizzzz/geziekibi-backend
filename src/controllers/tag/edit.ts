@@ -8,7 +8,7 @@ export const edit = async (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.id;
   const tagRepository = getRepository(Tag);
   try {
-    const tag = await tagRepository.findOne({ where: { id } });
+    const tag = await tagRepository.findOne({ where: { id: Number(id) } });
     if (!tag) {
       const customError = new CustomError(404, 'General', `Tag with id:${id} not found`, ['Tag not found.']);
       return next(customError);

@@ -7,7 +7,10 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
     const tourCategoryRepo = getRepository(TourCategory);
-    const tourCategory = await tourCategoryRepo.findOne(id, { relations: ['parent', 'subCategories'] });
+    const tourCategory = await tourCategoryRepo.findOne({
+      where: { id: Number(id) },
+      relations: ['parent', 'subCategories'],
+    });
 
     if (!tourCategory) {
       const customError = new CustomError(404, 'General', `Category with id:${id} not found`, ['Category not found']);

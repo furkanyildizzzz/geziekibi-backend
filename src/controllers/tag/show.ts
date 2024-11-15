@@ -9,7 +9,7 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
   const tagRepository = getRepository(Tag);
 
   try {
-    const tag = await tagRepository.findOne(id);
+    const tag = await tagRepository.findOne({ where: { id: Number(id) } });
     if (!tag) {
       const customError = new CustomError(404, 'General', `Tag with id:${id} not found`, ['Tag not found.']);
       return next(customError);

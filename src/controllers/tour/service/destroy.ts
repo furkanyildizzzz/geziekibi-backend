@@ -7,7 +7,7 @@ export const destroy = async (req: Request, res: Response, next: NextFunction) =
   const id = req.params.id;
   const serviceRepo = getRepository(Service);
   try {
-    const service = await serviceRepo.findOne(id);
+    const service = await serviceRepo.findOne({ where: { id: Number(id) } });
     if (!service) {
       const customError = new CustomError(404, 'General', 'Not Found', [`Tour Service with id:${id} not found`]);
       return next(customError);

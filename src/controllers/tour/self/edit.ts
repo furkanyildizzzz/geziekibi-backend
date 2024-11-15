@@ -10,7 +10,7 @@ export const edit = async (req: Request, res: Response, next: NextFunction) => {
   const tourCategoryRepo = getRepository(TourCategory);
 
   try {
-    const tourCategory = await tourCategoryRepo.findOne(id, { relations: ['parent'] });
+    const tourCategory = await tourCategoryRepo.findOne({ where: { id: Number(id) }, relations: ['parent'] });
     if (!tourCategory) {
       const customError = new CustomError(404, 'General', `Category with id:${id} not found`, ['Category not found']);
       return next(customError);

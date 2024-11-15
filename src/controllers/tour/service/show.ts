@@ -7,7 +7,7 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
     const serviceRepo = getRepository(Service);
-    const service = await serviceRepo.findOne(id);
+    const service = await serviceRepo.findOne({ where: { id: Number(id) } });
 
     if (!service) {
       const customError = new CustomError(404, 'General', `Tour Service with id:${id} not found`, [
