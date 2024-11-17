@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { Tag } from 'orm/entities/tag/Tag';
 import { getRepository } from 'typeorm';
-import { CustomError } from 'utils/response/custom-error/CustomError';
+import { CustomError } from 'shared/errors/CustomError';
 
 export const destroy = async (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.id;

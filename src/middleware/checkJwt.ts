@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { CustomError } from 'utils/response/custom-error/CustomError';
+import { CustomError } from 'shared/errors/CustomError';
 
 import jwt from 'jsonwebtoken';
 import { JwtPayload } from 'types/JwtPayload';
-import { createJwtToken } from 'utils/createJwtToken';
+import { createJwtToken } from 'shared/utils/createJwtToken';
 
 export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.get('Authorization');

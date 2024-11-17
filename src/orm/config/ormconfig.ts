@@ -1,7 +1,7 @@
-import { ConnectionOptions } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
-const config: ConnectionOptions = {
+const config: PostgresConnectionOptions = {
   type: 'postgres',
   name: 'default',
   host: process.env.PG_HOST,
@@ -14,11 +14,11 @@ const config: ConnectionOptions = {
   entities: ['src/orm/entities/**/*.ts'],
   migrations: ['src/orm/migrations/**/*.ts'],
   subscribers: ['src/orm/subscriber/**/*.ts'],
-  cli: {
-    entitiesDir: 'src/orm/entities',
-    migrationsDir: 'src/orm/migrations',
-    subscribersDir: 'src/orm/subscriber',
-  },
+  // cli: {
+  //   entitiesDir: 'src/orm/entities',
+  //   migrationsDir: 'src/orm/migrations',
+  //   subscribersDir: 'src/orm/subscriber',
+  // },
   namingStrategy: new SnakeNamingStrategy(),
 };
 

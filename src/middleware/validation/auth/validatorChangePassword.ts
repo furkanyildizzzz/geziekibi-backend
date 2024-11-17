@@ -1,7 +1,7 @@
-import { ConstsUser } from 'consts/ConstsUser';
 import { Request, Response, NextFunction } from 'express';
-import { CustomError } from 'utils/response/custom-error/CustomError';
-import { ErrorValidation } from 'utils/response/custom-error/types';
+import { ConstsUser } from 'shared/utils/enum';
+import { CustomError } from 'shared/errors/CustomError';
+import { ErrorValidation } from 'shared/errors/types';
 import validator from 'validator';
 
 export const validatorChangePassword = (req: Request, res: Response, next: NextFunction) => {

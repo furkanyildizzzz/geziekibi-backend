@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import validator from 'validator';
 
-import { ErrorValidation } from 'utils/response/custom-error/types';
-import { CustomError } from 'utils/response/custom-error/CustomError';
+import { ErrorValidation } from 'shared/errors/types';
+import { CustomError } from 'shared/errors/CustomError';
 
 export const validatorLogin = (req: Request, res: Response, next: NextFunction) => {
   let { email, password } = req.body;

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { User } from 'orm/entities/users/User';
 import { getRepository } from 'typeorm';
 import { JwtPayload } from 'types/JwtPayload';
-import { CustomError } from 'utils/response/custom-error/CustomError';
+import { CustomError } from 'shared/errors/CustomError';
 
 export const changePassword = async (req: Request, res: Response, next: NextFunction) => {
   const { password, passwordNew } = req.body;

@@ -3,8 +3,8 @@ import { Role } from 'orm/entities/users/types';
 import { User } from 'orm/entities/users/User';
 import { getRepository } from 'typeorm';
 import { JwtPayload } from 'types/JwtPayload';
-import { createJwtToken } from 'utils/createJwtToken';
-import { CustomError } from 'utils/response/custom-error/CustomError';
+import { createJwtToken } from 'shared/utils/createJwtToken';
+import { CustomError } from 'shared/errors/CustomError';
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;

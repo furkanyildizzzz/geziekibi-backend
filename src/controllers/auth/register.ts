@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { getRepository, Repository } from 'typeorm';
 
 import { User } from 'orm/entities/users/User';
-import { CustomError } from 'utils/response/custom-error/CustomError';
+import { CustomError } from 'shared/errors/CustomError';
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password, firstName, lastName } = req.body;

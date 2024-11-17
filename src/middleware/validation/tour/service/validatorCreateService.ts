@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { CustomError } from 'utils/response/custom-error/CustomError';
-import { ErrorValidation } from 'utils/response/custom-error/types';
+import { CustomError } from 'shared/errors/CustomError';
+import { ErrorValidation } from 'shared/errors/types';
 import validator from 'validator';
 
 const validatorCreateService = (req: Request, res: Response, next: NextFunction) => {

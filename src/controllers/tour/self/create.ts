@@ -7,7 +7,7 @@ import { TourPrice } from 'orm/entities/tour/TourPrice';
 import { TourService } from 'orm/entities/tour/TourService';
 import { ServiceType } from 'orm/entities/tour/types';
 import { getManager, getRepository } from 'typeorm';
-import { CustomError } from 'utils/response/custom-error/CustomError';
+import { CustomError } from 'shared/errors/CustomError';
 import { v2 } from '../../../config/cloudinaryConfig';
 import { Image } from 'orm/entities/image/Image';
 

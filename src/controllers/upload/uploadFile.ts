@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { CustomError } from 'utils/response/custom-error/CustomError';
+import { CustomError } from 'shared/errors/CustomError';
 import { v2 } from '../../config/cloudinaryConfig';
 
 export const uploadFile = async (req: Request, res: Response, next: NextFunction) => {
