@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Up
 import { Language, Role } from './types';
 import bcrypt from 'bcryptjs';
 import { Image } from '../image/Image';
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 
 @Entity('users')
 export class User {
@@ -48,6 +48,7 @@ export class User {
   @OneToMany(() => Image, (image) => image.user)
   images: Image[];
 
+  @Expose({ name: 'fullName' })
   get name(): string {
     return `${this.firstName} ${this.lastName}`;
   }

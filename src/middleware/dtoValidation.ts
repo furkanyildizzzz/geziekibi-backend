@@ -14,8 +14,8 @@ export const DtoValidationMiddleware = (type: any, skipMissingProperties = false
         errors.forEach((err) => {
           //   errMsg[err.property] = [...(Object as any).values(err.constraints)];
           errorsValidation.push({
-            property: err.property,
-            message: [...(Object as any).values(err.constraints)].join(', '),
+            [err.property]: [...(Object as any).values(err.constraints)].join(', '),
+            // message: [...(Object as any).values(err.constraints)].join(', '),
           });
         });
 

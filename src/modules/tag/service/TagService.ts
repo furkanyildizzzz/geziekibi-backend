@@ -26,7 +26,8 @@ export class TagService implements ITagService {
   public async getAll(): Promise<TagSuccessDTO[]> {
     const tags = await this.repository.getAll();
     if (tags && tags.length) return tags as TagSuccessDTO[];
-    throw new NotFoundException('Tag not found');
+    // throw new NotFoundException('No tags found');
+    return [];
   }
 
   public async getById(id: string): Promise<TagSuccessDTO> {
