@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import { ITagService } from 'modules/tag/interfaces/ITagService';
 import { inject } from 'inversify';
-import { controller, httpGet, httpPost } from 'inversify-express-utils';
+import { controller, httpDelete, httpGet, httpPost } from 'inversify-express-utils';
 import { INTERFACE_TYPE } from 'core/types';
 import { checkJwt } from 'middleware/checkJwt';
 import { checkRole } from 'middleware/checkRole';
 import { DtoValidationMiddleware } from 'middleware/dtoValidation';
-import { TagCreateDto } from '../dto/TagCreateDTO';
+import { CreateTagDto } from '../dto/CreateTagDto';
+import { DeleteMultipleTagDto } from '../dto/DeleteMultipleTagDto';
 
 @controller('/tag')
 export class TagController {
@@ -28,6 +29,29 @@ export class TagController {
     return res.customSuccess(200, 'Tag found', tag);
   }
 
-  @httpPost('/', checkJwt, checkRole(['ADMINISTRATOR']), DtoValidationMiddleware(TagCreateDto))
-  public async create(req: Request, res: Response, nex: NextFunction) {}
+  @httpPost('/', checkJwt, checkRole(['ADMINISTRATOR']), DtoValidationMiddleware(CreateTagDto))
+  public async create(req: Request, res: Response, nex: NextFunction) {
+    const tag = await this.interactor.createTag(req.body);
+    return res.customSuccess(200, 'Tag created successfully', tag);
+  }
+
+  @httpPost('/:id([0-9]+)', checkJwt, checkRole(['ADMINISTRATOR']), DtoValidationMiddleware(CreateTagDto))
+  public async update(req: Request, res: Response, nex: NextFunction) {
+    const id = req.params.id;
+    const tag = await this.interactor.updateTag(id, req.body);
+    return res.customSuccess(200, 'Tag updated successfully', tag);
+  }
+
+  @httpDelete('/:id([0-9]+)', checkJwt, checkRole(['ADMINISTRATOR']))
+  public async delete(req: Request, res: Response, nex: NextFunction) {
+    const id = req.params.id;
+    await this.interactor.deleteTag(id);
+    return res.customSuccess(200, 'Tag deleted successfully');
+  }
+
+  @httpDelete('/', checkJwt, checkRole(['ADMINISTRATOR']), DtoValidationMiddleware(DeleteMultipleTagDto))
+  public async deleteMultiple(req: Request, res: Response, nex: NextFunction) {
+    await this.interactor.deleteMultipleTag(req.body);
+    return res.customSuccess(200, 'Tags deleted successfully');
+  }
 }

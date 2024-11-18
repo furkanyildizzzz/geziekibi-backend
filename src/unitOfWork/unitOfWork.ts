@@ -1,21 +1,29 @@
 import { AppDataSource } from 'config/database';
-import { injectable } from 'inversify';
+import { IDatabaseService } from 'core/interface/IDatabaseService';
+import { INTERFACE_TYPE } from 'core/types';
+import { inject, injectable } from 'inversify';
 import { DataSource, QueryRunner } from 'typeorm';
 
 @injectable()
 export class UnitOfWork {
-  private dataSource: DataSource;
+  private dataSource: Promise<DataSource>;
   private queryRunner?: QueryRunner;
 
-  constructor() {
-    this.dataSource = AppDataSource;
+  constructor(@inject(INTERFACE_TYPE.IDatabaseService) private readonly database: IDatabaseService) {
+    this.dataSource = database.getConnection();
+    // this.setDataSource();
   }
+
+  // private async setDataSource(): Promise<void> {
+  //   this.dataSource = await this.database.getConnection();
+  // }
 
   async startTransaction() {
     if (this.queryRunner) {
       throw new Error('Transaction is already active');
     }
-    this.queryRunner = this.dataSource.createQueryRunner();
+    this.queryRunner = (await this.database.getConnection()).createQueryRunner();
+    // this.queryRunner = (await this.dataSource).createQueryRunner();
     await this.queryRunner.connect();
     await this.queryRunner.startTransaction();
   }
@@ -38,9 +46,9 @@ export class UnitOfWork {
     this.queryRunner = undefined;
   }
 
-  getRepository<T>(entity: { new (): T }) {
+  async getRepository<T>(entity: { new (): T }) {
     if (!this.queryRunner) {
-      return this.dataSource.getRepository(entity);
+      return (await this.database.getConnection()).getRepository(entity);
     }
     return this.queryRunner.manager.getRepository(entity);
   }

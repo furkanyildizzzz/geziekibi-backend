@@ -1,11 +1,14 @@
 import { TagSuccessDTO } from 'modules/tag/dto/TagSuccessDTO';
 import { ITagService } from 'modules/tag/interfaces/ITagService';
 import { ITagRepository } from 'modules/tag/interfaces/ITagRepository';
-import { inject, injectable } from 'inversify';
+import { inject, injectable, named } from 'inversify';
 import { Tag } from 'orm/entities/tag/Tag';
-import { NotFoundException } from 'shared/errors/allException';
+import { BadRequestException, NotFoundException } from 'shared/errors/allException';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import { INTERFACE_TYPE } from 'core/types';
+import { CreateTagDto } from '../dto/CreateTagDto';
+import { BadRequestErrorMessageResult } from 'inversify-express-utils/lib/results';
+import { DeleteMultipleTagDto } from '../dto/DeleteMultipleTagDto';
 
 @injectable()
 export class TagService implements ITagService {
@@ -32,19 +35,30 @@ export class TagService implements ITagService {
     throw new NotFoundException('Tag not found');
   }
 
-  async createTag(tagData: Partial<Tag>): Promise<Tag> {
-    const tag = new Tag();
+  async createTag(tagData: CreateTagDto): Promise<Tag> {
+    const tag = await this.repository.getByName(tagData.name);
+    if (tag) throw new BadRequestException(`Tag '${tag.name}' is already exists`);
+
+    const newTag = new Tag();
+    newTag.name = tagData.name;
+    return await this.repository.create(newTag);
+  }
+
+  async updateTag(id: string, tagData: CreateTagDto): Promise<Tag> {
+    const tag = await this.repository.getById(Number(id));
+    if (!tag) throw new NotFoundException(`Tag with id:'${id}' is not found`);
     tag.name = tagData.name;
+    return await this.repository.update(Number(id), tag);
+  }
 
-    try {
-      await this.unitOfWork.startTransaction();
-      await this.unitOfWork.getRepository(Tag).save(tag);
-      await this.unitOfWork.commitTransaction();
-    } catch (error) {
-      await this.unitOfWork.rollbackTransaction();
-      throw error;
-    }
+  async deleteTag(id: string): Promise<void> {
+    const tag = await this.repository.getById(Number(id));
+    if (!tag) throw new NotFoundException(`Tag with id:'${id}' is not found`);
+    await this.repository.delete(Number(id));
+  }
 
-    return tag;
+  async deleteMultipleTag(tags: DeleteMultipleTagDto): Promise<void> {
+    console.log({ tags });
+    await this.repository.deleteMultiple(tags.ids);
   }
 }

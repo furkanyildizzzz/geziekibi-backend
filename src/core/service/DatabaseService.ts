@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { DataSource, ObjectType, Repository } from 'typeorm';
+import { DataSource, ObjectType, QueryRunner, Repository } from 'typeorm';
 import { Logger } from '../../shared/services/Logger';
 import { AppDataSource } from '../../config/database';
 import { IDatabaseService } from '../interface/IDatabaseService';
@@ -7,10 +7,11 @@ import { INTERFACE_TYPE } from 'core/types';
 
 @injectable()
 export class DatabaseService implements IDatabaseService {
+  private queryRunner?: QueryRunner;
   private static myDataSource: DataSource;
   constructor(@inject(INTERFACE_TYPE.Logger) private readonly logger: Logger) {}
 
-  private async getConnection(): Promise<DataSource> {
+  public async getConnection(): Promise<DataSource> {
     if (DatabaseService.myDataSource?.isInitialized) {
       this.logger.info('Connection Already Established!');
       return DatabaseService.myDataSource;
