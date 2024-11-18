@@ -1,10 +1,11 @@
 import { TourCategory } from 'orm/entities/tour/TourCategory';
 import { ITourCategoryRepository } from '../interfaces/ITourCategoryRepository';
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { INTERFACE_TYPE } from 'core/types';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import { InternalServerErrorException } from 'shared/errors/allException';
 
+@injectable()
 export class TourCategoryRepository implements ITourCategoryRepository {
   constructor(@inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork) {}
 

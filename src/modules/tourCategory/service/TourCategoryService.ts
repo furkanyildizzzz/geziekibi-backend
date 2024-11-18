@@ -1,4 +1,4 @@
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { ITourCategoryService } from '../interfaces/ITourCategoryService';
 import { INTERFACE_TYPE } from 'core/types';
 import { ITourCategoryRepository } from '../interfaces/ITourCategoryRepository';
@@ -8,6 +8,7 @@ import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { BadRequestException, NotFoundException } from 'shared/errors/allException';
 import { TourCategory } from 'orm/entities/tour/TourCategory';
 
+@injectable()
 export class TourCategoryService implements ITourCategoryService {
   constructor(@inject(INTERFACE_TYPE.ITourCategoryRepository) private readonly repository: ITourCategoryRepository) {}
 
