@@ -45,7 +45,7 @@ export class User {
   updated_at: Date;
 
   // One-to-Many relationship with Image (A user can upload multiple images)
-  @OneToMany(() => Image, (image) => image.user)
+  @OneToMany(() => Image, (image) => image.user, { cascade: true })
   images: Image[];
 
   @Expose({ name: 'fullName' })

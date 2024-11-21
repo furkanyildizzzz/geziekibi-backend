@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify';
 import { DataSource, ObjectType, QueryRunner, Repository } from 'typeorm';
 import { Logger } from '../../shared/services/Logger';
-import { AppDataSource } from '../../config/database';
 import { IDatabaseService } from '../interface/IDatabaseService';
 import { INTERFACE_TYPE } from 'core/types';
+import AppDataSource from 'config/database';
 
 @injectable()
 export class DatabaseService implements IDatabaseService {

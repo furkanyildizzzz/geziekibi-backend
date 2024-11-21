@@ -59,7 +59,6 @@ export class TagService implements ITagService {
   }
 
   async deleteMultipleTag(tags: DeleteMultipleTagDto): Promise<void> {
-    console.log({ tags });
     await this.repository.deleteMultiple(tags.ids);
   }
 }

@@ -52,7 +52,6 @@ export class TourCategoryRepository implements ITourCategoryRepository {
     try {
       await this.unitOfWork.startTransaction();
       await (await this.unitOfWork.getRepository(TourCategory)).save({ id, ...tourCategory });
-      console.log('I am here!');
       await this.unitOfWork.commitTransaction();
       return tourCategory;
     } catch (error) {

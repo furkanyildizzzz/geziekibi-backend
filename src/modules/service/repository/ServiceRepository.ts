@@ -1,63 +1,60 @@
-import AppDataSource from 'config/database';
-import { ITagRepository } from 'modules/tag/interfaces/ITagRepository';
 import { inject, injectable } from 'inversify';
-import { Tag } from 'orm/entities/tag/Tag';
-import { IDatabaseService } from 'core/interface/IDatabaseService';
-import { InternalServerErrorException, NotFoundException } from 'shared/errors/allException';
-import { getRepository, Repository } from 'typeorm';
+import { IServiceRepository } from '../interfaces/IServiceRepository';
 import { INTERFACE_TYPE } from 'core/types';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
+import { InternalServerErrorException } from 'shared/errors/allException';
+import { Service } from 'orm/entities/service/Service';
 
 @injectable()
-export class TagRepository implements ITagRepository {
+export class ServiceRepository implements IServiceRepository {
   constructor(@inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork) {}
 
-  async getAll(): Promise<Tag[] | void> {
+  async getAll(): Promise<Service[] | void> {
     try {
-      const repo = await this.unitOfWork.getRepository(Tag);
+      const repo = await this.unitOfWork.getRepository(Service);
       const tags = await repo.find();
-      if (tags) return tags as Tag[];
+      if (tags) return tags as Service[];
     } catch (error) {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
 
-  async getById(id: number): Promise<Tag | void> {
+  async getById(id: number): Promise<Service | void> {
     try {
-      const repo = await this.unitOfWork.getRepository(Tag);
+      const repo = await this.unitOfWork.getRepository(Service);
       const tag = await repo.findOne({ where: { id: id } });
-      if (tag) return tag as Tag;
+      if (tag) return tag as Service;
     } catch (error) {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
 
-  async getByName(name: string): Promise<Tag | void> {
+  async getByName(name: string): Promise<Service | void> {
     try {
-      const repo = await this.unitOfWork.getRepository(Tag);
+      const repo = await this.unitOfWork.getRepository(Service);
       const tag = await repo.findOne({ where: { name: name } });
-      if (tag) return tag as Tag;
+      if (tag) return tag as Service;
     } catch (error) {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
 
-  async create(newTag: Tag): Promise<Tag> {
+  async create(newService: Service): Promise<Service> {
     try {
       await this.unitOfWork.startTransaction();
-      await (await this.unitOfWork.getRepository(Tag)).save(newTag);
+      await (await this.unitOfWork.getRepository(Service)).save(newService);
       await this.unitOfWork.commitTransaction();
-      return newTag;
+      return newService;
     } catch (error) {
       await this.unitOfWork.rollbackTransaction();
       throw new InternalServerErrorException(error.message);
     }
   }
 
-  async update(id: number, tag: Tag): Promise<Tag> {
+  async update(id: number, tag: Service): Promise<Service> {
     try {
       await this.unitOfWork.startTransaction();
-      await (await this.unitOfWork.getRepository(Tag)).update(id, tag);
+      await (await this.unitOfWork.getRepository(Service)).update(id, tag);
       await this.unitOfWork.commitTransaction();
       return tag;
     } catch (error) {
@@ -69,7 +66,7 @@ export class TagRepository implements ITagRepository {
   async delete(id: number): Promise<void> {
     try {
       await this.unitOfWork.startTransaction();
-      await (await this.unitOfWork.getRepository(Tag)).delete(id);
+      await (await this.unitOfWork.getRepository(Service)).delete(id);
       await this.unitOfWork.commitTransaction();
     } catch (error) {
       await this.unitOfWork.rollbackTransaction();
@@ -80,7 +77,7 @@ export class TagRepository implements ITagRepository {
   async deleteMultiple(ids: number[]): Promise<void> {
     try {
       await this.unitOfWork.startTransaction();
-      const repo = await this.unitOfWork.getRepository(Tag);
+      const repo = await this.unitOfWork.getRepository(Service);
       ids.forEach(async (id) => await repo.delete(id));
       await this.unitOfWork.commitTransaction();
     } catch (error) {

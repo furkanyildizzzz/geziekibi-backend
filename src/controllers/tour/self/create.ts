@@ -5,7 +5,7 @@ import { Tour } from 'orm/entities/tour/Tour';
 import { TourCategory } from 'orm/entities/tour/TourCategory';
 import { TourPrice } from 'orm/entities/tour/TourPrice';
 import { TourService } from 'orm/entities/tour/TourService';
-import { ServiceType } from 'orm/entities/tour/types';
+import { ServiceType } from 'shared/utils/enum';
 import { getManager, getRepository } from 'typeorm';
 import { CustomError } from 'shared/errors/CustomError';
 import { v2 } from '../../../config/cloudinaryConfig';

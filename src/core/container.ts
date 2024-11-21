@@ -28,11 +28,23 @@ import { TourCategoryController } from 'modules/tourCategory/controller/TourCate
 import { TourCategoryRepository } from 'modules/tourCategory/repository/TourCategoryRepository';
 import { TourCategoryService } from 'modules/tourCategory/service/TourCategoryService';
 
+import { IServiceRepository } from 'modules/service/interfaces/IServiceRepository';
+import { ServiceRepository } from 'modules/service/repository/ServiceRepository';
+import { IServiceInteractor } from 'modules/service/interfaces/IServiceInteractor';
+import { ServiceInteractor } from 'modules/service/service/ServiceInteractor';
+import { ServiceController } from 'modules/service/controller/ServiceController';
+
 import { ITourServiceRepository } from 'modules/tourService/interfaces/ITourServiceRepository';
-import { ITourServiceService } from 'modules/tourService/interfaces/ITourServiceService';
-import { TourServiceService } from 'modules/tourService/service/TourServiceService';
+import { ITourServiceInteractor } from 'modules/tourService/interfaces/ITourServiceInteractor';
 import { TourServiceRepository } from 'modules/tourService/repository/TourServiceRepository';
+import { TourServiceInteractor } from 'modules/tourService/service/TourServiceInteractor';
 import { TourServiceController } from 'modules/tourService/controller/TourServiceController';
+
+import { ITourRepository } from 'modules/tour/interfaces/ITourRepository';
+import { ITourService } from 'modules/tour/interfaces/ITourService';
+import { TourRepository } from 'modules/tour/repository/TourRepository';
+import { TourController } from 'modules/tour/controller/TourController';
+import { TourService } from 'modules/tour/service/TourService';
 
 const container = new Container();
 
@@ -56,8 +68,16 @@ container.bind<ITourCategoryRepository>(INTERFACE_TYPE.ITourCategoryRepository).
 container.bind<ITourCategoryService>(INTERFACE_TYPE.ITourCategoryService).to(TourCategoryService);
 container.bind(INTERFACE_TYPE.TourCategoryController).to(TourCategoryController);
 
+container.bind<IServiceRepository>(INTERFACE_TYPE.IServiceRepository).to(ServiceRepository);
+container.bind<IServiceInteractor>(INTERFACE_TYPE.IServiceInteractor).to(ServiceInteractor);
+container.bind(INTERFACE_TYPE.ServiceController).to(ServiceController);
+
 container.bind<ITourServiceRepository>(INTERFACE_TYPE.ITourServiceRepository).to(TourServiceRepository);
-container.bind<ITourServiceService>(INTERFACE_TYPE.ITourServiceService).to(TourServiceService);
+container.bind<ITourServiceInteractor>(INTERFACE_TYPE.ITourServiceInteractor).to(TourServiceInteractor);
 container.bind(INTERFACE_TYPE.TourServiceController).to(TourServiceController);
+
+container.bind<ITourRepository>(INTERFACE_TYPE.ITourRepository).to(TourRepository);
+container.bind<ITourService>(INTERFACE_TYPE.ITourService).to(TourService);
+container.bind(INTERFACE_TYPE.TourController).to(TourController);
 
 export default container;

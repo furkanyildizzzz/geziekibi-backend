@@ -1,4 +1,3 @@
-import { AppDataSource } from 'config/database';
 import { IDatabaseService } from 'core/interface/IDatabaseService';
 import { INTERFACE_TYPE } from 'core/types';
 import { inject, injectable } from 'inversify';
