@@ -18,10 +18,11 @@ export const DtoValidationMiddleware = (type: any, skipMissingProperties = false
         'prices',
         'category',
         'tourServices',
-        'uploadedPrimaryImages',
         'uploadedGalleryImages',
+        'uploadedPrimaryImages',
       ];
       parseFields.forEach((field) => {
+        console.log({ field: req.body[field] });
         if (req.body[field]) {
           try {
             req.body[field] = JSON.parse(req.body[field]);

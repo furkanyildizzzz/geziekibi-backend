@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColum
 import { Tour } from '../tour/Tour';
 import { User } from '../users/User';
 import { Expose } from 'class-transformer';
+import { TourCategory } from '../tour/TourCategory';
 
 @Entity('images')
 export class Image {
@@ -58,4 +59,9 @@ export class Image {
   @ManyToOne(() => User, (user) => user.images, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;
+
+  // One-to-Many relationship with Tour (Tour can have multiple gallery images)
+  @ManyToOne(() => TourCategory, (category) => category.primaryImages, { nullable: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'categoryId' })
+  category: TourCategory;
 }

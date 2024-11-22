@@ -9,4 +9,5 @@ export interface ITourService {
   createTour(tourData: CreateTourDto): Promise<TourDto>;
   updateTour(id: string, tourData: EditTourDto): Promise<TourDto>;
   deleteTour(id: string): Promise<void>;
+  uploadBodyImage(files: Express.Multer.File): Promise<string>;
 }

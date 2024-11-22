@@ -34,7 +34,8 @@ export class TourDto {
   title: string;
   @Expose()
   spot: string;
-
+  @Expose()
+  body: string;
   @Expose()
   tourType: TourType;
 

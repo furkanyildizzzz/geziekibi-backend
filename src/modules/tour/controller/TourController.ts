@@ -50,4 +50,10 @@ export class TourController {
     await this.service.deleteTour(id);
     return res.customSuccess(200, 'Tour deleted successfully');
   }
+
+  @httpPost('/uploadBodyImage', checkJwt, checkRole(['ADMINISTRATOR']), uploadMiddleware)
+  public async uploadBodyImage(req: Request, res: Response, next: NextFunction) {
+    const imageUrl = await this.service.uploadBodyImage(req.files['tourBodyImage'][0]);
+    return res.customSuccess(200, 'Tour body image uploaded successfully', imageUrl);
+  }
 }

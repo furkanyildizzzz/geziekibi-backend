@@ -320,7 +320,7 @@ export class TourService implements ITourService {
         const primaryImages: Image[] = [];
         const imageStr = 'data:image/jpeg;base64,' + tourData.primaryImages[0].buffer.toString('base64');
         await v2.uploader
-          .upload(imageStr, { folder: 'tour/' + folderDate + '/' + id })
+          .upload(imageStr, { folder: `${process.env.NODE_ENV}/tour/${folderDate}/${id}` })
           .then(async (result) => {
             const newImage = new Image();
             newImage.originalName = tourData.primaryImages[0].originalname;
@@ -357,7 +357,7 @@ export class TourService implements ITourService {
           console.log({ file });
           const imageStr = 'data:image/jpeg;base64,' + file.buffer.toString('base64');
           await v2.uploader
-            .upload(imageStr, { folder: 'tour/' + folderDate + '/' + id })
+            .upload(imageStr, { folder: `${process.env.NODE_ENV}/tour/${folderDate}/${id}` })
             .then(async (result) => {
               const newImage = new Image();
               newImage.originalName = file.originalname;
@@ -368,6 +368,7 @@ export class TourService implements ITourService {
               newImage.width = result.width;
               newImage.height = result.height;
               newImage.createdAt = new Date(result.created_at);
+              newImage.order = index + 1;
               newImage.tour = tour;
               await ImageRepository.save(newImage);
               galleryImages.push(newImage);
@@ -395,5 +396,24 @@ export class TourService implements ITourService {
     const tour = await this.repository.getById(Number(id));
     if (!tour) throw new NotFoundException(`Tour with id:'${id}' is not found`);
     await this.repository.delete(Number(id));
+  }
+
+  public async uploadBodyImage(file: Express.Multer.File): Promise<string> {
+    if (file) {
+      const imageStr = 'data:image/jpeg;base64,' + file.buffer.toString('base64');
+      return await v2.uploader
+        .upload(imageStr, { folder: `${process.env.NODE_ENV}/tourBodyImage/` })
+        .then((result) => {
+          const imageUrl = result.url;
+          console.log({ imageUrl });
+          return imageUrl;
+        })
+        .catch((err) => {
+          console.log(err);
+          throw new InternalServerErrorException(err.message);
+        });
+    } else {
+      throw new BadRequestException('No file provided');
+    }
   }
 }

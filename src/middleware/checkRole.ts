@@ -24,7 +24,6 @@ export const checkRole = (roles: Role[], isSelfAllowed = false) => {
       const customError = new CustomError(401, 'Unauthorized', 'Unauthorized - Insufficient user rights', errors);
       return next(customError);
     }
-
     return next();
   };
 };

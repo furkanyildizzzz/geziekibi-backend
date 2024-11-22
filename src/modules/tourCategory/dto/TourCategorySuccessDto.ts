@@ -1,4 +1,5 @@
 import { Expose, Type } from 'class-transformer';
+import { Image } from 'orm/entities/image/Image';
 
 export class TourCategorySuccessDto {
   @Expose()
@@ -14,4 +15,8 @@ export class TourCategorySuccessDto {
   //@Expose()
   @Type(() => TourCategorySuccessDto) // Transform the subCategories property
   subCategories: TourCategorySuccessDto[];
+
+  @Expose({ name: 'primaryImages' })
+  @Type(() => Image)
+  uploadedPrimaryImages: Image[];
 }

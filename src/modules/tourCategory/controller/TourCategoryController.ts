@@ -7,6 +7,7 @@ import { checkJwt } from 'middleware/checkJwt';
 import { checkRole } from 'middleware/checkRole';
 import { DtoValidationMiddleware } from 'middleware/dtoValidation';
 import { CreateTourCategoryDto } from '../dto/CreateTourCategoryDto';
+import { uploadMiddleware } from 'middleware/multer';
 
 @controller('/tour/category')
 export class TourCategoryController {
@@ -30,7 +31,13 @@ export class TourCategoryController {
     return res.customSuccess(200, `Tour Category '${tourCategory.name}' created successfully`, tourCategory);
   }
 
-  @httpPost('/:id([0-9]+)', checkJwt, checkRole(['ADMINISTRATOR']), DtoValidationMiddleware(CreateTourCategoryDto))
+  @httpPost(
+    '/:id([0-9]+)',
+    checkJwt,
+    checkRole(['ADMINISTRATOR']),
+    uploadMiddleware,
+    DtoValidationMiddleware(CreateTourCategoryDto),
+  )
   public async update(req: Request, res: Response, nex: NextFunction) {
     const tourCategory = await this.service.updateTourCategory(req.params.id, req.body);
     return res.customSuccess(200, 'Tour Category updated successfully', tourCategory);

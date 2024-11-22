@@ -12,7 +12,7 @@ export class TourCategoryRepository implements ITourCategoryRepository {
   public async getAll(): Promise<TourCategory[] | void> {
     try {
       const repo = await this.unitOfWork.getRepository(TourCategory);
-      const tourCategories = await repo.find({ relations: ['parent'] });
+      const tourCategories = await repo.find({ relations: ['parent', 'primaryImages'] });
       if (tourCategories) return tourCategories as TourCategory[];
     } catch (error) {
       throw new InternalServerErrorException(error.message);
@@ -21,7 +21,10 @@ export class TourCategoryRepository implements ITourCategoryRepository {
   public async getById(id: number): Promise<TourCategory | void> {
     try {
       const repo = await this.unitOfWork.getRepository(TourCategory);
-      const tourCategory = await repo.findOne({ where: { id: id }, relations: ['parent', 'subCategories'] });
+      const tourCategory = await repo.findOne({
+        where: { id: id },
+        relations: ['parent', 'subCategories', 'primaryImages'],
+      });
       if (tourCategory) return tourCategory as TourCategory;
     } catch (error) {
       throw new InternalServerErrorException(`${error.message}`);
