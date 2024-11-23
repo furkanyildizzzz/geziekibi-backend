@@ -16,7 +16,4 @@ services:
     env_file:
       - ./config/prod.env
     healthcheck:
-      test: ['CMD-SHELL', 'wget -qO- http://154.53.160.12/:4000/']
-      interval: 5s
-      timeout: 20s
-      retries: 10
+      disable: true
