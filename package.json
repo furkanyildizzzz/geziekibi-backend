@@ -30,7 +30,7 @@
     "seed:run": "NODE_PATH=./src ts-node ./node_modules/.bin/typeorm migration:run --config ./src/orm/config/ormconfig-seed.ts",
     "seed:run:dev": "PG_HOST=localhost NODE_PATH=./src ts-node ./node_modules/.bin/typeorm migration:run --config ./src/orm/config/ormconfig-seed.ts",
     "seed:create": "PG_HOST=localhost NODE_PATH=./src ts-node ./node_modules/.bin/typeorm migration:create --config ./src/orm/config/ormconfig-seed.ts -n ",
-    "migrate:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate ./src/orm/migrations/ImageForCategory -d=./src/config/database.ts",
+    "migrate:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate ./src/orm/migrations/ProfileImage -d=./src/config/database.ts",
     "migrate:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d=./src/config/database.ts"
   },
   "dependencies": {

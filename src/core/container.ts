@@ -16,6 +16,12 @@ import { AuthService } from 'modules/auth/service/AuthService';
 import { AuthController } from 'modules/auth/controller/AuthController';
 import { AuthRepository } from 'modules/auth/repository/AuthRepository';
 
+import { IUserRepository } from 'modules/user/interfaces/IUserRepository';
+import { IUserService } from 'modules/user/interfaces/IUserService';
+import { UserService } from 'modules/user/service/UserService';
+import { UserController } from 'modules/user/controller/UserController';
+import { UserRepository } from 'modules/user/repository/UserRepository';
+
 import { TagController } from 'modules/tag/controller/TagController';
 import { ITagService } from 'modules/tag/interfaces/ITagService';
 import { TagService } from 'modules/tag/service/TagService';
@@ -59,6 +65,10 @@ container.bind<IJsonWebTokenService>(INTERFACE_TYPE.IJsonWebTokenService).to(Jso
 container.bind<IAuthRepository>(INTERFACE_TYPE.IAuthRepository).to(AuthRepository);
 container.bind<IAuthService>(INTERFACE_TYPE.IAuthService).to(AuthService);
 container.bind(INTERFACE_TYPE.AuthController).to(AuthController);
+
+container.bind<IUserRepository>(INTERFACE_TYPE.IUserRepository).to(UserRepository);
+container.bind<IUserService>(INTERFACE_TYPE.IUserService).to(UserService);
+container.bind(INTERFACE_TYPE.UserController).to(UserController);
 
 container.bind<ITagRepository>(INTERFACE_TYPE.ITagRepository).to(TagRepository);
 container.bind<ITagService>(INTERFACE_TYPE.ITagService).to(TagService);

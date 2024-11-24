@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, OneToOne } from 'typeorm';
 import { Tour } from '../tour/Tour';
 import { User } from '../users/User';
 import { Expose } from 'class-transformer';
@@ -56,7 +56,7 @@ export class Image {
   primaryForTour: Tour;
 
   // Many-to-One relationship with User (Image uploaded by a user)
-  @ManyToOne(() => User, (user) => user.images, { nullable: true, onDelete: 'CASCADE' })
+  @OneToOne(() => User, (user) => user.profileImage, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;
 

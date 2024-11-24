@@ -1,8 +1,18 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Language, Role } from './types';
 import bcrypt from 'bcryptjs';
 import { Image } from '../image/Image';
 import { Exclude, Expose } from 'class-transformer';
+import { UserAddress } from './UserAddress';
 
 @Entity('users')
 export class User {
@@ -36,6 +46,9 @@ export class User {
   })
   language: string;
 
+  @Column({ nullable: true })
+  bio: string;
+
   @Column()
   @CreateDateColumn()
   created_at: Date;
@@ -45,8 +58,12 @@ export class User {
   updated_at: Date;
 
   // One-to-Many relationship with Image (A user can upload multiple images)
-  @OneToMany(() => Image, (image) => image.user, { cascade: true })
-  images: Image[];
+  @OneToOne(() => Image, (image) => image.user, { cascade: true })
+  profileImage: Image;
+
+  @OneToOne(() => UserAddress, (address) => address.user, { cascade: true })
+  @JoinColumn({ name: 'addressId' })
+  address: UserAddress;
 
   @Expose({ name: 'fullName' })
   get name(): string {

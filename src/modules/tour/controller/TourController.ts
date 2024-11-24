@@ -22,8 +22,8 @@ export class TourController {
 
   @httpGet('/:id([0-9]+)')
   public async getById(req: Request, res: Response, next: NextFunction) {
-    const tag = await this.service.getById(req.params.id);
-    return res.customSuccess(200, 'Tag found', tag);
+    const tour = await this.service.getById(req.params.id);
+    return res.customSuccess(200, 'Tour found', tour);
   }
 
   @httpPost('/', checkJwt, checkRole(['ADMINISTRATOR']), uploadMiddleware, DtoValidationMiddleware(CreateTourDto, true))

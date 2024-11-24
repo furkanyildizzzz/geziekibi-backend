@@ -65,3 +65,7 @@ export enum ServiceType {
   INHERIT = 'inherit',
   EXCLUDED = 'excluded',
 }
+
+export enum Country {
+  TURKEY = 'Türkiye',
+}

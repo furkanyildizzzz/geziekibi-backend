@@ -6,6 +6,5 @@ export class SignInCredentialsDto {
 
   @IsString()
   @MinLength(3)
-  @MaxLength(10)
   password: string;
 }
