@@ -25,4 +25,7 @@ export const INTERFACE_TYPE = {
   TourController: Symbol.for('TourController'),
   ITourService: Symbol.for('ITourService'),
   ITourRepository: Symbol.for('ITourRepository'),
+  TourPathController: Symbol.for('TourPathController'),
+  ITourPathService: Symbol.for('ITourPathService'),
+  ITourPathRepository: Symbol.for('ITourPathRepository'),
 };
