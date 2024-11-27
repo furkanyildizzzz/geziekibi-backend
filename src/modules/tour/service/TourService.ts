@@ -335,56 +335,85 @@ export class TourService implements ITourService {
       }
       tour.prices = tourPrices;
 
-      const dailyForms: TourDaily[] = [];
+      const dailyForms: TourDaily[] = []; // Array to hold updated or newly created TourDaily entities.
+
       for (let index = 0; index < tourData.dailyForms.length; index++) {
         const d = tourData.dailyForms[index];
-        const tourdaily = (await tourDailyRepository.findOne({ where: { id: d.id } })) || new TourDaily();
+
+        // Fetch the TourDaily entity by ID or create a new one if it doesn't exist.
+        const tourdaily =
+          (await tourDailyRepository.findOne({ where: { id: d.id }, relations: ['dailyVisitingPlaces'] })) ||
+          new TourDaily();
+
+        // Update tourdaily.dailyVisitingPlaces
+        if (!tourdaily.dailyVisitingPlaces) {
+          tourdaily.dailyVisitingPlaces = [];
+        }
         console.log('*********************');
-        tourdaily.name = index + 1 + '. Gün';
+
+        // Update properties of TourDaily entity.
+        tourdaily.name = index + 1 + '. Gün'; // Assign a name like "1. Gün", "2. Gün", etc.
         tourdaily.breakfeast = d.breakfeast;
         tourdaily.lunch = d.lunch;
         tourdaily.dinner = d.dinner;
         tourdaily.description = d.description;
 
-        let visitingPlacestoBeAdded: TourDailyVisitingPlace[] = d.dailyVisitingPlaces.map((s) => {
-          const dailyVisitingPlace = new TourDailyVisitingPlace();
-          dailyVisitingPlace.name = s.name;
-          return dailyVisitingPlace;
-        });
+        const comingVisitingPlaces = d.dailyVisitingPlaces.map((s) => s.name.trim().toLowerCase());
+        console.log({ incoming: comingVisitingPlaces });
 
-        console.log({ add: visitingPlacestoBeAdded });
-        if (tourdaily.id > 0) {
-          const comingVisitingPlaces = d.dailyVisitingPlaces.map((s) => s.name);
-          console.log({ coming: comingVisitingPlaces });
-          const existingVisitingPlaces = await tourDailyVisitingPlaceRepository.find({
-            where: { tourDaily: { id: tourdaily.id } },
-          });
-          const visitingPlacesToBeDeleted = existingVisitingPlaces.filter(
-            (s) => !comingVisitingPlaces.includes(s.name),
+        // Fetch existing visiting places from the database
+        const existingVisitingPlaces = tourdaily.dailyVisitingPlaces;
+        console.log({ existing: existingVisitingPlaces });
+
+        // Identify visiting places to delete
+        const visitingPlacesToBeDeleted = existingVisitingPlaces.filter(
+          (s) => !comingVisitingPlaces.includes(s.name.trim().toLowerCase()),
+        );
+        console.log({ toBeDeleted: visitingPlacesToBeDeleted });
+
+        // Perform deletion if there are outdated records
+        if (visitingPlacesToBeDeleted.length > 0) {
+          console.log('Deleting outdated visiting places...');
+          // await tourDailyVisitingPlaceRepository.remove(visitingPlacesToBeDeleted);
+          tourdaily.dailyVisitingPlaces = tourdaily.dailyVisitingPlaces.filter(
+            (s) => !visitingPlacesToBeDeleted.map((ss) => ss.id).includes(s.id),
           );
-          console.log({ delete: visitingPlacesToBeDeleted });
-          if (visitingPlacesToBeDeleted.length) {
-            console.log('I am here!');
-            await tourDailyVisitingPlaceRepository.delete(visitingPlacesToBeDeleted.map((s) => s.id));
-          }
-          const existingPlacesName = existingVisitingPlaces.map((s) => s.name);
-          visitingPlacestoBeAdded = visitingPlacestoBeAdded.filter((s) => !existingPlacesName.includes(s.name));
         }
 
-        console.log({ add: visitingPlacestoBeAdded });
-        if (tourdaily.dailyVisitingPlaces) tourdaily.dailyVisitingPlaces.push(...visitingPlacestoBeAdded);
-        else tourdaily.dailyVisitingPlaces = visitingPlacestoBeAdded;
+        // Identify new visiting places to add
+        const existingPlacesName = existingVisitingPlaces.map((s) => s.name.trim().toLowerCase());
+        let visitingPlacestoBeAdded = d.dailyVisitingPlaces
+          .filter((s) => !existingPlacesName.includes(s.name.trim().toLowerCase()))
+          .map((s) => {
+            const dailyVisitingPlace = new TourDailyVisitingPlace();
+            dailyVisitingPlace.name = s.name;
+            return dailyVisitingPlace;
+          });
 
-        const pathIds = d.dailyPaths.map((s) => s.id);
-        const dailyPaths = await tourDailyPathRepository.find({ where: { id: In(pathIds) } });
+        console.log({ toBeAdded: visitingPlacestoBeAdded });
+
+        // Add only new visiting places
+        tourdaily.dailyVisitingPlaces.push(...visitingPlacestoBeAdded);
+
+        // Handle daily paths: Validate and assign the paths to the TourDaily entity.
+        const pathIds = d.dailyPaths.map((s) => s.id); // Extract incoming path IDs.
+        const dailyPaths = await tourDailyPathRepository.find({ where: { id: In(pathIds) } }); // Fetch paths by IDs.
+
+        // Throw an error if any path is missing.
         if (!dailyPaths || dailyPaths.length != pathIds.length)
           throw new NotFoundException('One or more daily paths not found');
+
+        // Assign the validated paths to the TourDaily entity.
         tourdaily.dailyPaths = dailyPaths;
+
+        // Add the updated or newly created TourDaily entity to the dailyForms array.
         dailyForms.push(tourdaily);
       }
 
+      // Assign the updated daily forms to the tour entity.
       tour.dailyForms = dailyForms;
 
+      // Update the Tour entity in the database.
       await this.repository.update(Number(id), tour);
 
       //#region Images
