@@ -37,6 +37,9 @@ class TourPathDto {
 
 class TourDailyVisitingPlaceDto {
   @Expose()
+  id!: number;
+
+  @Expose()
   name?: string;
 }
 
