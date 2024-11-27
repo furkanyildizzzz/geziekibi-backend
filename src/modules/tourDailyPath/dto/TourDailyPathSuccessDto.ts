@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-export class TourPathSuccessDto {
+export class TourDailyPathSuccessDto {
   @Expose()
   public id: number;
   @Expose()

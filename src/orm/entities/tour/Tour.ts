@@ -15,6 +15,7 @@ import { TourService } from './TourService';
 import { TourCategory } from './TourCategory';
 import { Image } from '../image/Image';
 import { Expose } from 'class-transformer';
+import { TourDaily } from './TourDaily';
 
 @Entity('tours')
 export class Tour {
@@ -105,4 +106,7 @@ export class Tour {
   @OneToMany(() => TourService, (tourService) => tourService.tour, { cascade: true })
   @Expose()
   tourServices: TourService[];
+
+  @OneToMany(() => TourDaily, (dailyPath) => dailyPath.tour, { cascade: true })
+  dailyForms: TourDaily[]; // A tour can have many daily paths
 }

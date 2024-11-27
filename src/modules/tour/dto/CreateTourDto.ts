@@ -14,6 +14,7 @@ import {
 import { Transform, Type } from 'class-transformer';
 import { PublishStatus, ServiceType, TourType } from 'shared/utils/enum';
 import { Image } from 'orm/entities/image/Image';
+import { TourDailyVisitingPlace } from 'orm/entities/tour/TourDailyVisitingPlace';
 
 class TourPriceDto {
   @IsString({ message: 'Price name required' })
@@ -71,24 +72,46 @@ class TourServiceDto {
   service!: ServiceDto;
 }
 
-class ImageDto {
-  id: number;
+class TourPathDto {
+  @IsNumber()
+  id!: number;
 
-  publicId: string; // Cloudinary public ID
+  @IsOptional()
+  @IsString()
+  name?: string;
+}
 
-  url: string;
+class TourDailyVisitingPlaceDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+}
 
-  secureUrl: string;
+class TourDailyDto {
+  @IsOptional()
+  @IsString()
+  breakfeast: string;
 
-  format: string;
+  @IsOptional()
+  @IsString()
+  lunch: string;
 
-  width: number;
+  @IsOptional()
+  @IsString()
+  dinner: string;
 
-  height: number;
+  @IsOptional()
+  @IsString()
+  description?: string;
 
-  order: number;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TourPathDto)
+  dailyPaths?: TourPathDto[];
 
-  createdAt: Date;
+  @IsArray()
+  @IsOptional()
+  dailyVisitingPlaces?: TourDailyVisitingPlaceDto[];
 }
 
 export class CreateTourDto {
@@ -157,4 +180,9 @@ export class CreateTourDto {
   @ValidateNested({ each: true })
   @Type(() => TourServiceDto)
   tourServices!: TourServiceDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TourDailyDto)
+  dailyForms!: TourDailyDto[];
 }

@@ -20,9 +20,10 @@ export const DtoValidationMiddleware = (type: any, skipMissingProperties = false
         'tourServices',
         'uploadedGalleryImages',
         'uploadedPrimaryImages',
+        'dailyForms',
       ];
       parseFields.forEach((field) => {
-        console.log({ field: req.body[field] });
+        // console.log({ [field]: req.body[field] });
         if (req.body[field]) {
           try {
             req.body[field] = JSON.parse(req.body[field]);
@@ -32,7 +33,6 @@ export const DtoValidationMiddleware = (type: any, skipMissingProperties = false
         }
       });
     }
-
     // Merge file data into req.body (if nee
     // Handle file fields from Multer
     if (req.files) {
@@ -63,27 +63,33 @@ export const DtoValidationMiddleware = (type: any, skipMissingProperties = false
         req.body.galleryImages = [];
       }
     }
-
     const dtoObj = plainToInstance(type, req.body);
     validate(dtoObj, { skipMissingProperties }).then((errors: ValidationError[]) => {
       if (errors.length > 0) {
         const errorsValidation: ErrorValidation[] = [];
-        errors.forEach((err) => {
-          //   errMsg[err.property] = [...(Object as any).values(err.constraints)];
-          errorsValidation.push({
-            [err.property]: [...(Object as any).values(err.constraints)].join(', '),
-            // message: [...(Object as any).values(err.constraints)].join(', '),
+
+        const parseErrors = (validationErrors: ValidationError[], parent = '') => {
+          validationErrors.forEach((err) => {
+            const propertyPath = parent ? `${parent}.${err.property}` : err.property;
+
+            if (err.constraints) {
+              // Add current property errors
+              errorsValidation.push({
+                [propertyPath]: Object.values(err.constraints).join(', '),
+              });
+            }
+
+            if (err.children && err.children.length > 0) {
+              // Recursively parse child errors
+              parseErrors(err.children, propertyPath);
+            }
           });
-        });
+        };
+
+        parseErrors(errors);
 
         const badRequestError = new BadRequestException('BAD REQUEST', errorsValidation);
         return next(badRequestError);
-        // res.status(400).json({
-        //   statusCode: 400,
-        //   success: false,
-        //   message: '',
-        //   error: errMsg,
-        // });
       } else {
         req.body = dtoObj;
         next();

@@ -16,12 +16,15 @@ import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import { TourCategory } from 'orm/entities/tour/TourCategory';
 import { Service } from 'orm/entities/service/Service';
 import TourServiceEntity from 'orm/entities/tour/TourService';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Currency, ServiceType } from 'shared/utils/enum';
 import { TourPrice } from 'orm/entities/tour/TourPrice';
 import { v2 } from 'cloudinary';
 import { Image } from 'orm/entities/image/Image';
 import { Tour } from 'orm/entities/tour/Tour';
+import { TourDaily } from 'orm/entities/tour/TourDaily';
+import { TourDailyPath } from 'orm/entities/tour/TourDailyPath';
+import { TourDailyVisitingPlace } from 'orm/entities/tour/TourDailyVisitingPlace';
 
 @injectable()
 export class TourService implements ITourService {
@@ -55,6 +58,7 @@ export class TourService implements ITourService {
     const serviceRepository = await this.unitOfWork.getRepository(Service);
     const tourServiceRepository = await this.unitOfWork.getRepository(TourServiceEntity);
     const ImageRepository = await this.unitOfWork.getRepository(Image);
+    const tourDailyPathRepository = await this.unitOfWork.getRepository(TourDailyPath);
 
     const category = await categoryRepository.findOne({ where: { id: tourData.category.id } });
     if (!category) throw new NotFoundException(`Tour Category with id:${tourData.category.id} not found`);
@@ -75,6 +79,10 @@ export class TourService implements ITourService {
 
     if (!tourData.uploadedPrimaryImages.length && !tourData.primaryImages.length) {
       throw new BadRequestException(`Please provide a primary image`);
+    }
+
+    if (!tourData.dailyForms.length) {
+      throw new BadRequestException(`Please provide at least one daily program`);
     }
 
     try {
@@ -124,6 +132,33 @@ export class TourService implements ITourService {
         tourPrices.push(tourPrice);
       }
       tour.prices = tourPrices;
+
+      const dailyForms: TourDaily[] = [];
+
+      for (let index = 0; index < tourData.dailyForms.length; index++) {
+        const d = tourData.dailyForms[index];
+        const newTourDaily = new TourDaily();
+        newTourDaily.name = index + 1 + '. Gün';
+        console.log({ breakfeast: newTourDaily.breakfeast });
+        newTourDaily.breakfeast = d.breakfeast;
+        newTourDaily.lunch = d.lunch;
+        newTourDaily.dinner = d.dinner;
+        newTourDaily.description = d.description;
+        newTourDaily.dailyVisitingPlaces = d.dailyVisitingPlaces.map((s) => {
+          const dailyVisitingPlace = new TourDailyVisitingPlace();
+          dailyVisitingPlace.name = s.name;
+          return dailyVisitingPlace;
+        });
+
+        const pathIds = d.dailyPaths.map((s) => s.id);
+        const dailyPaths = await tourDailyPathRepository.find({ where: { id: In(pathIds) } });
+        if (!dailyPaths || dailyPaths.length != pathIds.length)
+          throw new BadRequestException('One or more daily paths not found');
+        newTourDaily.dailyPaths = dailyPaths;
+        dailyForms.push(newTourDaily);
+      }
+
+      tour.dailyForms = dailyForms;
 
       await this.repository.save(tour);
 
@@ -225,6 +260,8 @@ export class TourService implements ITourService {
     const serviceRepository = await this.unitOfWork.getRepository(Service);
     const tourServiceRepository = await this.unitOfWork.getRepository(TourServiceEntity);
     const ImageRepository = await this.unitOfWork.getRepository(Image);
+    const tourDailyRepository = await this.unitOfWork.getRepository(TourDaily);
+    const tourDailyPathRepository = await this.unitOfWork.getRepository(TourDailyPath);
 
     const tour = await this.repository.getById(Number(id));
     if (!tour) throw new NotFoundException(`Tour with id:${id} not found`);
@@ -296,6 +333,38 @@ export class TourService implements ITourService {
         tourPrices.push(tourPrice);
       }
       tour.prices = tourPrices;
+
+      const dailyForms: TourDaily[] = [];
+      for (let index = 0; index < tourData.dailyForms.length; index++) {
+        const d = tourData.dailyForms[index];
+        const tourdaily = (await tourDailyRepository.findOne({ where: { id: d.id } })) || new TourDaily();
+
+        tourdaily.name = index + 1 + '. Gün';
+        tourdaily.breakfeast = d.breakfeast;
+        tourdaily.lunch = d.lunch;
+        tourdaily.dinner = d.dinner;
+        tourdaily.description = d.description;
+
+        if (tourdaily.id > 0)
+          await (
+            await this.unitOfWork.getRepository(TourDailyVisitingPlace)
+          ).delete({ tourDaily: { id: tourdaily.id } });
+
+        tourdaily.dailyVisitingPlaces = d.dailyVisitingPlaces.map((s) => {
+          const dailyVisitingPlace = new TourDailyVisitingPlace();
+          dailyVisitingPlace.name = s.name;
+          return dailyVisitingPlace;
+        });
+
+        const pathIds = d.dailyPaths.map((s) => s.id);
+        const dailyPaths = await tourDailyPathRepository.find({ where: { id: In(pathIds) } });
+        if (!dailyPaths || dailyPaths.length != pathIds.length)
+          throw new NotFoundException('One or more daily paths not found');
+        tourdaily.dailyPaths = dailyPaths;
+        dailyForms.push(tourdaily);
+      }
+
+      tour.dailyForms = dailyForms;
 
       await this.repository.update(Number(id), tour);
 

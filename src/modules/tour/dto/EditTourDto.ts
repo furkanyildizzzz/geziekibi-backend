@@ -71,26 +71,50 @@ class TourServiceDto {
   service!: ServiceDto;
 }
 
-class ImageDto {
-  id: number;
+class TourPathDto {
+  @IsNumber()
+  id!: number;
 
-  publicId: string; // Cloudinary public ID
-
-  url: string;
-
-  secureUrl: string;
-
-  format: string;
-
-  width: number;
-
-  height: number;
-
-  order: number;
-
-  createdAt: Date;
+  @IsOptional()
+  @IsString()
+  name?: string;
 }
 
+class TourDailyVisitingPlaceDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+}
+
+class TourDailyDto {
+  @IsNumber()
+  id!: number;
+
+  @IsOptional()
+  @IsString()
+  breakfeast: string;
+
+  @IsOptional()
+  @IsString()
+  lunch: string;
+
+  @IsOptional()
+  @IsString()
+  dinner: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TourPathDto)
+  dailyPaths?: TourPathDto[];
+
+  @IsArray()
+  @IsOptional()
+  dailyVisitingPlaces?: TourDailyVisitingPlaceDto[];
+}
 export class EditTourDto {
   @IsString({ message: 'Title is required' })
   @IsNotEmpty({ message: 'Title is required' })
@@ -157,4 +181,9 @@ export class EditTourDto {
   @ValidateNested({ each: true })
   @Type(() => TourServiceDto)
   tourServices!: TourServiceDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TourDailyDto)
+  dailyForms!: TourDailyDto[];
 }

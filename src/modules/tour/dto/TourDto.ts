@@ -27,6 +27,44 @@ export class TourServiceDto {
   servicee: ServiceDto;
 }
 
+class TourPathDto {
+  @Expose()
+  id!: number;
+
+  @Expose()
+  name?: string;
+}
+
+class TourDailyVisitingPlaceDto {
+  @Expose()
+  name?: string;
+}
+
+class TourDailyDto {
+  @Expose()
+  id!: number;
+
+  @Expose()
+  breakfeast: string;
+
+  @Expose()
+  lunch: string;
+
+  @Expose()
+  dinner: string;
+
+  @Expose()
+  description?: string;
+
+  @Expose()
+  @Type(() => TourPathDto)
+  dailyPaths?: TourPathDto[];
+
+  @Expose()
+  @Type(() => TourDailyVisitingPlaceDto)
+  dailyVisitingPlaces?: TourDailyVisitingPlaceDto[];
+}
+
 export class TourDto {
   @Expose()
   id: number;
@@ -77,4 +115,8 @@ export class TourDto {
   @Expose()
   @Type(() => TourService)
   tourServices: TourService[];
+
+  @Expose()
+  @Type(() => TourDailyDto)
+  dailyForms: TourDailyDto[];
 }

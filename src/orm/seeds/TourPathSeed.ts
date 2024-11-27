@@ -1,8 +1,8 @@
-import { TourPath } from 'orm/entities/tour/TourPath';
+import { TourDailyPath } from 'orm/entities/tour/TourDailyPath';
 import { DataSource } from 'typeorm';
 
 const seedTourPaths = async (dataSource: DataSource) => {
-  const tourPathRepository = dataSource.getRepository(TourPath);
+  const tourPathRepository = dataSource.getRepository(TourDailyPath);
 
   const cities = [
     'Adana',
@@ -91,7 +91,7 @@ const seedTourPaths = async (dataSource: DataSource) => {
   for (const city of cities) {
     const exists = await tourPathRepository.findOneBy({ name: city });
     if (!exists) {
-      const tourPath = new TourPath();
+      const tourPath = new TourDailyPath();
       tourPath.name = city;
       await tourPathRepository.save(tourPath);
       console.log(`Seeded: ${city}`);

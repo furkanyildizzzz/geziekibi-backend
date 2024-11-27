@@ -31,6 +31,9 @@ export class TourRepository implements ITourRepository {
           'primaryImages',
           'galleryImages',
           'tourServices.service',
+          'dailyForms',
+          'dailyForms.dailyPaths',
+          'dailyForms.dailyVisitingPlaces',
         ],
       });
       if (tour) return tour as Tour;

@@ -51,11 +51,11 @@ import { ITourService } from 'modules/tour/interfaces/ITourService';
 import { TourRepository } from 'modules/tour/repository/TourRepository';
 import { TourController } from 'modules/tour/controller/TourController';
 import { TourService } from 'modules/tour/service/TourService';
-import { ITourPathRepository } from 'modules/tourPath/interfaces/ITourPathRepository';
-import { TourPathRepository } from 'modules/tourPath/repository/TourPathRepository';
-import { ITourPathService } from 'modules/tourPath/interfaces/ITourPathService';
-import { TourPathService } from 'modules/tourPath/service/TourPathService';
-import { TourPathController } from 'modules/tourPath/controller/TourPathController';
+import { TourDailyPathController } from 'modules/tourDailyPath/controller/TourDailyPathController';
+import { TourDailyPathRepository } from 'modules/tourDailyPath/repository/TourDailyPathRepository';
+import { TourDailyPathService } from 'modules/tourDailyPath/service/TourDailyPathService';
+import { ITourDailyPathRepository } from 'modules/tourDailyPath/interfaces/ITourDailyPathRepository';
+import { ITourDailyPathService } from 'modules/tourDailyPath/interfaces/ITourDailyPathService';
 
 const container = new Container();
 
@@ -95,8 +95,8 @@ container.bind<ITourRepository>(INTERFACE_TYPE.ITourRepository).to(TourRepositor
 container.bind<ITourService>(INTERFACE_TYPE.ITourService).to(TourService);
 container.bind(INTERFACE_TYPE.TourController).to(TourController);
 
-container.bind<ITourPathRepository>(INTERFACE_TYPE.ITourPathRepository).to(TourPathRepository);
-container.bind<ITourPathService>(INTERFACE_TYPE.ITourPathService).to(TourPathService);
-container.bind(INTERFACE_TYPE.TourPathController).to(TourPathController);
+container.bind<ITourDailyPathRepository>(INTERFACE_TYPE.ITourDailyPathRepository).to(TourDailyPathRepository);
+container.bind<ITourDailyPathService>(INTERFACE_TYPE.ITourDailyPathService).to(TourDailyPathService);
+container.bind(INTERFACE_TYPE.TourDailyPathController).to(TourDailyPathController);
 
 export default container;

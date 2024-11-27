@@ -1,48 +1,48 @@
 import { inject, injectable } from 'inversify';
-import { ITourPathRepository } from '../interfaces/ITourPathRepository';
+import { ITourDailyPathRepository } from '../interfaces/ITourDailyPathRepository';
 import { INTERFACE_TYPE } from 'core/types';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import { InternalServerErrorException } from 'shared/errors/allException';
-import { TourPath } from 'orm/entities/tour/TourPath';
+import { TourDailyPath } from 'orm/entities/tour/TourDailyPath';
 
 @injectable()
-export class TourPathRepository implements ITourPathRepository {
+export class TourDailyPathRepository implements ITourDailyPathRepository {
   constructor(@inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork) {}
 
-  async getAll(): Promise<TourPath[] | void> {
+  async getAll(): Promise<TourDailyPath[] | void> {
     try {
-      const repo = await this.unitOfWork.getRepository(TourPath);
+      const repo = await this.unitOfWork.getRepository(TourDailyPath);
       const tags = await repo.find();
-      if (tags) return tags as TourPath[];
+      if (tags) return tags as TourDailyPath[];
     } catch (error) {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
 
-  async getById(id: number): Promise<TourPath | void> {
+  async getById(id: number): Promise<TourDailyPath | void> {
     try {
-      const repo = await this.unitOfWork.getRepository(TourPath);
+      const repo = await this.unitOfWork.getRepository(TourDailyPath);
       const tag = await repo.findOne({ where: { id: id } });
-      if (tag) return tag as TourPath;
+      if (tag) return tag as TourDailyPath;
     } catch (error) {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
 
-  async getByName(name: string): Promise<TourPath | void> {
+  async getByName(name: string): Promise<TourDailyPath | void> {
     try {
-      const repo = await this.unitOfWork.getRepository(TourPath);
+      const repo = await this.unitOfWork.getRepository(TourDailyPath);
       const tag = await repo.findOne({ where: { name: name } });
-      if (tag) return tag as TourPath;
+      if (tag) return tag as TourDailyPath;
     } catch (error) {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
 
-  async create(newTourPath: TourPath): Promise<TourPath> {
+  async create(newTourPath: TourDailyPath): Promise<TourDailyPath> {
     try {
       await this.unitOfWork.startTransaction();
-      await (await this.unitOfWork.getRepository(TourPath)).save(newTourPath);
+      await (await this.unitOfWork.getRepository(TourDailyPath)).save(newTourPath);
       await this.unitOfWork.commitTransaction();
       return newTourPath;
     } catch (error) {
@@ -51,10 +51,10 @@ export class TourPathRepository implements ITourPathRepository {
     }
   }
 
-  async update(id: number, tag: TourPath): Promise<TourPath> {
+  async update(id: number, tag: TourDailyPath): Promise<TourDailyPath> {
     try {
       await this.unitOfWork.startTransaction();
-      await (await this.unitOfWork.getRepository(TourPath)).update(id, tag);
+      await (await this.unitOfWork.getRepository(TourDailyPath)).update(id, tag);
       await this.unitOfWork.commitTransaction();
       return tag;
     } catch (error) {
@@ -66,7 +66,7 @@ export class TourPathRepository implements ITourPathRepository {
   async delete(id: number): Promise<void> {
     try {
       await this.unitOfWork.startTransaction();
-      await (await this.unitOfWork.getRepository(TourPath)).delete(id);
+      await (await this.unitOfWork.getRepository(TourDailyPath)).delete(id);
       await this.unitOfWork.commitTransaction();
     } catch (error) {
       await this.unitOfWork.rollbackTransaction();
@@ -77,7 +77,7 @@ export class TourPathRepository implements ITourPathRepository {
   async deleteMultiple(ids: number[]): Promise<void> {
     try {
       await this.unitOfWork.startTransaction();
-      const repo = await this.unitOfWork.getRepository(TourPath);
+      const repo = await this.unitOfWork.getRepository(TourDailyPath);
       ids.forEach(async (id) => await repo.delete(id));
       await this.unitOfWork.commitTransaction();
     } catch (error) {

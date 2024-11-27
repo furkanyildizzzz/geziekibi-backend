@@ -1,38 +1,38 @@
 import { inject, injectable } from 'inversify';
-import { ITourPathService } from '../interfaces/ITourPathService';
 import { INTERFACE_TYPE } from 'core/types';
-import { ITourPathRepository } from '../interfaces/ITourPathRepository';
-import { CreateTourPathDto } from '../dto/CreateTourPathDto';
-import { TourPathSuccessDto } from '../dto/TourPathSuccessDto';
 import { BadRequestException, NotFoundException } from 'shared/errors/allException';
 import { Service } from 'orm/entities/service/Service';
-import { DeleteMultipleTourPathDto } from '../dto/DeleteMultipleTourPathDto';
 import { plainToInstance } from 'class-transformer';
+import { TourDailyPathSuccessDto } from '../dto/TourDailyPathSuccessDto';
+import { ITourDailyPathService } from '../interfaces/ITourDailyPathService';
+import { ITourDailyPathRepository } from '../interfaces/ITourDailyPathRepository';
+import { CreateTourDailyPathDto } from '../dto/CreateTourDailyPathDto';
+import { DeleteMultipleTourDailyPathDto } from '../dto/DeleteMultipleTourDailyPathDto';
 
 @injectable()
-export class TourPathService implements ITourPathService {
-  constructor(@inject(INTERFACE_TYPE.ITourPathRepository) private readonly repository: ITourPathRepository) {}
+export class TourDailyPathService implements ITourDailyPathService {
+  constructor(@inject(INTERFACE_TYPE.ITourDailyPathRepository) private readonly repository: ITourDailyPathRepository) {}
 
-  public async getAll(): Promise<TourPathSuccessDto[]> {
+  public async getAll(): Promise<TourDailyPathSuccessDto[]> {
     const tourPaths = await this.repository.getAll();
     if (tourPaths && tourPaths.length)
-      return plainToInstance(TourPathSuccessDto, tourPaths, {
+      return plainToInstance(TourDailyPathSuccessDto, tourPaths, {
         excludeExtraneousValues: true,
         enableCircularCheck: true,
       });
     return [];
   }
 
-  public async getById(id: string): Promise<TourPathSuccessDto> {
+  public async getById(id: string): Promise<TourDailyPathSuccessDto> {
     const tourPath = await this.repository.getById(Number(id));
     if (!tourPath) throw new NotFoundException(`Tour Path with id:${id} not found`);
-    return plainToInstance(TourPathSuccessDto, tourPath, {
+    return plainToInstance(TourDailyPathSuccessDto, tourPath, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
     });
   }
 
-  public async createTourPath(tourPathData: CreateTourPathDto): Promise<TourPathSuccessDto> {
+  public async createTourDailyPath(tourPathData: CreateTourDailyPathDto): Promise<TourDailyPathSuccessDto> {
     const newTourPath = new Service();
     const tourPath = await this.repository.getByName(tourPathData.name);
     if (tourPath) throw new BadRequestException(`TourPath '${tourPath.name}' already exists`);
@@ -40,7 +40,7 @@ export class TourPathService implements ITourPathService {
     return await this.repository.create(newTourPath);
   }
 
-  public async updateTourPath(id: string, tourPathData: CreateTourPathDto): Promise<TourPathSuccessDto> {
+  public async updateTourDailyPath(id: string, tourPathData: CreateTourDailyPathDto): Promise<TourDailyPathSuccessDto> {
     const tourPath = await this.repository.getById(Number(id));
     if (!tourPath) throw new NotFoundException(`Tour Path with id:'${id}' is not found`);
 
@@ -50,19 +50,19 @@ export class TourPathService implements ITourPathService {
     }
     tourPath.name = tourPathData.name;
     await this.repository.update(Number(id), tourPath);
-    return plainToInstance(TourPathSuccessDto, tourPath, {
+    return plainToInstance(TourDailyPathSuccessDto, tourPath, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
     });
   }
 
-  public async deleteTourPath(id: string): Promise<void> {
+  public async deleteTourDailyPath(id: string): Promise<void> {
     const tourPath = await this.repository.getById(Number(id));
     if (!tourPath) throw new NotFoundException(`Tour Path with id:'${id}' is not found`);
     await this.repository.delete(Number(id));
   }
 
-  public async deleteMultipleTourPath(services: DeleteMultipleTourPathDto): Promise<void> {
+  public async deleteMultipleTourDailyPath(services: DeleteMultipleTourDailyPathDto): Promise<void> {
     await this.repository.deleteMultiple(services.ids);
   }
 }
