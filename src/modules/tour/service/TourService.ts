@@ -77,7 +77,7 @@ export class TourService implements ITourService {
         throw new NotFoundException(`One or more services not found`);
     }
 
-    if (!tourData.uploadedPrimaryImages.length && !tourData.primaryImages.length) {
+    if (!tourData.primaryImages.length) {
       throw new BadRequestException(`Please provide a primary image`);
     }
 

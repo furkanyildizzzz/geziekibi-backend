@@ -28,4 +28,10 @@ export const INTERFACE_TYPE = {
   TourDailyPathController: Symbol.for('TourDailyPathController'),
   ITourDailyPathService: Symbol.for('ITourDailyPathService'),
   ITourDailyPathRepository: Symbol.for('ITourDailyPathRepository'),
+  BlogCategoryController: Symbol.for('BlogCategoryController'),
+  IBlogCategoryService: Symbol.for('IBlogCategoryService'),
+  IBlogCategoryRepository: Symbol.for('IBlogCategoryRepository'),
+  BlogController: Symbol.for('BlogController'),
+  IBlogService: Symbol.for('IBlogService'),
+  IBlogRepository: Symbol.for('IBlogRepository'),
 };

@@ -56,6 +56,16 @@ import { TourDailyPathRepository } from 'modules/tourDailyPath/repository/TourDa
 import { TourDailyPathService } from 'modules/tourDailyPath/service/TourDailyPathService';
 import { ITourDailyPathRepository } from 'modules/tourDailyPath/interfaces/ITourDailyPathRepository';
 import { ITourDailyPathService } from 'modules/tourDailyPath/interfaces/ITourDailyPathService';
+import { IBlogCategoryRepository } from 'modules/blogCategory/interfaces/IBlogCategoryRepository';
+import { IBlogCategoryService } from 'modules/blogCategory/interfaces/IBlogCategoryService';
+import { BlogCategoryRepository } from 'modules/blogCategory/repository/BlogCategoryRepository';
+import { BlogCategoryService } from 'modules/blogCategory/service/BlogCategoryService';
+import { BlogCategoryController } from 'modules/blogCategory/controller/BlogCategoryController';
+import { IBlogRepository } from 'modules/blog/interfaces/IBlogRepository';
+import { IBlogService } from 'modules/blog/interfaces/IBlogService';
+import { BlogRepository } from 'modules/blog/repository/BlogRepository';
+import { BlogService } from 'modules/blog/service/BlogService';
+import { BlogController } from 'modules/blog/controller/BlogController';
 
 const container = new Container();
 
@@ -98,5 +108,13 @@ container.bind(INTERFACE_TYPE.TourController).to(TourController);
 container.bind<ITourDailyPathRepository>(INTERFACE_TYPE.ITourDailyPathRepository).to(TourDailyPathRepository);
 container.bind<ITourDailyPathService>(INTERFACE_TYPE.ITourDailyPathService).to(TourDailyPathService);
 container.bind(INTERFACE_TYPE.TourDailyPathController).to(TourDailyPathController);
+
+container.bind<IBlogCategoryRepository>(INTERFACE_TYPE.IBlogCategoryRepository).to(BlogCategoryRepository);
+container.bind<IBlogCategoryService>(INTERFACE_TYPE.IBlogCategoryService).to(BlogCategoryService);
+container.bind(INTERFACE_TYPE.BlogCategoryController).to(BlogCategoryController);
+
+container.bind<IBlogRepository>(INTERFACE_TYPE.IBlogRepository).to(BlogRepository);
+container.bind<IBlogService>(INTERFACE_TYPE.IBlogService).to(BlogService);
+container.bind(INTERFACE_TYPE.BlogController).to(BlogController);
 
 export default container;

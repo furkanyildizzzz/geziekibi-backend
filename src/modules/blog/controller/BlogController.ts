@@ -1,36 +1,34 @@
 import { INTERFACE_TYPE } from 'core/types';
 import { inject } from 'inversify';
 import { controller, httpDelete, httpGet, httpPost } from 'inversify-express-utils';
-import { ITourService } from '../interfaces/ITourService';
+import { IBlogService } from '../interfaces/IBlogService';
 import { NextFunction, Request, Response } from 'express';
 import { checkJwt } from 'middleware/checkJwt';
 import { checkRole } from 'middleware/checkRole';
 import { DtoValidationMiddleware } from 'middleware/dtoValidation';
-import { EditTourDto } from '../dto/EditTourDto';
 import { uploadMiddleware } from 'middleware/multer';
-import { CreateTourDto } from '../dto/CreateTourDto';
+import { CreateBlogDto } from '../dto/CreateBlogDto';
 
-@controller('/tour')
-export class TourController {
-  constructor(@inject(INTERFACE_TYPE.ITourService) private readonly service: ITourService) {}
+@controller('/blog')
+export class BlogController {
+  constructor(@inject(INTERFACE_TYPE.IBlogService) private readonly service: IBlogService) {}
 
   @httpGet('/')
   public async getAll(req: Request, res: Response, next: NextFunction) {
-    const tours = await this.service.getAll();
-    return res.customSuccess(200, 'Tours', tours);
+    const blogs = await this.service.getAll();
+    return res.customSuccess(200, 'Blogs', blogs);
   }
 
   @httpGet('/:id([0-9]+)')
   public async getById(req: Request, res: Response, next: NextFunction) {
-    const tour = await this.service.getById(req.params.id);
-    return res.customSuccess(200, 'Tour found', tour);
+    const blog = await this.service.getById(req.params.id);
+    return res.customSuccess(200, 'Blog found', blog);
   }
 
-  @httpPost('/', checkJwt, checkRole(['ADMINISTRATOR']), uploadMiddleware, DtoValidationMiddleware(CreateTourDto, true))
+  @httpPost('/', checkJwt, checkRole(['ADMINISTRATOR']), uploadMiddleware, DtoValidationMiddleware(CreateBlogDto, true))
   public async create(req: Request, res: Response, next: NextFunction) {
-    console.log({ body: req.body });
-    const tour = await this.service.createTour(req.body);
-    return res.customSuccess(200, 'Tour saved successfully', tour);
+    const blog = await this.service.createBlog(req.body);
+    return res.customSuccess(200, 'Blog saved successfully', blog);
   }
 
   @httpPost(
@@ -38,23 +36,23 @@ export class TourController {
     checkJwt,
     checkRole(['ADMINISTRATOR']),
     uploadMiddleware,
-    DtoValidationMiddleware(EditTourDto, true),
+    DtoValidationMiddleware(CreateBlogDto, true),
   )
   public async update(req: Request, res: Response, next: NextFunction) {
-    const tour = await this.service.updateTour(req.params.id, req.body);
-    return res.customSuccess(200, 'Tour updated successfully', tour);
+    const blog = await this.service.updateBlog(req.params.id, req.body);
+    return res.customSuccess(200, 'Blog updated successfully', blog);
   }
 
   @httpDelete('/:id([0-9]+)', checkJwt, checkRole(['ADMINISTRATOR']))
   public async delete(req: Request, res: Response, nex: NextFunction) {
     const id = req.params.id;
-    await this.service.deleteTour(id);
-    return res.customSuccess(200, 'Tour deleted successfully');
+    await this.service.deleteBlog(id);
+    return res.customSuccess(200, 'Blog deleted successfully');
   }
 
   @httpPost('/uploadBodyImage', checkJwt, checkRole(['ADMINISTRATOR']), uploadMiddleware)
   public async uploadBodyImage(req: Request, res: Response, next: NextFunction) {
     const imageUrl = await this.service.uploadBodyImage(req.files['uploadBodyImage'][0]);
-    return res.customSuccess(200, 'Tour body image uploaded successfully', imageUrl);
+    return res.customSuccess(200, 'Blog body image uploaded successfully', imageUrl);
   }
 }

@@ -3,6 +3,8 @@ import { Tour } from '../tour/Tour';
 import { User } from '../users/User';
 import { Expose } from 'class-transformer';
 import { TourCategory } from '../tour/TourCategory';
+import { BlogCategory } from '../blog/BlogCategory';
+import { Blog } from '../blog/Blog';
 
 @Entity('images')
 export class Image {
@@ -64,4 +66,13 @@ export class Image {
   @ManyToOne(() => TourCategory, (category) => category.primaryImages, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'categoryId' })
   category: TourCategory;
+
+  @ManyToOne(() => BlogCategory, (blogCategory) => blogCategory.primaryImages, { nullable: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'blogCategoryId' })
+  blogCategory: BlogCategory;
+
+  // Many-to-one relationship with Tour (Primary Image for a specific tour)
+  @ManyToOne(() => Blog, (blog) => blog.primaryImages, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'blogId' })
+  blog: Blog;
 }

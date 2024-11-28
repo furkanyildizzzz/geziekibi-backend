@@ -69,3 +69,8 @@ export enum ServiceType {
 export enum Country {
   TURKEY = 'Türkiye',
 }
+
+export enum Language {
+  TR = 'turkish',
+  EN = 'english',
+}

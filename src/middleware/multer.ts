@@ -34,6 +34,7 @@ const multerUploads = multer({ storage, fileFilter: fileFilter }).fields([
   { name: 'tourBodyImage', maxCount: 1 },
   { name: 'primaryImages', maxCount: 1 },
   { name: 'galleryImages', maxCount: 5 },
+  { name: 'uploadBodyImage', maxCount: 1 },
 ]);
 
 // const multerUploads = multer({ storage, fileFilter: fileFilter }).any();

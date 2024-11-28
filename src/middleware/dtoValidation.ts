@@ -23,6 +23,7 @@ export const DtoValidationMiddleware = (type: any, skipMissingProperties = false
         'dailyForms',
       ];
       parseFields.forEach((field) => {
+        console.log('I am here!');
         // console.log({ [field]: req.body[field] });
         if (req.body[field]) {
           try {
