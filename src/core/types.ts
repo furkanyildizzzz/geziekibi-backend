@@ -34,4 +34,7 @@ export const INTERFACE_TYPE = {
   BlogController: Symbol.for('BlogController'),
   IBlogService: Symbol.for('IBlogService'),
   IBlogRepository: Symbol.for('IBlogRepository'),
+  StaticPageController: Symbol.for('StaticPageController'),
+  IStaticPageService: Symbol.for('IStaticPageService'),
+  IStaticPageRepository: Symbol.for('IStaticPageRepository'),
 };

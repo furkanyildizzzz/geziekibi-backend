@@ -66,6 +66,11 @@ import { IBlogService } from 'modules/blog/interfaces/IBlogService';
 import { BlogRepository } from 'modules/blog/repository/BlogRepository';
 import { BlogService } from 'modules/blog/service/BlogService';
 import { BlogController } from 'modules/blog/controller/BlogController';
+import { IStaticPageRepository } from 'modules/staticPage/interfaces/IStaticPageRepository';
+import { IStaticPageService } from 'modules/staticPage/interfaces/IStaticPageService';
+import { StaticPageRepository } from 'modules/staticPage/repository/StaticPageRepository';
+import { StaticPageService } from 'modules/staticPage/service/StaticPageService';
+import { StaticPageController } from 'modules/staticPage/controller/StaticPageController';
 
 const container = new Container();
 
@@ -116,5 +121,9 @@ container.bind(INTERFACE_TYPE.BlogCategoryController).to(BlogCategoryController)
 container.bind<IBlogRepository>(INTERFACE_TYPE.IBlogRepository).to(BlogRepository);
 container.bind<IBlogService>(INTERFACE_TYPE.IBlogService).to(BlogService);
 container.bind(INTERFACE_TYPE.BlogController).to(BlogController);
+
+container.bind<IStaticPageRepository>(INTERFACE_TYPE.IStaticPageRepository).to(StaticPageRepository);
+container.bind<IStaticPageService>(INTERFACE_TYPE.IStaticPageService).to(StaticPageService);
+container.bind(INTERFACE_TYPE.StaticPageController).to(StaticPageController);
 
 export default container;

@@ -74,3 +74,14 @@ export enum Language {
   TR = 'turkish',
   EN = 'english',
 }
+
+export enum StaticPageType {
+  PageAboutUs = 'page-about-us',
+  PageSecretPolicy = 'page-secret-policy',
+  PageUsagePolicy = 'page-usage-policy',
+  PageInformationSecurityPolicy = 'page-information-security-policy',
+  PageKVKKPolicy = 'page-kvkk-policy',
+  PageCookiePolicy = 'page-cookie-policy',
+  PageMembershipAgreementPolicy = 'page-membership-agreement-policy',
+  PageHumanResources = 'page-human-resources',
+}
