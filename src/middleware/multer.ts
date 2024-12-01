@@ -17,6 +17,14 @@ const fileFilter = (req, file, cb) => {
     } else {
       cb(null, false); // else fails
     }
+  } else if (file.fieldname === 'catalogFile') {
+    // if uploading catalog
+    if (file.mimetype === 'application/pdf') {
+      // check file type to be pdf
+      cb(null, true);
+    } else {
+      cb(null, false); // else fails
+    }
   } else {
     // else uploading image
     if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
@@ -30,6 +38,7 @@ const fileFilter = (req, file, cb) => {
 
 const multerUploads = multer({ storage, fileFilter: fileFilter }).fields([
   { name: 'file', maxCount: 1 },
+  { name: 'catalogFile', maxCount: 1 },
   { name: 'profileImage', maxCount: 1 },
   { name: 'tourBodyImage', maxCount: 1 },
   { name: 'primaryImages', maxCount: 1 },

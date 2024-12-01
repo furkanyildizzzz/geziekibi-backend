@@ -37,4 +37,7 @@ export const INTERFACE_TYPE = {
   StaticPageController: Symbol.for('StaticPageController'),
   IStaticPageService: Symbol.for('IStaticPageService'),
   IStaticPageRepository: Symbol.for('IStaticPageRepository'),
+  CatalogController: Symbol.for('CatalogController'),
+  ICatalogService: Symbol.for('ICatalogService'),
+  ICatalogRepository: Symbol.for('ICatalogRepository'),
 };

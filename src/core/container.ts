@@ -71,6 +71,11 @@ import { IStaticPageService } from 'modules/staticPage/interfaces/IStaticPageSer
 import { StaticPageRepository } from 'modules/staticPage/repository/StaticPageRepository';
 import { StaticPageService } from 'modules/staticPage/service/StaticPageService';
 import { StaticPageController } from 'modules/staticPage/controller/StaticPageController';
+import { ICatalogRepository } from 'modules/catalog/interfaces/ICatalogRepository';
+import { ICatalogService } from 'modules/catalog/interfaces/ICatalogService';
+import { CatalogRepository } from 'modules/catalog/repository/CatalogRepository';
+import { CatalogService } from 'modules/catalog/service/CatalogService';
+import { CatalogController } from 'modules/catalog/controller/CatalogController';
 
 const container = new Container();
 
@@ -125,5 +130,9 @@ container.bind(INTERFACE_TYPE.BlogController).to(BlogController);
 container.bind<IStaticPageRepository>(INTERFACE_TYPE.IStaticPageRepository).to(StaticPageRepository);
 container.bind<IStaticPageService>(INTERFACE_TYPE.IStaticPageService).to(StaticPageService);
 container.bind(INTERFACE_TYPE.StaticPageController).to(StaticPageController);
+
+container.bind<ICatalogRepository>(INTERFACE_TYPE.ICatalogRepository).to(CatalogRepository);
+container.bind<ICatalogService>(INTERFACE_TYPE.ICatalogService).to(CatalogService);
+container.bind(INTERFACE_TYPE.CatalogController).to(CatalogController);
 
 export default container;

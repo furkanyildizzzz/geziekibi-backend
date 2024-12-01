@@ -183,7 +183,7 @@ export class TourService implements ITourService {
         const primaryImages: Image[] = [];
         const imageStr = 'data:image/jpeg;base64,' + tourData.primaryImages[0].buffer.toString('base64');
         await v2.uploader
-          .upload(imageStr, { folder: 'tour/' + folderDate + '/' + tour.id })
+          .upload(imageStr, { folder: `${process.env.NODE_ENV}/tour/${folderDate}/${tour.id}` })
           .then(async (result) => {
             const newImage = new Image();
             newImage.originalName = tourData.primaryImages[0].originalname;
@@ -220,7 +220,7 @@ export class TourService implements ITourService {
           console.log({ file });
           const imageStr = 'data:image/jpeg;base64,' + file.buffer.toString('base64');
           await v2.uploader
-            .upload(imageStr, { folder: 'tour/' + folderDate + '/' + tour.id })
+            .upload(imageStr, { folder: `${process.env.NODE_ENV}/tour/${folderDate}/${tour.id}` })
             .then(async (result) => {
               const newImage = new Image();
               newImage.originalName = file.originalname;
