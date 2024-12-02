@@ -12,7 +12,7 @@ export class TourRepository implements ITourRepository {
   public async getAll(): Promise<Tour[] | void> {
     try {
       const repo = await this.unitOfWork.getRepository(Tour);
-      const tours = await repo.find({ relations: ['tags', 'prices', 'category', 'tourServices', 'primaryImages'] });
+      const tours = await repo.find({ relations: ['tags', 'dates', 'category', 'tourServices', 'primaryImages'] });
       return tours;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
@@ -25,7 +25,8 @@ export class TourRepository implements ITourRepository {
         where: { id: id },
         relations: [
           'tags',
-          'prices',
+          'dates',
+          'dates.prices',
           'category',
           'tourServices',
           'primaryImages',

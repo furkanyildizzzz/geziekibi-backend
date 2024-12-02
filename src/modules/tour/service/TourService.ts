@@ -25,6 +25,7 @@ import { Tour } from 'orm/entities/tour/Tour';
 import { TourDaily } from 'orm/entities/tour/TourDaily';
 import { TourDailyPath } from 'orm/entities/tour/TourDailyPath';
 import { TourDailyVisitingPlace } from 'orm/entities/tour/TourDailyVisitingPlace';
+import { TourDate } from 'orm/entities/tour/TourDate';
 
 @injectable()
 export class TourService implements ITourService {
@@ -53,6 +54,7 @@ export class TourService implements ITourService {
   }
 
   public async createTour(tourData: CreateTourDto): Promise<TourDto> {
+    await this.unitOfWork.startTransaction();
     const categoryRepository = await this.unitOfWork.getRepository(TourCategory);
     const tagRepository = await this.unitOfWork.getRepository(Tag);
     const serviceRepository = await this.unitOfWork.getRepository(Service);
@@ -61,29 +63,37 @@ export class TourService implements ITourService {
     const tourDailyPathRepository = await this.unitOfWork.getRepository(TourDailyPath);
 
     const category = await categoryRepository.findOne({ where: { id: tourData.category.id } });
-    if (!category) throw new NotFoundException(`Tour Category with id:${tourData.category.id} not found`);
-
+    if (!category) {
+      await this.unitOfWork.rollbackTransaction();
+      throw new NotFoundException(`Tour Category with id:${tourData.category.id} not found`);
+    }
     const tags = (await tagRepository.find()) as Tag[];
     if (tourData.tags && tourData.tags.length > 0) {
       const tagIds = tourData.tags.map((s) => s.id);
-      if (!tags || !(tags.filter((t) => tagIds.includes(t.id)).length === tagIds.length))
+      if (!tags || !(tags.filter((t) => tagIds.includes(t.id)).length === tagIds.length)) {
+        await this.unitOfWork.rollbackTransaction();
         throw new NotFoundException(`One or more tags not found`);
+      }
     }
 
     if (tourData.tourServices && tourData.tourServices.length > 0) {
       const services = await serviceRepository.find();
       const serviceIds = tourData.tourServices.map((s) => s.service.id);
-      if (services && !(services.filter((s) => serviceIds.includes(s.id)).length === serviceIds.length))
+      if (services && !(services.filter((s) => serviceIds.includes(s.id)).length === serviceIds.length)) {
+        console.log('I am here!');
         throw new NotFoundException(`One or more services not found`);
+      }
     }
 
     if (!tourData.primaryImages.length) {
+      await this.unitOfWork.rollbackTransaction();
       throw new BadRequestException(`Please provide a primary image`);
     }
 
-    if (!tourData.dailyForms.length) {
-      throw new BadRequestException(`Please provide at least one daily program`);
-    }
+    // if (!tourData.dailyForms.length) {
+    //   await this.unitOfWork.rollbackTransaction();
+    //   throw new BadRequestException(`Please provide at least one daily program`);
+    // }
 
     try {
       const tour = new Tour();
@@ -120,18 +130,43 @@ export class TourService implements ITourService {
       }
       tour.tourServices = newTourServices;
 
-      const tourPrices: TourPrice[] = [];
-      for (let index = 0; index < tourData.prices.length; index++) {
-        const p = tourData.prices[index];
-        const tourPrice = new TourPrice();
-        tourPrice.name = p.name;
-        tourPrice.currency = p.currency as Currency;
-        tourPrice.description = p.description;
-        tourPrice.price = Number(p.price);
-        // await transactionalEntityManager.save(tourPrice);
-        tourPrices.push(tourPrice);
+      const tourDates: TourDate[] = [];
+      for (let index = 0; index < tourData.dates.length; index++) {
+        const d = tourData.dates[index];
+        const tourDate = new TourDate();
+        tourDate.tourDate = new Date(d.tourDate);
+        tourDate.description = d.description;
+        tourDate.isActive = d.isActive;
+
+        const tourPrices: TourPrice[] = [];
+        for (let index = 0; index < d.prices.length; index++) {
+          const p = d.prices[index];
+          const tourPrice = new TourPrice();
+          tourPrice.name = p.name;
+          tourPrice.currency = p.currency as Currency;
+          tourPrice.description = p.description;
+          tourPrice.price = Number(p.price);
+          // await transactionalEntityManager.save(tourPrice);
+          tourPrices.push(tourPrice);
+        }
+        tourDate.prices = tourPrices;
+
+        tourDates.push(tourDate);
       }
-      tour.prices = tourPrices;
+      tour.dates = tourDates;
+
+      // const tourPrices: TourPrice[] = [];
+      // for (let index = 0; index < tourData.prices.length; index++) {
+      //   const p = tourData.prices[index];
+      //   const tourPrice = new TourPrice();
+      //   tourPrice.name = p.name;
+      //   tourPrice.currency = p.currency as Currency;
+      //   tourPrice.description = p.description;
+      //   tourPrice.price = Number(p.price);
+      //   // await transactionalEntityManager.save(tourPrice);
+      //   tourPrices.push(tourPrice);
+      // }
+      // tour.prices = tourPrices;
 
       const dailyForms: TourDaily[] = [];
 
@@ -152,8 +187,10 @@ export class TourService implements ITourService {
 
         const pathIds = d.dailyPaths.map((s) => s.id);
         const dailyPaths = await tourDailyPathRepository.find({ where: { id: In(pathIds) } });
-        if (!dailyPaths || dailyPaths.length != pathIds.length)
+        if (!dailyPaths || dailyPaths.length != pathIds.length) {
+          await this.unitOfWork.rollbackTransaction();
           throw new BadRequestException('One or more daily paths not found');
+        }
         newTourDaily.dailyPaths = dailyPaths;
         dailyForms.push(newTourDaily);
       }
@@ -200,7 +237,8 @@ export class TourService implements ITourService {
 
             console.log({ imageUrl: result.url });
           })
-          .catch((err) => {
+          .catch(async (err) => {
+            await this.unitOfWork.rollbackTransaction();
             throw new InternalServerErrorException(
               `Something went wrong while uploading ${tourData.primaryImages[0].originalname} to cloudinary`,
             );
@@ -236,13 +274,16 @@ export class TourService implements ITourService {
               galleryImages.push(newImage);
               console.log({ imageUrl: result.url });
             })
-            .catch((err) => {
+            .catch(async (err) => {
+              await this.unitOfWork.rollbackTransaction();
+
               throw new InternalServerErrorException(
                 `Something went wrong while uploading ${file.originalname} to cloudinary`,
               );
             });
         }
       }
+      await this.unitOfWork.commitTransaction();
 
       return plainToInstance(TourDto, tour, {
         excludeExtraneousValues: true,
@@ -255,6 +296,9 @@ export class TourService implements ITourService {
   }
 
   public async updateTour(id: string, tourData: EditTourDto): Promise<TourDto> {
+    await this.unitOfWork.startTransaction();
+
+    const tourRepository = await this.unitOfWork.getRepository(Tour);
     const categoryRepository = await this.unitOfWork.getRepository(TourCategory);
     const tagRepository = await this.unitOfWork.getRepository(Tag);
     const serviceRepository = await this.unitOfWork.getRepository(Service);
@@ -262,29 +306,40 @@ export class TourService implements ITourService {
     const ImageRepository = await this.unitOfWork.getRepository(Image);
     const tourDailyRepository = await this.unitOfWork.getRepository(TourDaily);
     const tourDailyPathRepository = await this.unitOfWork.getRepository(TourDailyPath);
-    const tourDailyVisitingPlaceRepository = await this.unitOfWork.getRepository(TourDailyVisitingPlace);
+    const tourDateRepository = await this.unitOfWork.getRepository(TourDate);
+    const tourPriceRepository = await this.unitOfWork.getRepository(TourPrice);
 
     const tour = await this.repository.getById(Number(id));
-    if (!tour) throw new NotFoundException(`Tour with id:${id} not found`);
+    if (!tour) {
+      await this.unitOfWork.rollbackTransaction();
+      throw new NotFoundException(`Tour with id:${id} not found`);
+    }
 
     const category = await categoryRepository.findOne({ where: { id: tourData.category.id } });
-    if (!category) throw new NotFoundException(`Tour Category with id:${tourData.category.id} not found`);
-
+    if (!category) {
+      await this.unitOfWork.rollbackTransaction();
+      throw new NotFoundException(`Tour Category with id:${tourData.category.id} not found`);
+    }
     const tags = (await tagRepository.find()) as Tag[];
     if (tourData.tags && tourData.tags.length > 0) {
       const tagIds = tourData.tags.map((s) => s.id);
-      if (!tags || !(tags.filter((t) => tagIds.includes(t.id)).length === tagIds.length))
+      if (!tags || !(tags.filter((t) => tagIds.includes(t.id)).length === tagIds.length)) {
+        await this.unitOfWork.rollbackTransaction();
         throw new NotFoundException(`One or more tags not found`);
+      }
     }
 
     if (tourData.tourServices && tourData.tourServices.length > 0) {
       const services = await serviceRepository.find();
       const serviceIds = tourData.tourServices.map((s) => s.service.id);
-      if (services && !(services.filter((s) => serviceIds.includes(s.id)).length === serviceIds.length))
+      if (services && !(services.filter((s) => serviceIds.includes(s.id)).length === serviceIds.length)) {
+        await this.unitOfWork.rollbackTransaction();
         throw new NotFoundException(`One or more services not found`);
+      }
     }
 
     if (!tourData.uploadedPrimaryImages.length && !tourData.primaryImages.length) {
+      await this.unitOfWork.rollbackTransaction();
       throw new BadRequestException(`Please provide a primary image`);
     }
 
@@ -322,18 +377,61 @@ export class TourService implements ITourService {
       }
       tour.tourServices = newTourServices;
 
-      const tourPrices: TourPrice[] = [];
-      for (let index = 0; index < tourData.prices.length; index++) {
-        const p = tourData.prices[index];
-        const tourPrice = new TourPrice();
-        tourPrice.name = p.name;
-        tourPrice.currency = p.currency as Currency;
-        tourPrice.description = p.description;
-        tourPrice.price = Number(p.price);
-        // await transactionalEntityManager.save(tourPrice);
-        tourPrices.push(tourPrice);
+      const tourDates: TourDate[] = [];
+      const incomingTourDateIds = tourData.dates.filter((s) => s.id > 0).map((s) => s.id);
+      const existingTourDates = await tourDateRepository.find({
+        where: { tour: { id: Number(id) } },
+        relations: ['prices'],
+      });
+      const tourDateIdsWillBeDeleted: number[] = existingTourDates.length
+        ? existingTourDates.filter((s) => !incomingTourDateIds.includes(s.id)).map((s) => s.id)
+        : [];
+      tourDateIdsWillBeDeleted &&
+        tourDateIdsWillBeDeleted.length &&
+        (await tourDateRepository.delete(tourDateIdsWillBeDeleted));
+      for (let index = 0; index < tourData.dates.length; index++) {
+        const d = tourData.dates[index];
+        const tourDate = d.id ? existingTourDates.find((s) => s.id == d.id) : new TourDate();
+
+        tourDate.tourDate = new Date(d.tourDate);
+        tourDate.isActive = d.isActive;
+        tourDate.description = d.description;
+
+        const incomingTourPriceIds = d.prices.filter((s) => s.id > 0).map((s) => s.id);
+        const existingTourPrices = tourDate.prices || [];
+        const tourPriceIdsWillBeDeleted: number[] = existingTourPrices
+          .filter((s) => !incomingTourPriceIds.includes(s.id))
+          .map((s) => s.id);
+        tourPriceIdsWillBeDeleted.length && (await tourPriceRepository.delete(tourPriceIdsWillBeDeleted));
+
+        const tourPrices: TourPrice[] = [];
+        for (let index = 0; index < d.prices.length; index++) {
+          const p = d.prices[index];
+          const tourPrice = p.id ? existingTourPrices.find((s) => s.id == p.id) : new TourPrice();
+          tourPrice.name = p.name;
+          tourPrice.currency = p.currency as Currency;
+          tourPrice.description = p.description;
+          tourPrice.price = Number(p.price);
+          // await transactionalEntityManager.save(tourPrice);
+          tourPrices.push(tourPrice);
+        }
+        tourDate.prices = tourPrices;
+        tourDates.push(tourDate);
       }
-      tour.prices = tourPrices;
+      tour.dates = tourDates;
+
+      // const tourPrices: TourPrice[] = [];
+      // for (let index = 0; index < tourData.prices.length; index++) {
+      //   const p = tourData.prices[index];
+      //   const tourPrice = new TourPrice();
+      //   tourPrice.name = p.name;
+      //   tourPrice.currency = p.currency as Currency;
+      //   tourPrice.description = p.description;
+      //   tourPrice.price = Number(p.price);
+      //   // await transactionalEntityManager.save(tourPrice);
+      //   tourPrices.push(tourPrice);
+      // }
+      // tour.prices = tourPrices;
 
       const dailyForms: TourDaily[] = []; // Array to hold updated or newly created TourDaily entities.
 
@@ -400,8 +498,10 @@ export class TourService implements ITourService {
         const dailyPaths = await tourDailyPathRepository.find({ where: { id: In(pathIds) } }); // Fetch paths by IDs.
 
         // Throw an error if any path is missing.
-        if (!dailyPaths || dailyPaths.length != pathIds.length)
+        if (!dailyPaths || dailyPaths.length != pathIds.length) {
+          await this.unitOfWork.rollbackTransaction();
           throw new NotFoundException('One or more daily paths not found');
+        }
 
         // Assign the validated paths to the TourDaily entity.
         tourdaily.dailyPaths = dailyPaths;
@@ -414,7 +514,7 @@ export class TourService implements ITourService {
       tour.dailyForms = dailyForms;
 
       // Update the Tour entity in the database.
-      await this.repository.update(Number(id), tour);
+      await tourRepository.save(tour);
 
       //#region Images
       const now = new Date();
@@ -454,7 +554,8 @@ export class TourService implements ITourService {
 
             console.log({ imageUrl: result.url });
           })
-          .catch((err) => {
+          .catch(async (err) => {
+            await this.unitOfWork.rollbackTransaction();
             throw new InternalServerErrorException(
               `Something went wrong while uploading ${tourData.primaryImages[0].originalname} to cloudinary`,
             );
@@ -491,7 +592,8 @@ export class TourService implements ITourService {
               galleryImages.push(newImage);
               console.log({ imageUrl: result.url });
             })
-            .catch((err) => {
+            .catch(async (err) => {
+              await this.unitOfWork.rollbackTransaction();
               throw new InternalServerErrorException(
                 `Something went wrong while uploading ${file.originalname} to cloudinary`,
               );
@@ -499,6 +601,7 @@ export class TourService implements ITourService {
         }
       }
 
+      await this.unitOfWork.commitTransaction();
       return plainToInstance(TourDto, tour, {
         excludeExtraneousValues: true,
         enableCircularCheck: true,

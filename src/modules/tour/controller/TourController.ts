@@ -28,7 +28,6 @@ export class TourController {
 
   @httpPost('/', checkJwt, checkRole(['ADMINISTRATOR']), uploadMiddleware, DtoValidationMiddleware(CreateTourDto, true))
   public async create(req: Request, res: Response, next: NextFunction) {
-    console.log({ body: req.body });
     const tour = await this.service.createTour(req.body);
     return res.customSuccess(200, 'Tour saved successfully', tour);
   }

@@ -111,7 +111,7 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
           await transactionalEntityManager.save(tourPrice);
           tourPrices.push(tourPrice);
         }
-        newTour.prices = tourPrices;
+        // newTour.prices = tourPrices;
 
         await transactionalEntityManager.save(newTour).catch((error) => {
           console.log({ DatabaseError: error });

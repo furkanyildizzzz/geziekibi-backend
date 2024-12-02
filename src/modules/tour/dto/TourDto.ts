@@ -3,6 +3,7 @@ import { Image } from 'orm/entities/image/Image';
 import { Service } from 'orm/entities/service/Service';
 import { Tag } from 'orm/entities/tag/Tag';
 import { TourCategory } from 'orm/entities/tour/TourCategory';
+import { TourDate } from 'orm/entities/tour/TourDate';
 import { TourPrice } from 'orm/entities/tour/TourPrice';
 import { TourService } from 'orm/entities/tour/TourService';
 import { ServiceType, TourType } from 'shared/utils/enum';
@@ -112,8 +113,8 @@ export class TourDto {
   uploadedGalleryImages: Image[];
 
   @Expose()
-  @Type(() => TourPrice)
-  prices: TourPrice[];
+  @Type(() => TourDate)
+  dates: TourDate[];
 
   @Expose()
   @Type(() => TourService)

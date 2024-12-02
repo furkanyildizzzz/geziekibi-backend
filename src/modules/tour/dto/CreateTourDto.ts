@@ -10,11 +10,32 @@ import {
   IsPositive,
   IsEmpty,
   IsNotEmpty,
+  IsBoolean,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { PublishStatus, ServiceType, TourType } from 'shared/utils/enum';
 import { Image } from 'orm/entities/image/Image';
 import { TourDailyVisitingPlace } from 'orm/entities/tour/TourDailyVisitingPlace';
+
+class TourDateDto {
+  @IsOptional()
+  @IsDateString({}, { message: 'Invalid tour date format' })
+  tourDate?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TourPriceDto)
+  prices?: TourPriceDto[];
+}
 
 class TourPriceDto {
   @IsString({ message: 'Price name required' })
@@ -165,11 +186,17 @@ export class CreateTourDto {
   @Type(() => TourTagDto)
   tags?: TourTagDto[];
 
+  // @IsOptional()
+  // @IsArray()
+  // @ValidateNested({ each: true })
+  // @Type(() => TourPriceDto)
+  // prices?: TourPriceDto[];
+
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => TourPriceDto)
-  prices?: TourPriceDto[];
+  @Type(() => TourDateDto)
+  dates?: TourDateDto[];
 
   @IsOptional()
   @ValidateNested()

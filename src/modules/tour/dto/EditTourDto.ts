@@ -10,12 +10,41 @@ import {
   IsPositive,
   IsEmpty,
   IsNotEmpty,
+  IsBoolean,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { PublishStatus, ServiceType, TourType } from 'shared/utils/enum';
 import { Image } from 'orm/entities/image/Image';
 
+class TourDateDto {
+  @IsOptional()
+  @IsNumber()
+  id?: number;
+
+  @IsOptional()
+  @IsDateString({}, { message: 'Invalid tour date format' })
+  tourDate?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TourPriceDto)
+  prices?: TourPriceDto[];
+}
+
 class TourPriceDto {
+  @IsOptional()
+  @IsNumber()
+  id?: number;
+
   @IsString({ message: 'Price name required' })
   @MinLength(1, { message: 'Price name required' })
   name!: string;
@@ -115,6 +144,7 @@ class TourDailyDto {
   @IsOptional()
   dailyVisitingPlaces?: TourDailyVisitingPlaceDto[];
 }
+
 export class EditTourDto {
   @IsString({ message: 'Title is required' })
   @IsNotEmpty({ message: 'Title is required' })
@@ -171,6 +201,12 @@ export class EditTourDto {
   @ValidateNested({ each: true })
   @Type(() => TourPriceDto)
   prices?: TourPriceDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TourDateDto)
+  dates?: TourDateDto[];
 
   @IsOptional()
   @ValidateNested()

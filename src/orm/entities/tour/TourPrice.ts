@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColu
 import { Tour } from './Tour';
 import { Expose } from 'class-transformer';
 import { Currency } from 'shared/utils/enum';
+import { TourDate } from './TourDate';
 
 @Entity('tour_prices')
 export class TourPrice {
@@ -13,7 +14,7 @@ export class TourPrice {
   @Expose()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   @Expose()
   description: string;
 
@@ -29,7 +30,11 @@ export class TourPrice {
   @Expose()
   currency: Currency;
 
-  @ManyToOne(() => Tour, (tour) => tour.prices, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'tourId' })
-  tour: Tour;
+  // @ManyToOne(() => Tour, (tour) => tour.prices, { onDelete: 'CASCADE' })
+  // @JoinColumn({ name: 'tourId' })
+  // tour: Tour;
+
+  @ManyToOne(() => TourDate, (tourDate) => tourDate.prices, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'tourDateId' })
+  tourDate: TourDate;
 }

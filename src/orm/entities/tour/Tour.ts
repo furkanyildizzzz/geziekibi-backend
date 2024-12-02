@@ -16,6 +16,7 @@ import { TourCategory } from './TourCategory';
 import { Image } from '../image/Image';
 import { Expose } from 'class-transformer';
 import { TourDaily } from './TourDaily';
+import { TourDate } from './TourDate';
 
 @Entity('tours')
 export class Tour {
@@ -83,9 +84,13 @@ export class Tour {
   @Expose()
   tags: Tag[];
 
-  @OneToMany(() => TourPrice, (price) => price.tour, { nullable: true, cascade: true })
+  // @OneToMany(() => TourPrice, (price) => price.tour, { nullable: true, cascade: true })
+  // @Expose()
+  // prices: TourPrice[];
+
+  @OneToMany(() => TourDate, (date) => date.tour, { nullable: true, cascade: true })
   @Expose()
-  prices: TourPrice[];
+  dates: TourDate[];
 
   // One-to-Many relationship with Image (Gallery Images)
   @OneToMany(() => Image, (image) => image.tour, { nullable: true, cascade: true })
