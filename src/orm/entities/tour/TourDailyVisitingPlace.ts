@@ -10,6 +10,6 @@ export class TourDailyVisitingPlace {
   @Column()
   name: string; // Title of the daily path (e.g., "Day 1", "Day 2")
 
-  @ManyToOne(() => TourDaily, (tour) => tour.dailyVisitingPlaces)
+  @ManyToOne(() => TourDaily, (tour) => tour.dailyVisitingPlaces, { onDelete: 'CASCADE' })
   tourDaily: TourDaily; // Many daily paths belong to one tour
 }

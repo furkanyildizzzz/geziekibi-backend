@@ -27,7 +27,12 @@ const fileFilter = (req, file, cb) => {
     }
   } else {
     // else uploading image
-    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+    if (
+      file.mimetype === 'image/png' ||
+      file.mimetype === 'image/jpg' ||
+      file.mimetype === 'image/jpeg' ||
+      file.mimetype === 'image/webp'
+    ) {
       // check file type to be png, jpeg, or jpg
       cb(null, true);
     } else {

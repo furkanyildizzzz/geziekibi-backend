@@ -76,6 +76,9 @@ import { ICatalogService } from 'modules/catalog/interfaces/ICatalogService';
 import { CatalogRepository } from 'modules/catalog/repository/CatalogRepository';
 import { CatalogService } from 'modules/catalog/service/CatalogService';
 import { CatalogController } from 'modules/catalog/controller/CatalogController';
+import { IHomepageService } from 'modules/website-modules/homepage/interfaces/IHomepageService';
+import { HomepageService } from 'modules/website-modules/homepage/service/HomepageService';
+import { HomepageController } from 'modules/website-modules/homepage/controller/HomepageController';
 
 const container = new Container();
 
@@ -134,5 +137,8 @@ container.bind(INTERFACE_TYPE.StaticPageController).to(StaticPageController);
 container.bind<ICatalogRepository>(INTERFACE_TYPE.ICatalogRepository).to(CatalogRepository);
 container.bind<ICatalogService>(INTERFACE_TYPE.ICatalogService).to(CatalogService);
 container.bind(INTERFACE_TYPE.CatalogController).to(CatalogController);
+
+container.bind<IHomepageService>(INTERFACE_TYPE.IHomepageService).to(HomepageService);
+container.bind(INTERFACE_TYPE.HomepageController).to(HomepageController);
 
 export default container;

@@ -40,4 +40,7 @@ export const INTERFACE_TYPE = {
   CatalogController: Symbol.for('CatalogController'),
   ICatalogService: Symbol.for('ICatalogService'),
   ICatalogRepository: Symbol.for('ICatalogRepository'),
+  HomepageController: Symbol.for('HomepageController'),
+  IHomepageService: Symbol.for('IHomepageService'),
+  IHomepageRepository: Symbol.for('IHomepageRepository'),
 };
