@@ -9,7 +9,7 @@ import { ITourDailyPathService } from '../interfaces/ITourDailyPathService';
 import { CreateTourDailyPathDto } from '../dto/CreateTourDailyPathDto';
 import { DeleteMultipleTourDailyPathDto } from '../dto/DeleteMultipleTourDailyPathDto';
 
-@controller('/tour/path')
+@controller('/panel/tour/path')
 export class TourDailyPathController {
   constructor(@inject(INTERFACE_TYPE.ITourDailyPathService) private readonly service: ITourDailyPathService) {}
 

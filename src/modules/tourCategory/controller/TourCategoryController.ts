@@ -9,7 +9,7 @@ import { DtoValidationMiddleware } from 'middleware/dtoValidation';
 import { CreateTourCategoryDto } from '../dto/CreateTourCategoryDto';
 import { uploadMiddleware } from 'middleware/multer';
 
-@controller('/tour/category')
+@controller('/panel/tour/category')
 export class TourCategoryController {
   constructor(@inject(INTERFACE_TYPE.ITourCategoryService) private readonly service: ITourCategoryService) {}
 

@@ -9,7 +9,7 @@ import { NextFunction, Request, Response } from 'express';
 import { CreateServiceDto } from '../dto/CreateServiceDto';
 import { DeleteMultipleServiceDto } from '../dto/DeleteMultipleServiceDto';
 
-@controller('/tour/service')
+@controller('/panel/tour/service')
 export class ServiceController {
   constructor(@inject(INTERFACE_TYPE.IServiceInteractor) private readonly service: IServiceInteractor) {}
 

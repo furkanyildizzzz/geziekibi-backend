@@ -11,7 +11,7 @@ import { ChangePasswordDto } from '../dto/ChangePasswordDto';
 import { uploadMiddleware } from 'middleware/multer';
 import { DeleteProfileImageDto } from '../dto/DeleteProfileImageDto';
 
-@controller('/user')
+@controller('/panel/user')
 export class UserController {
   constructor(@inject(INTERFACE_TYPE.IUserService) private readonly service: IUserService) {}
 

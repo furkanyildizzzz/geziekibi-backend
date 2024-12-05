@@ -9,7 +9,7 @@ import { DtoValidationMiddleware } from 'middleware/dtoValidation';
 import { CreateTagDto } from '../dto/CreateTagDto';
 import { DeleteMultipleTagDto } from '../dto/DeleteMultipleTagDto';
 
-@controller('/tag')
+@controller('/panel/tag')
 export class TagController {
   private readonly service: ITagService;
   constructor(@inject(INTERFACE_TYPE.ITagService) service: ITagService) {

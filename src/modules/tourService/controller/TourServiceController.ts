@@ -5,5 +5,5 @@ import { checkJwt } from 'middleware/checkJwt';
 import { checkRole } from 'middleware/checkRole';
 import { DtoValidationMiddleware } from 'middleware/dtoValidation';
 
-@controller('/tour/tourService')
+@controller('/panel/tour/tourService')
 export class TourServiceController {}

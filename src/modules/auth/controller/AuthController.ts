@@ -7,7 +7,7 @@ import { SignInCredentialsDto, SignUpCredentialsDto } from '../dto';
 import { Request, Response } from 'express';
 import { instanceToPlain } from 'class-transformer';
 
-@controller('/auth')
+@controller('/panel/auth')
 export class AuthController {
   constructor(@inject(INTERFACE_TYPE.IAuthService) private readonly authService: AuthService) {}
 

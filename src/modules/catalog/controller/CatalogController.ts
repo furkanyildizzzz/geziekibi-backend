@@ -9,7 +9,7 @@ import { DtoValidationMiddleware } from 'middleware/dtoValidation';
 import { uploadMiddleware } from 'middleware/multer';
 import { UpdateCatalogDto } from '../dto/UpdateCatalogDto';
 
-@controller('/catalog')
+@controller('/panel/catalog')
 export class CatalogController {
   constructor(@inject(INTERFACE_TYPE.ICatalogService) private readonly service: ICatalogService) {}
 

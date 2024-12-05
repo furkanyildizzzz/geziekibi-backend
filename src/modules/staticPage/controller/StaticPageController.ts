@@ -11,7 +11,7 @@ import { CreateStaticPageDto } from '../dto/CreateStaticPageDto';
 import { StaticPageType } from 'shared/utils/enum';
 import { BadRequestException } from 'shared/errors/allException';
 
-@controller('/staticPage')
+@controller('/panel/staticPage')
 export class StaticPageController {
   constructor(@inject(INTERFACE_TYPE.IStaticPageService) private readonly service: IStaticPageService) {}
 

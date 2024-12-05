@@ -9,7 +9,7 @@ import { DtoValidationMiddleware } from 'middleware/dtoValidation';
 import { CreateBlogCategoryDto } from '../dto/CreateBlogCategoryDto';
 import { uploadMiddleware } from 'middleware/multer';
 
-@controller('/blog/category')
+@controller('/panel/blog/category')
 export class BlogCategoryController {
   constructor(@inject(INTERFACE_TYPE.IBlogCategoryService) private readonly service: IBlogCategoryService) {}
 

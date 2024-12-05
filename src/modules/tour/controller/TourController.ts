@@ -10,7 +10,7 @@ import { EditTourDto } from '../dto/EditTourDto';
 import { uploadMiddleware } from 'middleware/multer';
 import { CreateTourDto } from '../dto/CreateTourDto';
 
-@controller('/tour')
+@controller('/panel/tour')
 export class TourController {
   constructor(@inject(INTERFACE_TYPE.ITourService) private readonly service: ITourService) {}
 
