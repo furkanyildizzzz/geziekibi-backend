@@ -134,7 +134,8 @@ export class TourService implements ITourService {
       for (let index = 0; index < tourData.dates.length; index++) {
         const d = tourData.dates[index];
         const tourDate = new TourDate();
-        tourDate.tourDate = new Date(d.tourDate);
+        tourDate.startDate = new Date(d.startDate);
+        tourDate.endDate = new Date(d.endDate);
         tourDate.description = d.description;
         tourDate.isActive = d.isActive;
 
@@ -393,7 +394,8 @@ export class TourService implements ITourService {
         const d = tourData.dates[index];
         const tourDate = d.id ? existingTourDates.find((s) => s.id == d.id) : new TourDate();
 
-        tourDate.tourDate = new Date(d.tourDate);
+        tourDate.startDate = new Date(d.startDate);
+        tourDate.endDate = new Date(d.endDate);
         tourDate.isActive = d.isActive;
         tourDate.description = d.description;
 

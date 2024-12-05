@@ -21,7 +21,12 @@ export class TourDate {
   @Column()
   @CreateDateColumn()
   @Expose()
-  tourDate: Date;
+  startDate: Date;
+
+  @Column()
+  @CreateDateColumn()
+  @Expose()
+  endDate: Date;
 
   @Column()
   @Expose()

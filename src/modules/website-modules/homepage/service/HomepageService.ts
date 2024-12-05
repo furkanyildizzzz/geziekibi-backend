@@ -8,6 +8,7 @@ import { IsNull, LessThan, LessThanOrEqual } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import tourFunctions from 'shared/utils/tourFunctions';
 import { TourCategory } from 'orm/entities/tour/TourCategory';
+import { PublishStatus } from 'shared/utils/enum';
 
 @injectable()
 export class HomepageService implements IHomepageService {
@@ -18,10 +19,10 @@ export class HomepageService implements IHomepageService {
 
     const today = new Date();
     const tours = await tourRepo.find({
-      where: { dates: { tourDate: LessThanOrEqual(today) } },
+      where: { dates: { startDate: LessThanOrEqual(today) }, publishStatus: PublishStatus.PUBLISH },
       order: {
         dates: {
-          tourDate: 'DESC',
+          startDate: 'DESC',
         },
       },
       take: 3,
@@ -30,7 +31,7 @@ export class HomepageService implements IHomepageService {
 
     const toursWithMostRecentDate = tours.map((tour) => {
       const mostRecentDate = tour.dates.reduce((latest, current) => {
-        return current.tourDate > latest.tourDate ? current : latest;
+        return current.startDate > latest.startDate ? current : latest;
       }, tour.dates[0]);
 
       return {
@@ -78,10 +79,10 @@ export class HomepageService implements IHomepageService {
 
     const today = new Date();
     const tours = await tourRepo.find({
-      where: { dates: { tourDate: LessThanOrEqual(today) } },
+      where: { dates: { startDate: LessThanOrEqual(today) }, publishStatus: PublishStatus.PUBLISH },
       order: {
         dates: {
-          tourDate: 'DESC',
+          startDate: 'DESC',
         },
       },
       take: 6,
@@ -90,7 +91,7 @@ export class HomepageService implements IHomepageService {
 
     const toursWithMostRecentDate = tours.map((tour) => {
       const mostRecentDate = tour.dates.reduce((latest, current) => {
-        return current.tourDate > latest.tourDate ? current : latest;
+        return current.startDate > latest.startDate ? current : latest;
       }, tour.dates[0]);
 
       return {

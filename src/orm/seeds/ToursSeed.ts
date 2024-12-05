@@ -1,4 +1,5 @@
 import { BlogCategory } from 'orm/entities/blog/BlogCategory';
+import { Image } from 'orm/entities/image/Image';
 import { Service } from 'orm/entities/service/Service';
 import { Tag } from 'orm/entities/tag/Tag';
 import { Tour } from 'orm/entities/tour/Tour';
@@ -17,7 +18,7 @@ const seedTours = async (dataSource: DataSource) => {
   await UrfaTuru(dataSource);
   await KapadokyaTuru(dataSource);
   await KuzeyEgeTuru(dataSource);
-  await GüneyDoguTuru(dataSource);
+  await GuneyDoguTuru(dataSource);
   await AnkaraEskisehirTuru(dataSource);
   await OrtaAvrupaBalkanTuru(dataSource);
   console.log('All tours have been seeded!');
@@ -44,7 +45,8 @@ const DoguKaradenizTuru = async (dataSource: DataSource) => {
 
   tour.dates = [
     {
-      tourDate: '2024-12-10',
+      startDate: '2024-12-10',
+      endDate: '2024-12-14',
       description: 'Guided tour of the city',
       isActive: true,
       prices: [
@@ -52,9 +54,10 @@ const DoguKaradenizTuru = async (dataSource: DataSource) => {
         { name: 'Çocuk (0-7 yaş)', price: 7500, currency: 'try', description: 'Çocuk Fiyatı' },
         { name: '65+ Yaş', price: 8000, currency: 'try', description: '65 Yaş ve Üzeri' },
       ],
-    } as unknown as TourDate,
+    },
     {
-      tourDate: new Date('2024-12-15'),
+      startDate: new Date('2024-12-15'),
+      endDate: new Date('2024-12-19'),
       description: 'Special holiday tour',
       isActive: false,
       prices: [
@@ -63,7 +66,7 @@ const DoguKaradenizTuru = async (dataSource: DataSource) => {
         { name: '65+ Yaş', price: 8000, currency: 'try', description: '65 Yaş ve Üzeri' },
         { name: 'VIP', price: 15000, currency: 'try' },
       ],
-    } as TourDate,
+    },
   ] as TourDate[];
 
   tour.dailyForms = [
@@ -210,6 +213,22 @@ const DoguKaradenizTuru = async (dataSource: DataSource) => {
     },
   ] as TourService[];
 
+  tour.primaryImages = [
+    {
+      id: 1,
+      url: 'http://res.cloudinary.com/furkannn/image/upload/v1733308046/dev/tour/2024-12-04/1/w7hlcp0yi6ygvapsqxlo.jpg',
+      format: 'jpg',
+      width: 806,
+      height: 646,
+      publicId: 'dev/tour/2024-12-04/1/w7hlcp0yi6ygvapsqxlo',
+      secureUrl:
+        'https://res.cloudinary.com/furkannn/image/upload/v1733308046/dev/tour/2024-12-04/1/w7hlcp0yi6ygvapsqxlo.jpg',
+      order: 1,
+      createdAt: new Date('2024-12-04T07:27:26.000Z'),
+      originalName: 'karadeniz-turu-806-646.jpg',
+    } as Image,
+  ];
+
   await TourRepository.save(tour);
 };
 
@@ -234,7 +253,8 @@ const BatıKaradenizTuru = async (dataSource: DataSource) => {
 
   tour.dates = [
     {
-      tourDate: '2024-10-10',
+      startDate: '2024-10-10',
+      endDate: '2024-10-13',
       description: 'Guided tour of the city',
       isActive: true,
       prices: [
@@ -244,7 +264,8 @@ const BatıKaradenizTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2024-11-10'),
+      startDate: new Date('2024-11-10'),
+      endDate: new Date('2024-11-13'),
       description: 'Special holiday tour',
       isActive: false,
       prices: [
@@ -255,7 +276,8 @@ const BatıKaradenizTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2024-12-10'),
+      startDate: new Date('2024-12-10'),
+      endDate: new Date('2024-12-13'),
       description: 'Very Special holiday tour',
       isActive: false,
       prices: [
@@ -364,6 +386,21 @@ const BatıKaradenizTuru = async (dataSource: DataSource) => {
     },
   ] as TourService[];
 
+  tour.primaryImages = [
+    {
+      id: 2,
+      url: 'http://res.cloudinary.com/furkannn/image/upload/v1733308937/dev/tour/2024-12-04/2/n5lhbjlycjor05nwnkb1.png',
+      format: 'png',
+      width: 806,
+      height: 646,
+      publicId: 'dev/tour/2024-12-04/2/n5lhbjlycjor05nwnkb1',
+      secureUrl:
+        'https://res.cloudinary.com/furkannn/image/upload/v1733308937/dev/tour/2024-12-04/2/n5lhbjlycjor05nwnkb1.png',
+      order: 1,
+      createdAt: new Date('2024-12-04T07:42:17.000Z'),
+      originalName: 'bati-karadeniz-turu-806-646.png',
+    } as Image,
+  ];
   await TourRepository.save(tour);
 };
 
@@ -396,7 +433,8 @@ const UrfaTuru = async (dataSource: DataSource) => {
 
   tour.dates = [
     {
-      tourDate: '2024-10-15',
+      startDate: '2024-10-15',
+      endDate: '2024-10-17',
       description: 'Guided tour of the city',
       isActive: true,
       prices: [
@@ -406,7 +444,8 @@ const UrfaTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2024-11-15'),
+      startDate: new Date('2024-11-15'),
+      endDate: new Date('2024-11-17'),
       description: 'Special holiday tour',
       isActive: false,
       prices: [
@@ -417,7 +456,8 @@ const UrfaTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2024-12-15'),
+      startDate: new Date('2024-12-15'),
+      endDate: new Date('2024-12-17'),
       description: 'Very Special holiday tour',
       isActive: false,
       prices: [
@@ -537,6 +577,21 @@ const UrfaTuru = async (dataSource: DataSource) => {
     },
   ] as TourService[];
 
+  tour.primaryImages = [
+    {
+      id: 3,
+      url: 'http://res.cloudinary.com/furkannn/image/upload/v1733309539/dev/tour/2024-12-04/3/skcc7fgzgwjxfaeoj7zf.jpg',
+      format: 'jpg',
+      width: 806,
+      height: 646,
+      publicId: 'dev/tour/2024-12-04/3/skcc7fgzgwjxfaeoj7zf',
+      secureUrl:
+        'https://res.cloudinary.com/furkannn/image/upload/v1733309539/dev/tour/2024-12-04/3/skcc7fgzgwjxfaeoj7zf.jpg',
+      order: 1,
+      createdAt: new Date('2024-12-04T07:52:19.000Z'),
+      originalName: 'nemrut-halfeti-turu-806-646.jpg',
+    } as Image,
+  ];
   await TourRepository.save(tour);
 };
 
@@ -561,7 +616,8 @@ const KapadokyaTuru = async (dataSource: DataSource) => {
 
   tour.dates = [
     {
-      tourDate: '2024-3-10',
+      startDate: '2024-3-10',
+      endDate: '2024-3-13',
       description: 'Kapadokya',
       isActive: true,
       prices: [
@@ -571,7 +627,8 @@ const KapadokyaTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2024-4-10'),
+      startDate: new Date('2024-4-10'),
+      endDate: new Date('2024-4-13'),
       description: 'Özel tur',
       isActive: false,
       prices: [
@@ -582,7 +639,8 @@ const KapadokyaTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2024-5-10'),
+      startDate: new Date('2024-5-10'),
+      endDate: new Date('2024-5-13'),
       description: 'Very Special holiday tour',
       isActive: false,
       prices: [
@@ -690,6 +748,21 @@ const KapadokyaTuru = async (dataSource: DataSource) => {
     },
   ] as TourService[];
 
+  tour.primaryImages = [
+    {
+      id: 7,
+      url: 'http://res.cloudinary.com/furkannn/image/upload/v1733310181/dev/tour/2024-12-04/4/jtrycadhi5kumlczzt7z.jpg',
+      format: 'jpg',
+      width: 806,
+      height: 646,
+      publicId: 'dev/tour/2024-12-04/4/jtrycadhi5kumlczzt7z',
+      secureUrl:
+        'https://res.cloudinary.com/furkannn/image/upload/v1733310181/dev/tour/2024-12-04/4/jtrycadhi5kumlczzt7z.jpg',
+      order: 1,
+      createdAt: new Date('2024-12-04T08:03:01.000Z'),
+      originalName: 'kapadokya-turu-806-646.jpg',
+    } as Image,
+  ];
   await TourRepository.save(tour);
 };
 
@@ -714,7 +787,8 @@ const KuzeyEgeTuru = async (dataSource: DataSource) => {
 
   tour.dates = [
     {
-      tourDate: '2024-06-10',
+      startDate: '2024-06-10',
+      endDate: '2024-06-13',
       description: 'Guided tour of the city',
       isActive: true,
       prices: [
@@ -724,7 +798,8 @@ const KuzeyEgeTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2024-7-15'),
+      startDate: new Date('2024-7-15'),
+      endDate: new Date('2024-7-18'),
       description: 'Special holiday tour',
       isActive: false,
       prices: [
@@ -735,7 +810,8 @@ const KuzeyEgeTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2024-08-15'),
+      startDate: new Date('2024-08-15'),
+      endDate: new Date('2024-08-18'),
       description: 'Special holiday tour',
       isActive: false,
       prices: [
@@ -880,10 +956,26 @@ const KuzeyEgeTuru = async (dataSource: DataSource) => {
     },
   ] as TourService[];
 
+  tour.primaryImages = [
+    {
+      id: 8,
+      url: 'http://res.cloudinary.com/furkannn/image/upload/v1733310358/dev/tour/2024-12-04/5/h0yjgu23jwdl9g6gxbu8.webp',
+      format: 'webp',
+      width: 806,
+      height: 646,
+      publicId: 'dev/tour/2024-12-04/5/h0yjgu23jwdl9g6gxbu8',
+      secureUrl:
+        'https://res.cloudinary.com/furkannn/image/upload/v1733310358/dev/tour/2024-12-04/5/h0yjgu23jwdl9g6gxbu8.webp',
+      order: 1,
+      createdAt: new Date('2024-12-04T08:05:58.000Z'),
+      originalName: 'ege-turu-806-646.webp',
+    } as Image,
+  ];
+
   await TourRepository.save(tour);
 };
 
-const GüneyDoguTuru = async (dataSource: DataSource) => {
+const GuneyDoguTuru = async (dataSource: DataSource) => {
   const TourRepository = dataSource.getRepository(Tour);
 
   const today = new Date();
@@ -912,7 +1004,8 @@ const GüneyDoguTuru = async (dataSource: DataSource) => {
 
   tour.dates = [
     {
-      tourDate: '2024-6-1',
+      startDate: '2024-6-1',
+      endDate: '2024-6-3',
       description: 'Guided tour of the city',
       isActive: true,
       prices: [
@@ -922,7 +1015,8 @@ const GüneyDoguTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2024-7-1'),
+      startDate: new Date('2024-7-1'),
+      endDate: new Date('2024-7-3'),
       description: 'Special holiday tour',
       isActive: false,
       prices: [
@@ -933,7 +1027,8 @@ const GüneyDoguTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2024-8-1'),
+      startDate: new Date('2024-8-1'),
+      endDate: new Date('2024-8-3'),
       description: 'Very Special holiday tour',
       isActive: false,
       prices: [
@@ -945,7 +1040,8 @@ const GüneyDoguTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: '2025-6-1',
+      startDate: '2025-6-1',
+      endDate: '2025-6-3',
       description: 'Guided tour of the city',
       isActive: true,
       prices: [
@@ -955,7 +1051,8 @@ const GüneyDoguTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2025-7-1'),
+      startDate: new Date('2025-7-1'),
+      endDate: new Date('2025-7-3'),
       description: 'Special holiday tour',
       isActive: false,
       prices: [
@@ -966,7 +1063,8 @@ const GüneyDoguTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2025-8-1'),
+      startDate: new Date('2025-8-1'),
+      endDate: new Date('2025-8-3'),
       description: 'Very Special holiday tour',
       isActive: false,
       prices: [
@@ -1085,6 +1183,22 @@ const GüneyDoguTuru = async (dataSource: DataSource) => {
     },
   ] as TourService[];
 
+  tour.primaryImages = [
+    {
+      id: 9,
+      url: 'http://res.cloudinary.com/furkannn/image/upload/v1733310467/dev/tour/2024-12-04/6/zi65u6v0piroxjudemfk.jpg',
+      format: 'jpg',
+      width: 806,
+      height: 646,
+      publicId: 'dev/tour/2024-12-04/6/zi65u6v0piroxjudemfk',
+      secureUrl:
+        'https://res.cloudinary.com/furkannn/image/upload/v1733310467/dev/tour/2024-12-04/6/zi65u6v0piroxjudemfk.jpg',
+      order: 1,
+      createdAt: new Date('2024-12-04T08:07:47.000Z'),
+      originalName: 'guneydogu-turu-806-646.jpg',
+    } as Image,
+  ];
+
   await TourRepository.save(tour);
 };
 
@@ -1109,7 +1223,8 @@ const AnkaraEskisehirTuru = async (dataSource: DataSource) => {
 
   tour.dates = [
     {
-      tourDate: '2024-11-10',
+      startDate: '2024-11-10',
+      endDate: '2024-11-12',
       description: 'Guided tour of the city',
       isActive: true,
       prices: [
@@ -1119,7 +1234,8 @@ const AnkaraEskisehirTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2024-12-10'),
+      startDate: new Date('2024-12-10'),
+      endDate: new Date('2024-12-12'),
       description: 'Special holiday tour',
       isActive: false,
       prices: [
@@ -1130,7 +1246,8 @@ const AnkaraEskisehirTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2025-11-10'),
+      startDate: new Date('2025-11-10'),
+      endDate: new Date('2025-11-12'),
       description: 'Very Special holiday tour',
       isActive: false,
       prices: [
@@ -1237,6 +1354,22 @@ const AnkaraEskisehirTuru = async (dataSource: DataSource) => {
     },
   ] as TourService[];
 
+  tour.primaryImages = [
+    {
+      id: 10,
+      url: 'http://res.cloudinary.com/furkannn/image/upload/v1733310742/dev/tour/2024-12-04/7/xt5fyorimzdngotdk9pv.jpg',
+      format: 'jpg',
+      width: 806,
+      height: 646,
+      publicId: 'dev/tour/2024-12-04/7/xt5fyorimzdngotdk9pv',
+      secureUrl:
+        'https://res.cloudinary.com/furkannn/image/upload/v1733310742/dev/tour/2024-12-04/7/xt5fyorimzdngotdk9pv.jpg',
+      order: 1,
+      createdAt: new Date('2024-12-04T08:12:22.000Z'),
+      originalName: 'eskisehir-ankara-turu-806-646.jpg',
+    } as Image,
+  ];
+
   await TourRepository.save(tour);
 };
 
@@ -1287,7 +1420,8 @@ const OrtaAvrupaBalkanTuru = async (dataSource: DataSource) => {
 
   tour.dates = [
     {
-      tourDate: '2024-07-14',
+      startDate: '2024-07-14',
+      endDate: '2024-07-24',
       description: 'Guided tour of the city',
       isActive: true,
       prices: [
@@ -1297,7 +1431,8 @@ const OrtaAvrupaBalkanTuru = async (dataSource: DataSource) => {
       ],
     },
     {
-      tourDate: new Date('2024-08-12'),
+      startDate: new Date('2024-08-12'),
+      endDate: new Date('2024-08-22'),
       description: 'Special holiday tour',
       isActive: false,
       prices: [
@@ -1531,6 +1666,22 @@ const OrtaAvrupaBalkanTuru = async (dataSource: DataSource) => {
       },
     },
   ] as TourService[];
+
+  tour.primaryImages = [
+    {
+      id: 11,
+      url: 'http://res.cloudinary.com/furkannn/image/upload/v1733311320/dev/tour/2024-12-04/8/eyk01pxbyurpl8mhhzpi.jpg',
+      format: 'jpg',
+      width: 806,
+      height: 646,
+      publicId: 'dev/tour/2024-12-04/8/eyk01pxbyurpl8mhhzpi',
+      secureUrl:
+        'https://res.cloudinary.com/furkannn/image/upload/v1733311320/dev/tour/2024-12-04/8/eyk01pxbyurpl8mhhzpi.jpg',
+      order: 1,
+      createdAt: new Date('2024-12-04T08:22:00.000Z'),
+      originalName: 'orta-avrupa-balkanlar-turu-806-646.jpg',
+    } as Image,
+  ];
 
   await TourRepository.save(tour);
 };

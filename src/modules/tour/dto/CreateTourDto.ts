@@ -19,8 +19,12 @@ import { TourDailyVisitingPlace } from 'orm/entities/tour/TourDailyVisitingPlace
 
 class TourDateDto {
   @IsOptional()
-  @IsDateString({}, { message: 'Invalid tour date format' })
-  tourDate?: string;
+  @IsDateString({}, { message: 'Invalid start date format' })
+  startDate?: string;
+
+  @IsOptional()
+  @IsDateString({}, { message: 'Invalid end date format' })
+  endDate?: string;
 
   @IsOptional()
   @IsString()

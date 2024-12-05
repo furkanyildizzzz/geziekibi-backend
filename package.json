@@ -29,7 +29,7 @@
     "migration:create": "PG_HOST=localhost NODE_PATH=./src ts-node ./node_modules/.bin/typeorm migration:create --config ./src/orm/config/ormconfig.ts -d src/orm/migrations -n ",
     "seed:run": "NODE_PATH=./src ts-node ./node_modules/.bin/typeorm migration:run --config ./src/orm/config/ormconfig-seed.ts",
     "seed:create": "PG_HOST=localhost NODE_PATH=./src ts-node ./node_modules/.bin/typeorm migration:create ./src/orm/migrations/SeedBlogCategories",
-    "migrate:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate ./src/orm/migrations/TourDailyVisitingPlacesCascadeOnDelete -d=./src/config/migration-database.ts",
+    "migrate:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate ./src/orm/migrations/TourDateRevision -d=./src/config/migration-database.ts",
     "migrate:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d=./src/config/migration-database.ts",
     "migrate:revert": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d=./src/config/migration-database.ts",
     "typeorm:schema:drop": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js schema:drop -d=./src/config/migration-database.ts",
