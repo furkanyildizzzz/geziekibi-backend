@@ -9,6 +9,7 @@ import { INTERFACE_TYPE } from 'core/types';
 import { CreateTagDto } from '../dto/CreateTagDto';
 import { BadRequestErrorMessageResult } from 'inversify-express-utils/lib/results';
 import { DeleteMultipleTagDto } from '../dto/DeleteMultipleTagDto';
+import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 
 @injectable()
 export class TagService implements ITagService {
@@ -18,6 +19,7 @@ export class TagService implements ITagService {
   constructor(
     @inject(INTERFACE_TYPE.UnitOfWork) unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.ITagRepository) repository,
+    @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
   ) {
     this.repository = repository;
     this.unitOfWork = unitOfWork;
@@ -36,12 +38,19 @@ export class TagService implements ITagService {
     throw new NotFoundException('Tag not found');
   }
 
+  public async getBySeoLink(seoLink: string): Promise<TagSuccessDTO> {
+    const tag = await this.repository.getBySeoLink(seoLink);
+    if (tag) return tag as TagSuccessDTO;
+    throw new NotFoundException('Tag not found');
+  }
+
   async createTag(tagData: CreateTagDto): Promise<Tag> {
     const tag = await this.repository.getByName(tagData.name);
     if (tag) throw new BadRequestException(`Tag '${tag.name}' is already exists`);
 
     const newTag = new Tag();
     newTag.name = tagData.name;
+    newTag.seoLink = await this.seoLinkService.generateUniqueSeoLink(tagData.name, 'tag', newTag.id);
     return await this.repository.create(newTag);
   }
 
@@ -49,6 +58,7 @@ export class TagService implements ITagService {
     const tag = await this.repository.getById(Number(id));
     if (!tag) throw new NotFoundException(`Tag with id:'${id}' is not found`);
     tag.name = tagData.name;
+    tag.seoLink = await this.seoLinkService.generateUniqueSeoLink(tagData.name, 'tag', tag.id);
     return await this.repository.update(Number(id), tag);
   }
 

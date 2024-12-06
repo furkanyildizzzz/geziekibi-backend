@@ -26,12 +26,14 @@ import { TourDaily } from 'orm/entities/tour/TourDaily';
 import { TourDailyPath } from 'orm/entities/tour/TourDailyPath';
 import { TourDailyVisitingPlace } from 'orm/entities/tour/TourDailyVisitingPlace';
 import { TourDate } from 'orm/entities/tour/TourDate';
+import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 
 @injectable()
 export class TourService implements ITourService {
   constructor(
     @inject(INTERFACE_TYPE.ITourRepository) private readonly repository: ITourRepository,
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
+    @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
   ) {}
 
   public async getAll(): Promise<TourListDto[]> {
@@ -47,6 +49,15 @@ export class TourService implements ITourService {
   public async getById(id: string): Promise<TourDto> {
     const tour = await this.repository.getById(Number(id));
     if (!tour) throw new NotFoundException(`Tour with id:${id} not found`);
+    return plainToInstance(TourDto, tour, {
+      excludeExtraneousValues: true,
+      enableCircularCheck: true,
+    });
+  }
+
+  public async getBySeoLink(seoLink: string): Promise<TourDto> {
+    const tour = await this.repository.getBySeoLink(seoLink);
+    if (!tour) throw new NotFoundException(`Tour with seoLink:${seoLink} not found`);
     return plainToInstance(TourDto, tour, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -105,7 +116,7 @@ export class TourService implements ITourService {
       tour.publishDate = new Date(tourData.publishDate);
       tour.startDate = new Date(tourData.startDate);
       tour.endDate = new Date(tourData.endDate);
-
+      tour.seoLink = await this.seoLinkService.generateUniqueSeoLink(tourData.title, 'tour', tour.id);
       tour.category = category;
 
       const tagIds = tourData.tags.map((s) => s.id);
@@ -353,6 +364,7 @@ export class TourService implements ITourService {
       tour.publishDate = new Date(tourData.publishDate);
       tour.startDate = new Date(tourData.startDate);
       tour.endDate = new Date(tourData.endDate);
+      tour.seoLink = await this.seoLinkService.generateUniqueSeoLink(tourData.title, 'tour', tour.id);
 
       tour.category = category;
 

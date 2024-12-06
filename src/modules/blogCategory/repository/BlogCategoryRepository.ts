@@ -30,6 +30,18 @@ export class BlogCategoryRepository implements IBlogCategoryRepository {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
+  public async getBySeoLink(seoLink: string): Promise<BlogCategory | void> {
+    try {
+      const repo = await this.unitOfWork.getRepository(BlogCategory);
+      const blogCategory = await repo.findOne({
+        where: { seoLink: seoLink },
+        relations: ['parent', 'subCategories', 'primaryImages'],
+      });
+      if (blogCategory) return blogCategory as BlogCategory;
+    } catch (error) {
+      throw new InternalServerErrorException(`${error.message}`);
+    }
+  }
   public async getByName(name: string): Promise<BlogCategory | void> {
     try {
       const repo = await this.unitOfWork.getRepository(BlogCategory);

@@ -31,6 +31,15 @@ export class TagRepository implements ITagRepository {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
+  async getBySeoLink(seoLink: string): Promise<Tag | void> {
+    try {
+      const repo = await this.unitOfWork.getRepository(Tag);
+      const tag = await repo.findOne({ where: { seoLink: seoLink } });
+      if (tag) return tag as Tag;
+    } catch (error) {
+      throw new InternalServerErrorException(`${error.message}`);
+    }
+  }
 
   async getByName(name: string): Promise<Tag | void> {
     try {

@@ -2,6 +2,7 @@ import { BlogCategory } from 'orm/entities/blog/BlogCategory';
 import { Image } from 'orm/entities/image/Image';
 import { TourCategory } from 'orm/entities/tour/TourCategory';
 import { TourDailyPath } from 'orm/entities/tour/TourDailyPath';
+import { generateUniqueSeoLink } from 'shared/utils/generateSeoLink';
 import { DataSource } from 'typeorm';
 
 const seedTourCategories = async (dataSource: DataSource) => {
@@ -24,6 +25,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'karadeniz-turu-262-117.jpg',
     } as Image,
   ];
+  category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
   await repo.save(category);
 
   let subCategory = new TourCategory();
@@ -44,6 +46,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'bartÄ±n-turu-262-117.jpg',
     } as Image,
   ];
+  subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
   await repo.save(subCategory);
 
   subCategory = new TourCategory();
@@ -64,6 +67,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'batÄ±-karadeniz-turu-262-117.jpg',
     } as Image,
   ];
+  subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
   await repo.save(subCategory);
 
   subCategory = new TourCategory();
@@ -84,6 +88,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'dogÌu-karadeniz-turu-262-117.jpeg',
     } as Image,
   ];
+  subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
   await repo.save(subCategory);
 
   category = new TourCategory();
@@ -103,6 +108,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'ege-akdeniz-turu-262-117.webp',
     } as Image,
   ];
+  category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
   await repo.save(category);
 
   subCategory = new TourCategory();
@@ -123,6 +129,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'orta-ege-turu-262-117.webp',
     } as Image,
   ];
+  subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
   await repo.save(subCategory);
 
   subCategory = new TourCategory();
@@ -143,6 +150,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'guney-ege-turu-262-117.jpg',
     } as Image,
   ];
+  subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
   await repo.save(subCategory);
 
   category = new TourCategory();
@@ -162,6 +170,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'nemrut-turu-262-117.jpg',
     } as Image,
   ];
+  category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
   await repo.save(category);
 
   subCategory = new TourCategory();
@@ -182,6 +191,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'mardin-turu-262-117.jpg',
     } as Image,
   ];
+  subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
   await repo.save(subCategory);
 
   category = new TourCategory();
@@ -201,6 +211,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'dogÌu-anadolu-turu-262-117.jpg',
     } as Image,
   ];
+  category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
   await repo.save(category);
 
   subCategory = new TourCategory();
@@ -221,6 +232,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'van-turu-262-117.webp',
     } as Image,
   ];
+  subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
   await repo.save(subCategory);
 
   category = new TourCategory();
@@ -240,6 +252,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'ankara-turu-262-117.jpg',
     } as Image,
   ];
+  category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
   await repo.save(category);
 
   subCategory = new TourCategory();
@@ -260,6 +273,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'kapadokya-turu-262-117.jpg',
     } as Image,
   ];
+  subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
   await repo.save(subCategory);
 
   category = new TourCategory();
@@ -279,6 +293,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'orta-avrupa-balkan-turu-262-117.jpg',
     } as Image,
   ];
+  category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
   await repo.save(category);
 
   category = new TourCategory();
@@ -298,6 +313,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'avrupa-turu-262-117.jpg',
     } as Image,
   ];
+  category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
   await repo.save(category);
 
   category = new TourCategory();
@@ -317,6 +333,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
       originalName: 'italya-yunanistan-turu-262-117.jpg',
     } as Image,
   ];
+  category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
   await repo.save(category);
 
   console.log('All tour categories have been seeded!');

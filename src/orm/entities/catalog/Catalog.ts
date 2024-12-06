@@ -57,6 +57,9 @@ export class Catalog {
   @Expose()
   order: number;
 
+  @Column({ unique: true })
+  seoLink: string;
+
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP', name: 'createdAt' })
   createdAt: Date;
 

@@ -5,6 +5,7 @@ import { DeleteMultipleTagDto } from '../dto/DeleteMultipleTagDto';
 export interface ITagService {
   getAll(): Promise<TagSuccessDTO[]>;
   getById(id: string): Promise<TagSuccessDTO>;
+  getBySeoLink(seoLink: string): Promise<TagSuccessDTO>;
   createTag(tagData: CreateTagDto): Promise<TagSuccessDTO>;
   updateTag(id: string, tagData: CreateTagDto): Promise<TagSuccessDTO>;
   deleteTag(id: string): Promise<void>;

@@ -38,6 +38,15 @@ export class CatalogRepository implements ICatalogRepository {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
+  public async getBySeoLink(seoLink: string): Promise<Catalog | void> {
+    try {
+      const repo = await this.unitOfWork.getRepository(Catalog);
+      const catalog = await repo.findOne({ where: { seoLink: seoLink } });
+      if (catalog) return catalog as Catalog;
+    } catch (error) {
+      throw new InternalServerErrorException(`${error.message}`);
+    }
+  }
 
   public async create(newCatalog: Catalog): Promise<Catalog> {
     try {

@@ -14,6 +14,9 @@ export class Tag {
   @Expose()
   name: string;
 
+  @Column({ unique: true })
+  seoLink: string;
+
   @ManyToMany(() => Tour, (tour) => tour.tags)
   tours: Tour[];
 

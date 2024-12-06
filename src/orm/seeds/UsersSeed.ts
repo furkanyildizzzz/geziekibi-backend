@@ -12,6 +12,7 @@ const seedUsers = async (dataSource: DataSource) => {
   user.password = 'test';
   user.hashPassword();
   user.role = 'ADMINISTRATOR' as Role;
+  user.seoLink = 'walter-white';
   await userRepository.save(user);
 
   user = new User();
@@ -21,6 +22,7 @@ const seedUsers = async (dataSource: DataSource) => {
   user.password = 'test';
   user.hashPassword();
   user.role = 'STANDARD' as Role;
+  user.seoLink = 'jesse-pinkman';
   await userRepository.save(user);
 
   user = new User();
@@ -29,6 +31,7 @@ const seedUsers = async (dataSource: DataSource) => {
   user.email = 'skyler.white@test.com';
   user.password = 'test';
   user.hashPassword();
+  user.seoLink = 'skyler-white';
   await userRepository.save(user);
 
   console.log('All users have been seeded!');

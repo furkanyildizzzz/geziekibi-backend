@@ -10,12 +10,14 @@ import { v2 } from 'cloudinary';
 import { IBlogCategoryService } from '../interfaces/IBlogCategoryService';
 import { IBlogCategoryRepository } from '../interfaces/IBlogCategoryRepository';
 import { BlogCategory } from 'orm/entities/blog/BlogCategory';
+import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 
 @injectable()
 export class BlogCategoryService implements IBlogCategoryService {
   constructor(
     @inject(INTERFACE_TYPE.IBlogCategoryRepository) private readonly repository: IBlogCategoryRepository,
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
+    @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
   ) {}
 
   public async getAll(): Promise<BlogCategorySuccessDto[]> {
@@ -36,12 +38,27 @@ export class BlogCategoryService implements IBlogCategoryService {
       enableCircularCheck: true,
     });
   }
+
+  public async getBySeoLink(seoLink: string): Promise<BlogCategorySuccessDto> {
+    const blogCategory = await this.repository.getBySeoLink(seoLink);
+    if (!blogCategory) throw new NotFoundException(`Blog Category with seoLink:${seoLink} not found`);
+    return plainToInstance(BlogCategorySuccessDto, blogCategory, {
+      excludeExtraneousValues: true,
+      enableCircularCheck: true,
+    });
+  }
+
   public async createBlogCategory(blogCategoryData: CreateBlogCategoryDto): Promise<BlogCategorySuccessDto> {
     console.log({ parentId: blogCategoryData.parentId });
     const newBlogCategory = new BlogCategory();
     const blogCategory = await this.repository.getByName(blogCategoryData.name);
     if (blogCategory) throw new BadRequestException(`Blog Category '${blogCategoryData.name}' is already exists`);
     newBlogCategory.name = blogCategoryData.name;
+    newBlogCategory.seoLink = await this.seoLinkService.generateUniqueSeoLink(
+      blogCategoryData.name,
+      'blogCategory',
+      newBlogCategory.id,
+    );
 
     if (blogCategoryData.parentId > 0) {
       const parentBlogCategory = await this.repository.getById(blogCategoryData.parentId);
@@ -71,6 +88,11 @@ export class BlogCategoryService implements IBlogCategoryService {
           throw new BadRequestException(`Blog Category '${blogCategoryData.name}' is already exists`);
       }
       blogCategory.name = blogCategoryData.name;
+      blogCategory.seoLink = await this.seoLinkService.generateUniqueSeoLink(
+        blogCategoryData.name,
+        'blogCategory',
+        blogCategory.id,
+      );
 
       if (blogCategoryData.parentId) {
         const parentBlogCategory = await this.repository.getById(blogCategoryData.parentId);

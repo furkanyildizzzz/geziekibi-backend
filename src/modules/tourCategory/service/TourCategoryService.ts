@@ -10,12 +10,14 @@ import { TourCategory } from 'orm/entities/tour/TourCategory';
 import { Image } from 'orm/entities/image/Image';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import { v2 } from 'cloudinary';
+import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 
 @injectable()
 export class TourCategoryService implements ITourCategoryService {
   constructor(
     @inject(INTERFACE_TYPE.ITourCategoryRepository) private readonly repository: ITourCategoryRepository,
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
+    @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
   ) {}
 
   public async getAll(): Promise<TourCategorySuccessDto[]> {
@@ -36,12 +38,27 @@ export class TourCategoryService implements ITourCategoryService {
       enableCircularCheck: true,
     });
   }
+
+  public async getBySeoLink(seoLink: string): Promise<TourCategorySuccessDto> {
+    const tourCategory = await this.repository.getBySeoLink(seoLink);
+    if (!tourCategory) throw new NotFoundException(`Tour Category with seoLink:${seoLink} not found`);
+    return plainToInstance(TourCategorySuccessDto, tourCategory, {
+      excludeExtraneousValues: true,
+      enableCircularCheck: true,
+    });
+  }
+
   public async createTourCategory(tourCategoryData: CreateTourCategoryDto): Promise<TourCategorySuccessDto> {
     console.log({ parentId: tourCategoryData.parentId });
     const newTourCategory = new TourCategory();
     const tourCategory = await this.repository.getByName(tourCategoryData.name);
     if (tourCategory) throw new BadRequestException(`Tour Category '${tourCategoryData.name}' is already exists`);
     newTourCategory.name = tourCategoryData.name;
+    newTourCategory.seoLink = await this.seoLinkService.generateUniqueSeoLink(
+      tourCategoryData.name,
+      'tourCategory',
+      newTourCategory.id,
+    );
 
     if (tourCategoryData.parentId > 0) {
       const parentTourCategory = await this.repository.getById(tourCategoryData.parentId);
@@ -71,6 +88,11 @@ export class TourCategoryService implements ITourCategoryService {
           throw new BadRequestException(`Tour Category '${tourCategoryData.name}' is already exists`);
       }
       tourCategory.name = tourCategoryData.name;
+      tourCategory.seoLink = await this.seoLinkService.generateUniqueSeoLink(
+        tourCategoryData.name,
+        'tourCategory',
+        tourCategory.id,
+      );
 
       if (tourCategoryData.parentId) {
         const parentTourCategory = await this.repository.getById(tourCategoryData.parentId);

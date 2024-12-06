@@ -1,6 +1,7 @@
 import { Tag } from 'orm/entities/tag/Tag';
 import { Role } from 'orm/entities/users/types';
 import { User } from 'orm/entities/users/User';
+import { generateUniqueSeoLink } from 'shared/utils/generateSeoLink';
 import { DataSource } from 'typeorm';
 
 const seedTags = async (dataSource: DataSource) => {
@@ -77,6 +78,7 @@ const seedTags = async (dataSource: DataSource) => {
   for (const tagName of tags) {
     const tag = new Tag();
     tag.name = tagName;
+    tag.seoLink = await generateUniqueSeoLink(tag.name, 'tag');
     await tagRepository.save(tag);
   }
 

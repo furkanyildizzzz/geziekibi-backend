@@ -30,6 +30,18 @@ export class TourCategoryRepository implements ITourCategoryRepository {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
+  public async getBySeoLink(seoLink: string): Promise<TourCategory | void> {
+    try {
+      const repo = await this.unitOfWork.getRepository(TourCategory);
+      const tourCategory = await repo.findOne({
+        where: { seoLink: seoLink },
+        relations: ['parent', 'subCategories', 'primaryImages'],
+      });
+      if (tourCategory) return tourCategory as TourCategory;
+    } catch (error) {
+      throw new InternalServerErrorException(`${error.message}`);
+    }
+  }
   public async getByName(name: string): Promise<TourCategory | void> {
     try {
       const repo = await this.unitOfWork.getRepository(TourCategory);

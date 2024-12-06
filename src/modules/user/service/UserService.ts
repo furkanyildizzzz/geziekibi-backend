@@ -41,6 +41,15 @@ export class UserService implements IUserService {
     });
   }
 
+  public async getBySeoLink(seoLink: string): Promise<UserDto> {
+    const user = await this.repository.getBySeoLink(seoLink);
+    if (!user) throw new NotFoundException(`User with seoLink:${seoLink} not found`);
+    return plainToInstance(UserDto, user, {
+      excludeExtraneousValues: true,
+      enableCircularCheck: true,
+    });
+  }
+
   public async getUserEditProfile(id: number): Promise<UserProfileDto> {
     const user = await this.repository.getById(Number(id));
     if (!user) throw new NotFoundException(`User with id:${id} not found`);

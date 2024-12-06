@@ -57,6 +57,9 @@ export class User {
   @UpdateDateColumn()
   updated_at: Date;
 
+  @Column({ unique: true })
+  seoLink: string;
+
   // One-to-Many relationship with Image (A user can upload multiple images)
   @OneToOne(() => Image, (image) => image.user, { cascade: true })
   profileImage: Image;

@@ -16,12 +16,14 @@ import { BlogCategory } from 'orm/entities/blog/BlogCategory';
 import { v2 } from 'cloudinary';
 import { Image } from 'orm/entities/image/Image';
 import { Blog } from 'orm/entities/blog/Blog';
+import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 
 @injectable()
 export class BlogService implements IBlogService {
   constructor(
     @inject(INTERFACE_TYPE.IBlogRepository) private readonly repository: IBlogRepository,
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
+    @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
   ) {}
 
   public async getAll(): Promise<BlogListDto[]> {
@@ -37,6 +39,15 @@ export class BlogService implements IBlogService {
   public async getById(id: string): Promise<BlogDto> {
     const blog = await this.repository.getById(Number(id));
     if (!blog) throw new NotFoundException(`Blog with id:${id} not found`);
+    return plainToInstance(BlogDto, blog, {
+      excludeExtraneousValues: true,
+      enableCircularCheck: true,
+    });
+  }
+
+  public async getBySeoLink(seoLink: string): Promise<BlogDto> {
+    const blog = await this.repository.getBySeoLink(seoLink);
+    if (!blog) throw new NotFoundException(`Blog with seoLink:${seoLink} not found`);
     return plainToInstance(BlogDto, blog, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -70,6 +81,7 @@ export class BlogService implements IBlogService {
       blog.language = blogData.language;
       blog.publishStatus = blogData.publishStatus;
       blog.publishDate = new Date(blogData.publishDate);
+      blog.seoLink = await this.seoLinkService.generateUniqueSeoLink(blogData.title, 'blog', blog.id);
 
       blog.category = category;
 
@@ -156,6 +168,7 @@ export class BlogService implements IBlogService {
       blog.language = blogData.language;
       blog.publishStatus = blogData.publishStatus;
       blog.publishDate = new Date(blogData.publishDate);
+      blog.seoLink = await this.seoLinkService.generateUniqueSeoLink(blogData.title, 'blog', blog.id);
 
       blog.category = category;
 

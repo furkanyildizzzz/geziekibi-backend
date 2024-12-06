@@ -10,6 +10,7 @@ import { TourDailyVisitingPlace } from 'orm/entities/tour/TourDailyVisitingPlace
 import { TourDate } from 'orm/entities/tour/TourDate';
 import TourService from 'orm/entities/tour/TourService';
 import { PublishStatus, ServiceType, TourType } from 'shared/utils/enum';
+import { generateUniqueSeoLink } from 'shared/utils/generateSeoLink';
 import { DataSource } from 'typeorm';
 
 const seedTours = async (dataSource: DataSource) => {
@@ -39,6 +40,7 @@ const DoguKaradenizTuru = async (dataSource: DataSource) => {
   tour.publishDate = new Date(today.getDate() - 2);
   tour.startDate = new Date('2024-10-10');
   tour.endDate = new Date('2024-10-14');
+  tour.seoLink = await generateUniqueSeoLink(tour.title, 'tour');
 
   tour.category = { id: 4 } as TourCategory;
   tour.tags = [{ id: 1 } as Tag, { id: 2 } as Tag, { id: 4 } as Tag, { id: 5 } as Tag];
@@ -247,6 +249,7 @@ const BatıKaradenizTuru = async (dataSource: DataSource) => {
   tour.publishDate = new Date(today.getDate() - 20);
   tour.startDate = new Date('2024-10-10');
   tour.endDate = new Date('2024-10-13');
+  tour.seoLink = await generateUniqueSeoLink(tour.title, 'tour');
 
   tour.category = { id: 3 } as TourCategory;
   tour.tags = [{ id: 1 } as Tag, { id: 2 } as Tag, { id: 4 } as Tag, { id: 5 } as Tag];
@@ -419,6 +422,7 @@ const UrfaTuru = async (dataSource: DataSource) => {
   tour.publishDate = new Date(today.getDate() - 10);
   tour.startDate = new Date('2024-10-10');
   tour.endDate = new Date('2024-10-12');
+  tour.seoLink = await generateUniqueSeoLink(tour.title, 'tour');
 
   tour.category = { id: 8 } as TourCategory;
   tour.tags = [
@@ -610,6 +614,7 @@ const KapadokyaTuru = async (dataSource: DataSource) => {
   tour.publishDate = new Date(today.getDate() - 20);
   tour.startDate = new Date('2024-10-10');
   tour.endDate = new Date('2024-10-13');
+  tour.seoLink = await generateUniqueSeoLink(tour.title, 'tour');
 
   tour.category = { id: 13 } as TourCategory;
   tour.tags = [{ id: 1 } as Tag, { id: 2 } as Tag, { id: 4 } as Tag, { id: 5 } as Tag];
@@ -781,6 +786,7 @@ const KuzeyEgeTuru = async (dataSource: DataSource) => {
   tour.publishDate = new Date(today.getDate() - 2);
   tour.startDate = new Date('2024-10-10');
   tour.endDate = new Date('2024-10-13');
+  tour.seoLink = await generateUniqueSeoLink(tour.title, 'tour');
 
   tour.category = { id: 5 } as TourCategory;
   tour.tags = [{ id: 1 } as Tag, { id: 2 } as Tag, { id: 4 } as Tag, { id: 5 } as Tag];
@@ -990,6 +996,7 @@ const GuneyDoguTuru = async (dataSource: DataSource) => {
   tour.publishDate = new Date(today.getDate() - 10);
   tour.startDate = new Date('2024-10-10');
   tour.endDate = new Date('2024-10-12');
+  tour.seoLink = await generateUniqueSeoLink(tour.title, 'tour');
 
   tour.category = { id: 8 } as TourCategory;
   tour.tags = [
@@ -1217,6 +1224,7 @@ const AnkaraEskisehirTuru = async (dataSource: DataSource) => {
   tour.publishDate = new Date(today.getDate() - 10);
   tour.startDate = new Date('2024-10-10');
   tour.endDate = new Date('2024-10-12');
+  tour.seoLink = await generateUniqueSeoLink(tour.title, 'tour');
 
   tour.category = { id: 8 } as TourCategory;
   tour.tags = [{ id: 31 } as Tag, { id: 20 } as Tag];
@@ -1414,6 +1422,7 @@ const OrtaAvrupaBalkanTuru = async (dataSource: DataSource) => {
   tour.publishDate = new Date(today.getDate());
   tour.startDate = new Date('2024-07-14');
   tour.endDate = new Date('2024-07-24');
+  tour.seoLink = await generateUniqueSeoLink(tour.title, 'tour');
 
   tour.category = { id: 14 } as TourCategory;
   tour.tags = [{ id: 3 } as Tag, { id: 4 } as Tag];

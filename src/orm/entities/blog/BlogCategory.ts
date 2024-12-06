@@ -20,6 +20,9 @@ export class BlogCategory {
   @OneToMany(() => Blog, (blog) => blog.category)
   blogs: Blog[];
 
+  @Column({ unique: true })
+  seoLink: string;
+
   // Self-referencing relationship to represent the master category
   @ManyToOne(() => BlogCategory, (category) => category.subCategories, { nullable: true, onDelete: 'SET NULL' })
   @Expose()

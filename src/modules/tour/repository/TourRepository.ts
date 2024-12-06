@@ -42,6 +42,31 @@ export class TourRepository implements ITourRepository {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
+
+  public async getBySeoLink(seoLink: string): Promise<Tour | void> {
+    try {
+      const repo = await this.unitOfWork.getRepository(Tour);
+      const tour = await repo.findOne({
+        where: { seoLink: seoLink },
+        relations: [
+          'tags',
+          'dates',
+          'dates.prices',
+          'category',
+          'tourServices',
+          'primaryImages',
+          'galleryImages',
+          'tourServices.service',
+          'dailyForms',
+          'dailyForms.dailyPaths',
+          'dailyForms.dailyVisitingPlaces',
+        ],
+      });
+      if (tour) return tour as Tour;
+    } catch (error) {
+      throw new InternalServerErrorException(`${error.message}`);
+    }
+  }
   public async save(newTour: Tour): Promise<Tour> {
     try {
       await this.unitOfWork.startTransaction();

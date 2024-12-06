@@ -9,12 +9,14 @@ import { Image } from 'orm/entities/image/Image';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import uploadStream from 'shared/services/uploadStream';
 import { UpdateCatalogDto } from '../dto/UpdateCatalogDto';
+import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 
 @injectable()
 export class CatalogService implements ICatalogService {
   constructor(
     @inject(INTERFACE_TYPE.ICatalogRepository) private readonly repository: ICatalogRepository,
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
+    @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
   ) {}
 
   public async getAll(): Promise<Catalog[]> {
@@ -30,6 +32,15 @@ export class CatalogService implements ICatalogService {
   public async getById(id: string): Promise<Catalog> {
     const tourCategory = await this.repository.getById(Number(id));
     if (!tourCategory) throw new NotFoundException(`Catalog with id:${id} not found`);
+    return plainToInstance(Catalog, tourCategory, {
+      excludeExtraneousValues: true,
+      enableCircularCheck: true,
+    });
+  }
+
+  public async getBySeoLink(seoLink: string): Promise<Catalog> {
+    const tourCategory = await this.repository.getBySeoLink(seoLink);
+    if (!tourCategory) throw new NotFoundException(`Catalog with seoLink:${seoLink} not found`);
     return plainToInstance(Catalog, tourCategory, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -58,6 +69,11 @@ export class CatalogService implements ICatalogService {
         console.log({ result });
         const newCatalog = new Catalog();
         newCatalog.originalName = file.originalname;
+        newCatalog.seoLink = await this.seoLinkService.generateUniqueSeoLink(
+          file.originalname,
+          'catalog',
+          newCatalog.id,
+        );
         newCatalog.publicId = result.public_id;
         newCatalog.url = result.url;
         newCatalog.secureUrl = result.secure_url;
@@ -88,7 +104,11 @@ export class CatalogService implements ICatalogService {
       catalog.originalName = catalogData.originalName;
       catalog.publishDate = new Date(catalogData.publishDate);
       catalog.publishStatus = catalogData.publishStatus;
-
+      catalog.seoLink = await this.seoLinkService.generateUniqueSeoLink(
+        catalogData.originalName,
+        'catalog',
+        catalog.id,
+      );
       await this.repository.update(Number(id), catalog);
 
       return catalog;

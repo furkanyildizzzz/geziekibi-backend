@@ -6,6 +6,7 @@ import seedTourCategories from './TourCategoriesSeed';
 import seedTourServices from './TourServicesSeed';
 import seedTags from './TagsSeed';
 import seedTours from './ToursSeed';
+import seedBlogs from './BlogsSeed';
 
 const runSeeder = async () => {
   try {
@@ -32,6 +33,9 @@ const runSeeder = async () => {
 
     console.log('Seeding tours ...');
     await seedTours(AppDataSource);
+
+    console.log('Seeding blogs ...');
+    await seedBlogs(AppDataSource);
 
     console.log('Seeding completed!');
     await AppDataSource.destroy();

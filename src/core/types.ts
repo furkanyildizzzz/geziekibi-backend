@@ -43,4 +43,6 @@ export const INTERFACE_TYPE = {
   HomepageController: Symbol.for('HomepageController'),
   IHomepageService: Symbol.for('IHomepageService'),
   IHomepageRepository: Symbol.for('IHomepageRepository'),
+  SeoLinkService: Symbol.for('SeoLinkService'),
+  ISeoLinkService: Symbol.for('ISeoLinkService'),
 };

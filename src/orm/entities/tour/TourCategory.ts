@@ -17,6 +17,9 @@ export class TourCategory {
   @Expose()
   description: string;
 
+  @Column({ unique: true })
+  seoLink: string;
+
   @OneToMany(() => Tour, (tour) => tour.category)
   tours: Tour[];
 

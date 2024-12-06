@@ -79,6 +79,8 @@ import { CatalogController } from 'modules/catalog/controller/CatalogController'
 import { IHomepageService } from 'modules/website-modules/homepage/interfaces/IHomepageService';
 import { HomepageService } from 'modules/website-modules/homepage/service/HomepageService';
 import { HomepageController } from 'modules/website-modules/homepage/controller/HomepageController';
+import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
+import { SeoLinkService } from 'shared/services/SeoLinkService';
 
 const container = new Container();
 
@@ -141,4 +143,5 @@ container.bind(INTERFACE_TYPE.CatalogController).to(CatalogController);
 container.bind<IHomepageService>(INTERFACE_TYPE.IHomepageService).to(HomepageService);
 container.bind(INTERFACE_TYPE.HomepageController).to(HomepageController);
 
+container.bind<ISeoLinkService>(INTERFACE_TYPE.ISeoLinkService).to(SeoLinkService);
 export default container;

@@ -30,6 +30,18 @@ export class UserRepository implements IUserRepository {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
+  public async getBySeoLink(seoLink: string): Promise<User | void> {
+    try {
+      const repo = await this.unitOfWork.getRepository(User);
+      const user = await repo.findOne({
+        where: { seoLink: seoLink },
+        relations: ['profileImage', 'address'],
+      });
+      if (user) return user as User;
+    } catch (error) {
+      throw new InternalServerErrorException(`${error.message}`);
+    }
+  }
   public async save(user: User): Promise<User> {
     try {
       await this.unitOfWork.startTransaction();

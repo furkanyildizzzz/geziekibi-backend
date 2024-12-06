@@ -9,6 +9,7 @@ import { DeleteProfileImageDto } from '../dto/DeleteProfileImageDto';
 export interface IUserService {
   getAll(): Promise<UserListDto[]>;
   getById(id: string): Promise<UserDto>;
+  getBySeoLink(seoLink: string): Promise<UserDto>;
   getUserEditProfile(id: number): Promise<UserProfileDto>;
   updateUserProfile(id: number, userData: UserEditProfileDto): Promise<UserProfileDto>;
   changePassword(id: number, data: ChangePasswordDto): Promise<void>;

@@ -79,6 +79,9 @@ export class Tour {
   @Expose()
   updated_at: Date;
 
+  @Column({ unique: true })
+  seoLink: string;
+
   @ManyToMany(() => Tag, (tag) => tag.tours, { cascade: true })
   @JoinTable()
   @Expose()

@@ -30,6 +30,18 @@ export class BlogRepository implements IBlogRepository {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
+  public async getBySeoLink(seoLink: string): Promise<Blog | void> {
+    try {
+      const repo = await this.unitOfWork.getRepository(Blog);
+      const blog = await repo.findOne({
+        where: { seoLink: seoLink },
+        relations: ['tags', 'category', 'primaryImages'],
+      });
+      if (blog) return blog as Blog;
+    } catch (error) {
+      throw new InternalServerErrorException(`${error.message}`);
+    }
+  }
   public async save(newBlog: Blog): Promise<Blog> {
     try {
       await this.unitOfWork.startTransaction();
