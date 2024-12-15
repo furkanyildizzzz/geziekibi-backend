@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Tour } from './Tour';
 import { TourService } from './TourService';
 import { Expose } from 'class-transformer';
@@ -34,6 +34,7 @@ export class TourDaily {
   })
   dailyVisitingPlaces: TourDailyVisitingPlace[]; // Users can add as many daily paths as they want
 
+  @Index()
   @ManyToOne(() => Tour, (tour) => tour.dailyForms, { onDelete: 'CASCADE' })
   tour: Tour; // Each daily path belongs to one tour
 }

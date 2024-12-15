@@ -47,22 +47,6 @@ export class TourRepositoryWeb implements ITourRepositoryWeb {
   public async getBySeoLink(seoLink: string): Promise<Tour | void> {
     try {
       const repo = await this.unitOfWork.getRepository(Tour);
-      // const tour = await repo.findOne({
-      //   where: { seoLink: seoLink },
-      //   relations: [
-      //     'tags',
-      //     'dates',
-      //     'dates.prices',
-      //     'category',
-      //     'tourServices',
-      //     'primaryImages',
-      //     'galleryImages',
-      //     'tourServices.service',
-      //     'dailyForms',
-      //     'dailyForms.dailyPaths',
-      //      'dailyForms.dailyVisitingPlaces',
-      //   ],
-      // });
       const tour = await repo
         .createQueryBuilder('tour')
         .leftJoinAndSelect('tour.tags', 'tags')
@@ -76,7 +60,8 @@ export class TourRepositoryWeb implements ITourRepositoryWeb {
         .leftJoinAndSelect('dailyForms.dailyVisitingPlaces', 'dailyVisitingPlaces')
         .leftJoinAndSelect('tour.primaryImages', 'primaryImages')
         .leftJoinAndSelect('tour.galleryImages', 'galleryImages')
-        .where('tour.seoLink = :seoLink', { seoLink })
+        .where(`tour.seoLink = '${seoLink}'`)
+        .limit(1)
         .getOne();
 
       if (tour) return tour as Tour;

@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -79,6 +80,7 @@ export class Tour {
   @Expose()
   updated_at: Date;
 
+  @Index()
   @Column({ unique: true })
   seoLink: string;
 
