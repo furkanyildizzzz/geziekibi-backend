@@ -12,6 +12,9 @@ export class FeaturedTourDto {
   title: string;
 
   @Expose()
+  seoLink: string;
+
+  @Expose()
   tourType: TourType;
 
   @Expose()
@@ -44,6 +47,9 @@ export class CategoryDto {
   name: string;
   @Expose()
   description: string;
+  @Expose()
+  seoLink: string;
+
   @Expose()
   @Type(() => CategoryDto) // Transform the parent property
   parent: CategoryDto;

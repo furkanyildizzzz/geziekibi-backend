@@ -115,6 +115,6 @@ export class Tour {
   @Expose()
   tourServices: TourService[];
 
-  @OneToMany(() => TourDaily, (dailyPath) => dailyPath.tour, { cascade: true })
+  @OneToMany(() => TourDaily, (dailyForm) => dailyForm.tour, { cascade: true })
   dailyForms: TourDaily[]; // A tour can have many daily paths
 }

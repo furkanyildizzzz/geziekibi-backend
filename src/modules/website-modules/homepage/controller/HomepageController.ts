@@ -23,4 +23,15 @@ export class HomepageController {
     const topTours = await this.service.getTopTours();
     return res.customSuccess(200, 'Top Tours', topTours);
   }
+  @httpGet('/blogs')
+  public async getBlogs(req: Request, res: Response, next: NextFunction) {
+    const blogs = await this.service.getBlogs();
+    return res.customSuccess(200, 'Blogs', blogs);
+  }
+
+  @httpGet('/dailyPaths')
+  public async getDailyPaths(req: Request, res: Response, next: NextFunction) {
+    const dailyPaths = await this.service.getDailyPaths();
+    return res.customSuccess(200, 'Blogs', dailyPaths);
+  }
 }

@@ -81,6 +81,14 @@ import { HomepageService } from 'modules/website-modules/homepage/service/Homepa
 import { HomepageController } from 'modules/website-modules/homepage/controller/HomepageController';
 import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 import { SeoLinkService } from 'shared/services/SeoLinkService';
+import { IBlogServiceWeb } from 'modules/website-modules/blog/interfaces/IBlogServiceWeb';
+import { BlogServiceWeb } from 'modules/website-modules/blog/service/BlogServiceWeb';
+import { BlogControllerWeb } from 'modules/website-modules/blog/controller/BlogControllerWeb';
+import { ITourServiceWeb } from 'modules/website-modules/tour/interfaces/ITourServiceWeb';
+import { TourControllerWeb } from 'modules/website-modules/tour/controller/TourControllerWeb';
+import { TourServiceWeb } from 'modules/website-modules/tour/service/TourServiceWeb';
+import { ITourRepositoryWeb } from 'modules/website-modules/tour/interfaces/ITourRepositoryWeb';
+import { TourRepositoryWeb } from 'modules/website-modules/tour/repository/TourRepositoryWeb';
 
 const container = new Container();
 
@@ -144,4 +152,11 @@ container.bind<IHomepageService>(INTERFACE_TYPE.IHomepageService).to(HomepageSer
 container.bind(INTERFACE_TYPE.HomepageController).to(HomepageController);
 
 container.bind<ISeoLinkService>(INTERFACE_TYPE.ISeoLinkService).to(SeoLinkService);
+
+container.bind<IBlogServiceWeb>(INTERFACE_TYPE.IBlogServiceWeb).to(BlogServiceWeb);
+container.bind(INTERFACE_TYPE.BlogControllerWeb).to(BlogControllerWeb);
+
+container.bind<ITourRepositoryWeb>(INTERFACE_TYPE.ITourRepositoryWeb).to(TourRepositoryWeb);
+container.bind<ITourServiceWeb>(INTERFACE_TYPE.ITourServiceWeb).to(TourServiceWeb);
+container.bind(INTERFACE_TYPE.TourControllerWeb).to(TourControllerWeb);
 export default container;
