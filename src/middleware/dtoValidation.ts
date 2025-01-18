@@ -63,6 +63,7 @@ export const DtoValidationMiddleware = (type: any, skipMissingProperties = false
         req.body.galleryImages = [];
       }
     }
+    console.log('I am here!');
     const dtoObj = plainToInstance(type, req.body);
     validate(dtoObj, { skipMissingProperties }).then((errors: ValidationError[]) => {
       if (errors.length > 0) {

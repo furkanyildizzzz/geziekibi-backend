@@ -21,22 +21,23 @@ export class TourRepository implements ITourRepository {
   public async getById(id: number): Promise<Tour | void> {
     try {
       const repo = await this.unitOfWork.getRepository(Tour);
-      const tour = await repo.findOne({
-        where: { id: id },
-        relations: [
-          'tags',
-          'dates',
-          'dates.prices',
-          'category',
-          'tourServices',
-          'primaryImages',
-          'galleryImages',
-          'tourServices.service',
-          'dailyForms',
-          'dailyForms.dailyPaths',
-          'dailyForms.dailyVisitingPlaces',
-        ],
-      });
+      const tour = await repo
+        .createQueryBuilder('tour')
+        .leftJoinAndSelect('tour.tags', 'tags')
+        .leftJoinAndSelect('tour.dates', 'dates')
+        .leftJoinAndSelect('dates.prices', 'prices')
+        .leftJoinAndSelect('tour.category', 'category')
+        .leftJoinAndSelect('tour.tourServices', 'tourServices')
+        .leftJoinAndSelect('tourServices.service', 'service')
+        .leftJoinAndSelect('tour.primaryImages', 'primaryImages')
+        .leftJoinAndSelect('tour.galleryImages', 'galleryImages')
+        .leftJoinAndSelect('tour.dailyForms', 'dailyForms')
+        .leftJoinAndSelect('dailyForms.dailyPaths', 'dailyPaths')
+        .leftJoinAndSelect('dailyForms.dailyVisitingPlaces', 'dailyVisitingPlaces')
+        .where('tour.id = :id', { id })
+        .orderBy('dailyForms.id', 'ASC') // Order by dailyForms id
+        .getOne();
+
       if (tour) return tour as Tour;
     } catch (error) {
       throw new InternalServerErrorException(`${error.message}`);

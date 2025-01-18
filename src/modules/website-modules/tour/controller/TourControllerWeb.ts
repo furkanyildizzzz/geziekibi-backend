@@ -10,7 +10,8 @@ export class TourControllerWeb {
 
   @httpGet('/')
   public async getAll(req: Request, res: Response, next: NextFunction) {
-    const tours = await this.service.getAll();
+    const { categoryId } = req.query;
+    const tours = await this.service.getAll(categoryId as string);
     return res.customSuccess(200, 'Tours', tours);
   }
 
@@ -18,5 +19,17 @@ export class TourControllerWeb {
   public async getBySeoLink(req: Request, res: Response, next: NextFunction) {
     const tour = await this.service.getBySeoLink(req.params.seoLink);
     return res.customSuccess(200, 'Tour found', tour);
+  }
+
+  @httpGet('/category/:seoLink')
+  public async getCategoryBySeoLink(req: Request, res: Response, next: NextFunction) {
+    const tour = await this.service.getCategoryBySeoLink(req.params.seoLink);
+    return res.customSuccess(200, 'Tour Category found', tour);
+  }
+
+  @httpPost('/search')
+  public async searchTour(req: Request, res: Response, next: NextFunction) {
+    const tours = await this.service.searchTours(req.body);
+    return res.customSuccess(200, 'Tours', tours);
   }
 }

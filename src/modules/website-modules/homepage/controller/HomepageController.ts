@@ -1,8 +1,11 @@
 import { INTERFACE_TYPE } from 'core/types';
 import { inject } from 'inversify';
 import { IHomepageService } from '../interfaces/IHomepageService';
-import { controller, httpGet } from 'inversify-express-utils';
+import { controller, httpGet, httpPost } from 'inversify-express-utils';
 import { NextFunction, Request, Response } from 'express';
+import { StaticPageType } from 'shared/utils/enum';
+import { DtoValidationMiddleware } from 'middleware/dtoValidation';
+import { CreateContactFormDto } from '../dto/CreateContactFormDto';
 
 @controller('/website/homepage')
 export class HomepageController {
@@ -33,5 +36,17 @@ export class HomepageController {
   public async getDailyPaths(req: Request, res: Response, next: NextFunction) {
     const dailyPaths = await this.service.getDailyPaths();
     return res.customSuccess(200, 'Blogs', dailyPaths);
+  }
+
+  @httpGet('/staticPage/:pageType')
+  public async getBySeoLink(req: Request, res: Response, next: NextFunction) {
+    const staticPage = await this.service.getStaticPage(req.params.pageType as StaticPageType);
+    return res.customSuccess(200, 'Static page found', staticPage);
+  }
+
+  @httpPost('/contactForm/', DtoValidationMiddleware(CreateContactFormDto))
+  public async create(req: Request, res: Response, next: NextFunction) {
+    const contactForm = await this.service.createContactForm(req.body);
+    return res.customSuccess(200, 'Contact form saved successfully', contactForm);
   }
 }

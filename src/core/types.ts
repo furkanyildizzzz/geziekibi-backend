@@ -50,4 +50,7 @@ export const INTERFACE_TYPE = {
   TourControllerWeb: Symbol.for('TourControllerWeb'),
   ITourServiceWeb: Symbol.for('ITourServiceWeb'),
   ITourRepositoryWeb: Symbol.for('ITourRepositoryWeb'),
+  ContactFormController: Symbol.for('ContactFormController'),
+  IContactFormService: Symbol.for('IContactFormService'),
+  IContactFormRepository: Symbol.for('IContactFormRepository'),
 };

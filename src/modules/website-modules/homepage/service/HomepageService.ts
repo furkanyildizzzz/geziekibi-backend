@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { CategoryDto, FeaturedTourDto } from '../dto/FeaturedTourDto';
+import { FeaturedCategoryDto, FeaturedTourDto } from '../dto/FeaturedTourDto';
 import { IHomepageService } from '../interfaces/IHomepageService';
 import { INTERFACE_TYPE } from 'core/types';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
@@ -8,11 +8,17 @@ import { IsNull, LessThan, LessThanOrEqual } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import tourFunctions from 'shared/utils/tourFunctions';
 import { TourCategory } from 'orm/entities/tour/TourCategory';
-import { PublishStatus } from 'shared/utils/enum';
+import { PublishStatus, StaticPageType } from 'shared/utils/enum';
 import { BlogDto } from '../dto/BlogDto';
 import { Blog } from 'orm/entities/blog/Blog';
 import { DailyPathDto } from '../dto/DailyPathDto';
 import { TourDailyPath } from 'orm/entities/tour/TourDailyPath';
+import { CategoryDto } from '../dto/CategoryDto';
+import { StaticPageDto } from '../dto/StaticPageDto';
+import { StaticPage } from 'orm/entities/static-page/StaticPage';
+import { CreateContactFormDto } from '../dto/CreateContactFormDto';
+import { InternalServerErrorException } from 'shared/errors/allException';
+import { ContactForm } from 'orm/entities/contactForm/ContactForm';
 
 @injectable()
 export class HomepageService implements IHomepageService {
@@ -30,7 +36,7 @@ export class HomepageService implements IHomepageService {
         },
       },
       take: 3,
-      relations: ['dates', 'dates.prices', 'primaryImages'],
+      relations: ['dates', 'dates.prices', 'primaryImages', 'category', 'category.tours'],
     });
 
     const toursWithMostRecentDate = tours.map((tour) => {
@@ -54,6 +60,7 @@ export class HomepageService implements IHomepageService {
       featuredTour.pricePerPerson = tour.dates[0].prices[0].price;
       featuredTour.dates = tour.dates;
       featuredTour.uploadedPrimaryImages = tour.primaryImages;
+      featuredTour.category = { ...tour.category, tourCount: tour.category.tours.length };
       const { days, nights } = tourFunctions.calculateDaysAndNights(tour.startDate, tour.endDate);
       const daysAndNights = `${nights} gece/${days} gün`;
       featuredTour.daysAndNights = daysAndNights;
@@ -70,9 +77,34 @@ export class HomepageService implements IHomepageService {
   public async getCategories(): Promise<CategoryDto[]> {
     const categoryRepo = await this.unitOfWork.getRepository(TourCategory);
 
-    const categories = await categoryRepo.find({ where: { parent: IsNull() }, relations: ['parent', 'primaryImages'] });
+    const categories = await categoryRepo.find({
+      relations: ['parent', 'subCategories', 'primaryImages', 'tours', 'subCategories.tours'],
+    });
 
-    return plainToInstance(CategoryDto, categories, {
+    const calculateTourCount = (category: TourCategory): number => {
+      // Count tours in the current category
+      let tourCount =
+        category.tours === undefined || category.tours.length === 0
+          ? 0
+          : category.tours.filter((tour) => tour.publishStatus === 'publish').length;
+
+      // Add tour counts from subcategories
+      if (category.subCategories && category.subCategories.length > 0) {
+        tourCount += category.subCategories.reduce((count, subCategory) => count + calculateTourCount(subCategory), 0);
+      }
+
+      return tourCount;
+    };
+
+    const parentCategoriesWithPublishedTourCount = categories
+      .map((category) => ({
+        ...category,
+        uploadedPrimaryImages: category.primaryImages,
+        tourCount: calculateTourCount(category), // Calculate total tour count recursively
+      }))
+      .filter((s) => s.parent === null);
+
+    return plainToInstance(CategoryDto, parentCategoriesWithPublishedTourCount, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
     });
@@ -90,7 +122,7 @@ export class HomepageService implements IHomepageService {
         },
       },
       take: 6,
-      relations: ['dates', 'dates.prices', 'primaryImages'],
+      relations: ['dates', 'dates.prices', 'primaryImages', 'category', 'category.tours'],
     });
 
     const toursWithMostRecentDate = tours.map((tour) => {
@@ -114,6 +146,7 @@ export class HomepageService implements IHomepageService {
       featuredTour.pricePerPerson = tour.dates[0].prices[0].price;
       featuredTour.dates = tour.dates;
       featuredTour.uploadedPrimaryImages = tour.primaryImages;
+      featuredTour.category = { ...tour.category, tourCount: tour.category.tours.length };
 
       const { days, nights } = tourFunctions.calculateDaysAndNights(tour.startDate, tour.endDate);
       const daysAndNights = `${nights} gece/${days} gün`;
@@ -169,5 +202,34 @@ export class HomepageService implements IHomepageService {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
     });
+  }
+
+  public async getStaticPage(pageType: StaticPageType): Promise<StaticPageDto> {
+    const repo = await this.unitOfWork.getRepository(StaticPage);
+
+    const staticPage = (await repo.find({ where: { pageType: pageType } })).at(0);
+
+    return plainToInstance(StaticPageDto, staticPage, {
+      excludeExtraneousValues: true,
+      enableCircularCheck: true,
+    });
+  }
+
+  public async createContactForm(contactFormDto: CreateContactFormDto): Promise<boolean> {
+    const repo = await this.unitOfWork.getRepository(ContactForm);
+    try {
+      const contactForm = new ContactForm();
+      contactForm.firstName = contactFormDto.firstName;
+      contactForm.lastName = contactFormDto.lastName;
+      contactForm.email = contactFormDto.email;
+      contactForm.phone = contactFormDto.phone;
+      contactForm.message = contactFormDto.message;
+      contactForm.agreeToTerms = contactFormDto.agreeToTerms;
+      await repo.save(contactForm);
+
+      return true;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }

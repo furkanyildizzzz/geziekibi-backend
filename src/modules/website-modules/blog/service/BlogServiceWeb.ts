@@ -16,6 +16,7 @@ import { v2 } from 'cloudinary';
 import { Image } from 'orm/entities/image/Image';
 import { Blog } from 'orm/entities/blog/Blog';
 import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
+import { CategoryDto } from '../dto/CategoryDto';
 
 @injectable()
 export class BlogServiceWeb implements IBlogServiceWeb {
@@ -39,6 +40,41 @@ export class BlogServiceWeb implements IBlogServiceWeb {
     const blog = await this.repository.getBySeoLink(seoLink);
     if (!blog) throw new NotFoundException(`Blog with seoLink:${seoLink} not found`);
     return plainToInstance(BlogDtoWeb, blog, {
+      excludeExtraneousValues: true,
+      enableCircularCheck: true,
+    });
+  }
+
+  public async getCategories(): Promise<CategoryDto[]> {
+    const categoryRepo = await this.unitOfWork.getRepository(BlogCategory);
+    const categories = await categoryRepo.find({
+      relations: ['parent', 'subCategories', 'primaryImages', 'blogs', 'subCategories.blogs'],
+    });
+
+    const calculateBlogCount = (category: BlogCategory): number => {
+      // Count blogs in the current category
+      let blogCount =
+        category.blogs === undefined || category.blogs.length === 0
+          ? 0
+          : category.blogs.filter((blog) => blog.publishStatus === 'publish').length;
+
+      // Add tour counts from subcategories
+      if (category.subCategories && category.subCategories.length > 0) {
+        blogCount += category.subCategories.reduce((count, subCategory) => count + calculateBlogCount(subCategory), 0);
+      }
+
+      return blogCount;
+    };
+
+    const parentCategoriesWithPublishedBlogCount = categories
+      .map((category) => ({
+        ...category,
+        uploadedPrimaryImages: category.primaryImages,
+        blogCount: calculateBlogCount(category), // Calculate total tour count recursively
+      }))
+      .filter((s) => s.parent === null);
+
+    return plainToInstance(CategoryDto, parentCategoriesWithPublishedBlogCount, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
     });

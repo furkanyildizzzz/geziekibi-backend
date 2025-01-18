@@ -1,34 +1,22 @@
 import { Expose, Type } from 'class-transformer';
 import { Image } from 'orm/entities/image/Image';
 import { TourCategory } from 'orm/entities/tour/TourCategory';
+import { TourDate } from 'orm/entities/tour/TourDate';
 import { TourPrice } from 'orm/entities/tour/TourPrice';
 import { TourType } from 'shared/utils/enum';
 
 export class TourListDtoWeb {
   @Expose()
   id: number;
+
   @Expose()
   title: string;
+
   @Expose()
-  spot: string;
+  seoLink: string;
 
   @Expose()
   tourType: TourType;
-
-  @Expose()
-  @Type(() => TourCategory)
-  category: TourCategory;
-
-  @Expose()
-  @Type(() => Image)
-  primaryImages: Image[];
-
-  @Expose()
-  @Type(() => TourPrice)
-  prices: TourPrice[];
-
-  @Expose()
-  publishStatus: string;
 
   @Expose()
   @Type(() => Date) // Ensures date fields are serialized correctly
@@ -39,6 +27,16 @@ export class TourListDtoWeb {
   endDate: Date;
 
   @Expose()
-  @Type(() => Date)
-  publishDate: Date;
+  daysAndNights: string;
+
+  @Expose()
+  pricePerPerson: number;
+
+  @Expose()
+  @Type(() => Image)
+  uploadedPrimaryImages: Image[];
+
+  @Expose()
+  @Type(() => TourDate)
+  dates: TourDate[];
 }

@@ -15,6 +15,7 @@ import { getLanguage } from 'middleware/getLanguage';
 import { cloudinaryConfig } from 'config/cloudinaryConfig';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import container from 'core/container';
+import 'modules/contactForm/controller/ContactFormController';
 
 export const server = new InversifyExpressServer(container, null, { rootPath: '/v1' });
 server.setConfig((app) => {

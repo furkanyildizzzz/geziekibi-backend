@@ -33,10 +33,20 @@ export class BlogRepositoryWeb implements IBlogRepositoryWeb {
   public async getBySeoLink(seoLink: string): Promise<Blog | void> {
     try {
       const repo = await this.unitOfWork.getRepository(Blog);
-      const blog = await repo.findOne({
-        where: { seoLink: seoLink },
-        relations: ['tags', 'category', 'primaryImages'],
-      });
+      // const blog = await repo.findOne({
+      //   where: { seoLink: seoLink },
+      //   relations: ['tags', 'category', 'primaryImages'],
+      // });
+
+      const blog = await repo
+        .createQueryBuilder('blog')
+        .leftJoinAndSelect('blog.tags', 'tags')
+        .leftJoinAndSelect('blog.category', 'category')
+        .leftJoinAndSelect('blog.primaryImages', 'primaryImages')
+        .where(`blog.seoLink = '${seoLink}'`)
+        .limit(1)
+        .getOne();
+
       if (blog) return blog as Blog;
     } catch (error) {
       throw new InternalServerErrorException(`${error.message}`);

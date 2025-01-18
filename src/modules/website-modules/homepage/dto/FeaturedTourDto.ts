@@ -4,6 +4,19 @@ import { TourCategory } from 'orm/entities/tour/TourCategory';
 import { TourDate } from 'orm/entities/tour/TourDate';
 import { TourType } from 'shared/utils/enum';
 
+export class FeaturedCategoryDto {
+  @Expose()
+  id: number;
+  @Expose()
+  name: string;
+  @Expose()
+  description: string;
+  @Expose()
+  seoLink: string;
+  @Expose()
+  tourCount: number;
+}
+
 export class FeaturedTourDto {
   @Expose()
   id: number;
@@ -38,27 +51,8 @@ export class FeaturedTourDto {
   @Expose()
   @Type(() => TourDate)
   dates: TourDate[];
-}
-
-export class CategoryDto {
-  @Expose()
-  id: number;
-  @Expose()
-  name: string;
-  @Expose()
-  description: string;
-  @Expose()
-  seoLink: string;
 
   @Expose()
-  @Type(() => CategoryDto) // Transform the parent property
-  parent: CategoryDto;
-
-  //@Expose()
-  @Type(() => CategoryDto) // Transform the subCategories property
-  subCategories: CategoryDto[];
-
-  @Expose({ name: 'primaryImages' })
-  @Type(() => Image)
-  uploadedPrimaryImages: Image[];
+  @Type(() => FeaturedCategoryDto)
+  category: FeaturedCategoryDto;
 }

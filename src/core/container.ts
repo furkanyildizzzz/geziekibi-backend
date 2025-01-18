@@ -89,6 +89,11 @@ import { TourControllerWeb } from 'modules/website-modules/tour/controller/TourC
 import { TourServiceWeb } from 'modules/website-modules/tour/service/TourServiceWeb';
 import { ITourRepositoryWeb } from 'modules/website-modules/tour/interfaces/ITourRepositoryWeb';
 import { TourRepositoryWeb } from 'modules/website-modules/tour/repository/TourRepositoryWeb';
+import { IContactFormRepository } from 'modules/contactForm/interfaces/IContactFormRepository';
+import { IContactFormService } from 'modules/contactForm/interfaces/IContactFormService';
+import { ContactFormRepository } from 'modules/contactForm/repository/ContactFormRepository';
+import { ContactFormService } from 'modules/contactForm/service/ContactFormService';
+import { ContactFormController } from 'modules/contactForm/controller/ContactFormController';
 
 const container = new Container();
 
@@ -159,4 +164,9 @@ container.bind(INTERFACE_TYPE.BlogControllerWeb).to(BlogControllerWeb);
 container.bind<ITourRepositoryWeb>(INTERFACE_TYPE.ITourRepositoryWeb).to(TourRepositoryWeb);
 container.bind<ITourServiceWeb>(INTERFACE_TYPE.ITourServiceWeb).to(TourServiceWeb);
 container.bind(INTERFACE_TYPE.TourControllerWeb).to(TourControllerWeb);
+
+container.bind<IContactFormRepository>(INTERFACE_TYPE.IContactFormRepository).to(ContactFormRepository);
+container.bind<IContactFormService>(INTERFACE_TYPE.IContactFormService).to(ContactFormService);
+container.bind(INTERFACE_TYPE.ContactFormController).to(ContactFormController);
+
 export default container;

@@ -6,12 +6,23 @@ import { NextFunction, Request, Response } from 'express';
 
 @controller('/website/blog')
 export class BlogControllerWeb {
-  constructor(@inject(INTERFACE_TYPE.IBlogService) private readonly service: IBlogServiceWeb) {}
+  constructor(@inject(INTERFACE_TYPE.IBlogServiceWeb) private readonly service: IBlogServiceWeb) {}
 
   @httpGet('/')
   public async getAll(req: Request, res: Response, next: NextFunction) {
     const blogs = await this.service.getAll();
     return res.customSuccess(200, 'Blogs', blogs);
+  }
+
+  @httpGet('/blogCategories')
+  public async getCategories(req: Request, res: Response, next: NextFunction) {
+    try {
+      const categories = await this.service.getCategories();
+      return res.customSuccess(200, 'Categories', categories);
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
   }
 
   @httpGet('/:seoLink')
