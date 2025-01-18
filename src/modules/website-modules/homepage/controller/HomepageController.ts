@@ -49,4 +49,11 @@ export class HomepageController {
     const contactForm = await this.service.createContactForm(req.body);
     return res.customSuccess(200, 'Contact form saved successfully', contactForm);
   }
+
+  @httpGet('/faqs')
+  public async getFAQs(req: Request, res: Response, next: NextFunction) {
+    console.log('I am here!');
+    const faqs = await this.service.getFAQs();
+    return res.customSuccess(200, 'FAQs', faqs);
+  }
 }

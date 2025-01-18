@@ -53,4 +53,7 @@ export const INTERFACE_TYPE = {
   ContactFormController: Symbol.for('ContactFormController'),
   IContactFormService: Symbol.for('IContactFormService'),
   IContactFormRepository: Symbol.for('IContactFormRepository'),
+  FaqController: Symbol.for('FaqController'),
+  IFaqService: Symbol.for('IFaqService'),
+  IFaqRepository: Symbol.for('IFaqRepository'),
 };

@@ -5,6 +5,7 @@ import { DailyPathDto } from '../dto/DailyPathDto';
 import { FeaturedTourDto } from '../dto/FeaturedTourDto';
 import { StaticPageDto } from '../dto/StaticPageDto';
 import { CreateContactFormDto } from '../dto/CreateContactFormDto';
+import { FAQsDto } from '../dto/FAQsDto';
 
 export interface IHomepageService {
   getFeaturedTours(): Promise<FeaturedTourDto[]>;
@@ -14,4 +15,5 @@ export interface IHomepageService {
   getDailyPaths(): Promise<DailyPathDto[]>;
   getStaticPage(pageType: StaticPageType): Promise<StaticPageDto>;
   createContactForm(contactFormDto: CreateContactFormDto): Promise<boolean>;
+  getFAQs(): Promise<FAQsDto[]>;
 }

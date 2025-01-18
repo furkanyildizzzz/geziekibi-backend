@@ -19,6 +19,8 @@ import { StaticPage } from 'orm/entities/static-page/StaticPage';
 import { CreateContactFormDto } from '../dto/CreateContactFormDto';
 import { InternalServerErrorException } from 'shared/errors/allException';
 import { ContactForm } from 'orm/entities/contactForm/ContactForm';
+import { FAQsDto } from '../dto/FAQsDto';
+import { FAQ } from 'orm/entities/faq/FAQ';
 
 @injectable()
 export class HomepageService implements IHomepageService {
@@ -231,5 +233,16 @@ export class HomepageService implements IHomepageService {
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
+  }
+
+  public async getFAQs(): Promise<FAQsDto[]> {
+    const repo = await this.unitOfWork.getRepository(FAQ);
+
+    const faqs = await repo.find();
+
+    return plainToInstance(FAQsDto, faqs, {
+      excludeExtraneousValues: true,
+      enableCircularCheck: true,
+    });
   }
 }

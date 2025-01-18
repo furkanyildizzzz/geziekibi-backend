@@ -94,6 +94,11 @@ import { IContactFormService } from 'modules/contactForm/interfaces/IContactForm
 import { ContactFormRepository } from 'modules/contactForm/repository/ContactFormRepository';
 import { ContactFormService } from 'modules/contactForm/service/ContactFormService';
 import { ContactFormController } from 'modules/contactForm/controller/ContactFormController';
+import { IFaqRepository } from 'modules/faq/interfaces/IFaqRepository';
+import { IFaqService } from 'modules/faq/interfaces/IFaqService';
+import { FaqService } from 'modules/faq/service/FaqService';
+import { FaqRepository } from 'modules/faq/repository/FaqRepository';
+import { FaqController } from 'modules/faq/controller/FaqController';
 
 const container = new Container();
 
@@ -168,5 +173,9 @@ container.bind(INTERFACE_TYPE.TourControllerWeb).to(TourControllerWeb);
 container.bind<IContactFormRepository>(INTERFACE_TYPE.IContactFormRepository).to(ContactFormRepository);
 container.bind<IContactFormService>(INTERFACE_TYPE.IContactFormService).to(ContactFormService);
 container.bind(INTERFACE_TYPE.ContactFormController).to(ContactFormController);
+
+container.bind<IFaqRepository>(INTERFACE_TYPE.IFaqRepository).to(FaqRepository);
+container.bind<IFaqService>(INTERFACE_TYPE.IFaqService).to(FaqService);
+container.bind(INTERFACE_TYPE.FaqController).to(FaqController);
 
 export default container;
