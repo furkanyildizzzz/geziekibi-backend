@@ -119,4 +119,11 @@ export class Tour {
 
   @OneToMany(() => TourDaily, (dailyForm) => dailyForm.tour, { cascade: true })
   dailyForms: TourDaily[]; // A tour can have many daily paths
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  @Expose()
+  importantNotes: string;
 }

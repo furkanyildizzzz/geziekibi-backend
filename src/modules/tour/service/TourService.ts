@@ -116,6 +116,7 @@ export class TourService implements ITourService {
       tour.publishDate = new Date(tourData.publishDate);
       tour.startDate = new Date(tourData.startDate);
       tour.endDate = new Date(tourData.endDate);
+      tour.importantNotes = tourData.importantNotes;
       tour.seoLink = await this.seoLinkService.generateUniqueSeoLink(tourData.title, 'tour', tour.id);
       tour.category = category;
 
@@ -350,7 +351,7 @@ export class TourService implements ITourService {
       }
     }
 
-    if (!tourData.uploadedPrimaryImages.length && !tourData.primaryImages.length) {
+    if (!tourData.uploadedPrimaryImages || (!tourData.uploadedPrimaryImages.length && !tourData.primaryImages.length)) {
       await this.unitOfWork.rollbackTransaction();
       throw new BadRequestException(`Please provide a primary image`);
     }
@@ -365,6 +366,7 @@ export class TourService implements ITourService {
       tour.startDate = new Date(tourData.startDate);
       tour.endDate = new Date(tourData.endDate);
       tour.seoLink = await this.seoLinkService.generateUniqueSeoLink(tourData.title, 'tour', tour.id);
+      tour.importantNotes = tourData.importantNotes;
 
       tour.category = category;
 

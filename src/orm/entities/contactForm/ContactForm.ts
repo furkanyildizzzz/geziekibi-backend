@@ -39,7 +39,7 @@ export class ContactForm {
   @Column({ default: false })
   isResponded: boolean;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   @Length(10, 1000, {
     message: 'Mesajınız en az 10 karakter ve en fazla 1000 karakter içermelidir.',
   })

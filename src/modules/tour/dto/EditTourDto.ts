@@ -226,4 +226,8 @@ export class EditTourDto {
   @ValidateNested({ each: true })
   @Type(() => TourDailyDto)
   dailyForms!: TourDailyDto[];
+
+  @IsOptional()
+  @IsString()
+  importantNotes?: string;
 }

@@ -216,4 +216,8 @@ export class CreateTourDto {
   @ValidateNested({ each: true })
   @Type(() => TourDailyDto)
   dailyForms!: TourDailyDto[];
+
+  @IsOptional()
+  @IsString()
+  importantNotes?: string;
 }

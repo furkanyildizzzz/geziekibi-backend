@@ -126,4 +126,7 @@ export class TourDtoWeb {
   @Expose()
   @Type(() => TourDailyDto)
   dailyForms: TourDailyDto[];
+
+  @Expose()
+  importantNotes: string;
 }
