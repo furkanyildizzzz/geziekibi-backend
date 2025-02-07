@@ -56,4 +56,10 @@ export class HomepageController {
     const faqs = await this.service.getFAQs();
     return res.customSuccess(200, 'FAQs', faqs);
   }
+
+  @httpGet('/sliders')
+  public async getHomepageSliders(req: Request, res: Response, next: NextFunction) {
+    const sliders = await this.service.getHomepageSliders();
+    return res.customSuccess(200, 'Homepage Sliders', sliders);
+  }
 }

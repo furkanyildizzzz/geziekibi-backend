@@ -11,7 +11,6 @@ export const DtoValidationMiddleware = (type: any, skipMissingProperties = false
     // Check if the content type is form-data (Multer parses this as plain objects)
     const contentType = req.headers['content-type'];
     const isFormData = contentType && contentType.includes('multipart/form-data');
-
     if (isFormData) {
       const parseFields = [
         'tags',
@@ -63,7 +62,6 @@ export const DtoValidationMiddleware = (type: any, skipMissingProperties = false
         req.body.galleryImages = [];
       }
     }
-    console.log('I am here!');
     const dtoObj = plainToInstance(type, req.body);
     validate(dtoObj, { skipMissingProperties }).then((errors: ValidationError[]) => {
       if (errors.length > 0) {

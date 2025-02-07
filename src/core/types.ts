@@ -56,4 +56,7 @@ export const INTERFACE_TYPE = {
   FaqController: Symbol.for('FaqController'),
   IFaqService: Symbol.for('IFaqService'),
   IFaqRepository: Symbol.for('IFaqRepository'),
+  HomepageSliderController: Symbol.for('HomepageSliderController'),
+  IHomepageSliderService: Symbol.for('IHomepageSliderService'),
+  IHomepageSliderRepository: Symbol.for('IHomepageSliderRepository'),
 };

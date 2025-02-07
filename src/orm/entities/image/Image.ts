@@ -5,6 +5,7 @@ import { Expose } from 'class-transformer';
 import { TourCategory } from '../tour/TourCategory';
 import { BlogCategory } from '../blog/BlogCategory';
 import { Blog } from '../blog/Blog';
+import { HomepageSlider } from '../homepageSlider/HomepageSlider';
 
 @Entity('images')
 export class Image {
@@ -75,4 +76,9 @@ export class Image {
   @ManyToOne(() => Blog, (blog) => blog.primaryImages, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'blogId' })
   blog: Blog;
+
+  // Many-to-One relationship with User (Image uploaded by a user)
+  @OneToOne(() => HomepageSlider, (homepageSlider) => homepageSlider.image, { nullable: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'homepageSliderId' })
+  homepageSlider: HomepageSlider;
 }

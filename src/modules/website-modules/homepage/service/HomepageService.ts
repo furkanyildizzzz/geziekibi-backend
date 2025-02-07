@@ -21,6 +21,8 @@ import { InternalServerErrorException } from 'shared/errors/allException';
 import { ContactForm } from 'orm/entities/contactForm/ContactForm';
 import { FAQsDto } from '../dto/FAQsDto';
 import { FAQ } from 'orm/entities/faq/FAQ';
+import { SliderDto } from '../dto/SliderDto';
+import { HomepageSlider } from 'orm/entities/homepageSlider/HomepageSlider';
 
 @injectable()
 export class HomepageService implements IHomepageService {
@@ -241,6 +243,33 @@ export class HomepageService implements IHomepageService {
     const faqs = await repo.find();
 
     return plainToInstance(FAQsDto, faqs, {
+      excludeExtraneousValues: true,
+      enableCircularCheck: true,
+    });
+  }
+
+  public async getHomepageSliders(): Promise<SliderDto[]> {
+    const homepageSliderRepo = await this.unitOfWork.getRepository(HomepageSlider);
+
+    const today = new Date();
+    const sliders = await homepageSliderRepo.find({
+      where: { isActive: true },
+      order: {
+        order: 'ASC',
+      },
+      relations: ['image'],
+    });
+
+    const sliderList = sliders.map((s) => {
+      const slider = new SliderDto();
+      slider.id = s.id;
+      slider.isActive = s.isActive;
+      slider.image = s.image;
+      slider.order = s.order;
+      return slider;
+    });
+
+    return plainToInstance(SliderDto, sliderList, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
     });

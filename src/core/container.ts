@@ -99,6 +99,11 @@ import { IFaqService } from 'modules/faq/interfaces/IFaqService';
 import { FaqService } from 'modules/faq/service/FaqService';
 import { FaqRepository } from 'modules/faq/repository/FaqRepository';
 import { FaqController } from 'modules/faq/controller/FaqController';
+import { IHomepageSliderRepository } from 'modules/homepageSlider/interfaces/IHomepageSliderRepository';
+import { IHomepageSliderService } from 'modules/homepageSlider/interfaces/IHomepageSliderService';
+import { HomepageSliderController } from 'modules/homepageSlider/controller/HomepageSliderController';
+import { HomepageSliderService } from 'modules/homepageSlider/service/HomepageSliderService';
+import { HomepageSliderRepository } from 'modules/homepageSlider/repository/HomepageSliderRepository';
 
 const container = new Container();
 
@@ -177,5 +182,9 @@ container.bind(INTERFACE_TYPE.ContactFormController).to(ContactFormController);
 container.bind<IFaqRepository>(INTERFACE_TYPE.IFaqRepository).to(FaqRepository);
 container.bind<IFaqService>(INTERFACE_TYPE.IFaqService).to(FaqService);
 container.bind(INTERFACE_TYPE.FaqController).to(FaqController);
+
+container.bind<IHomepageSliderRepository>(INTERFACE_TYPE.IHomepageSliderRepository).to(HomepageSliderRepository);
+container.bind<IHomepageSliderService>(INTERFACE_TYPE.IHomepageSliderService).to(HomepageSliderService);
+container.bind(INTERFACE_TYPE.HomepageSliderController).to(HomepageSliderController);
 
 export default container;
