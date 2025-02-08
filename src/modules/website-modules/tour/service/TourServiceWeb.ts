@@ -77,7 +77,6 @@ export class TourServiceWeb implements ITourServiceWeb {
       },
       relations: ['dates', 'dates.prices', 'primaryImages', 'category'],
     });
-    console.log({ tours });
 
     const toursWithMostRecentDate = tours.map((tour) => {
       const mostRecentDate = tour.dates.reduce((latest, current) => {
@@ -154,7 +153,6 @@ export class TourServiceWeb implements ITourServiceWeb {
     const whereConditions: any = {
       publishStatus: PublishStatus.PUBLISH,
     };
-
     // Add `startDate` condition if provided
     if (searchParams.startDate) {
       whereConditions.dates = {
