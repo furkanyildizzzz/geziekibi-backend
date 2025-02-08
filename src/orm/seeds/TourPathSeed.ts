@@ -94,7 +94,6 @@ const seedTourPaths = async (dataSource: DataSource) => {
       const tourPath = new TourDailyPath();
       tourPath.name = city;
       await tourPathRepository.save(tourPath);
-      console.log(`Seeded: ${city}`);
     }
   }
 

@@ -12,7 +12,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   category.name = 'Karadeniz Turu';
   category.primaryImages = [
     {
-      id: 12,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733314656/dev/category/2024-12-04/1/cwwrqmzum5dl2ll4vyy4.jpg',
       format: 'jpg',
       width: 262,
@@ -33,7 +32,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   subCategory.name = 'Bartın Turu';
   subCategory.primaryImages = [
     {
-      id: 13,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733314669/dev/category/2024-12-04/2/vlzyxxwm8ps7foyhohvf.jpg',
       format: 'jpg',
       width: 262,
@@ -54,7 +52,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   subCategory.name = 'Batı Karadeniz Turu';
   subCategory.primaryImages = [
     {
-      id: 14,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733314809/dev/category/2024-12-04/3/vgi9b95zjp06dcejxxvu.jpg',
       format: 'jpg',
       width: 262,
@@ -75,7 +72,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   subCategory.name = 'Doğu Karadeniz Turu';
   subCategory.primaryImages = [
     {
-      id: 17,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733315033/dev/category/2024-12-04/4/enzreo6ltgru7neskwkc.jpg',
       format: 'jpg',
       width: 294,
@@ -95,7 +91,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   category.name = 'Ege Turu';
   category.primaryImages = [
     {
-      id: 18,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733315083/dev/category/2024-12-04/5/cpdu0ky59njfnpz334bs.webp',
       format: 'webp',
       width: 262,
@@ -116,7 +111,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   subCategory.name = 'Orta Ege Turu';
   subCategory.primaryImages = [
     {
-      id: 19,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733315166/dev/category/2024-12-04/6/fpbdnmpc2n1afavek6yh.webp',
       format: 'webp',
       width: 262,
@@ -137,7 +131,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   subCategory.name = 'Güney Ege Turu';
   subCategory.primaryImages = [
     {
-      id: 20,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733315253/dev/category/2024-12-04/7/fmkl8tsfgqljxvy4ljxo.jpg',
       format: 'jpg',
       width: 262,
@@ -157,7 +150,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   category.name = 'Güneydoğu Turu';
   category.primaryImages = [
     {
-      id: 21,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733315280/dev/category/2024-12-04/8/oyn8y02hxk80m1rhb6bl.jpg',
       format: 'jpg',
       width: 262,
@@ -178,7 +170,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   subCategory.name = 'Mardin Turu';
   subCategory.primaryImages = [
     {
-      id: 22,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733315353/dev/category/2024-12-04/9/qxfnhm16nuxwewi3oron.jpg',
       format: 'jpg',
       width: 262,
@@ -198,7 +189,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   category.name = 'Doğu Anadolu Turu';
   category.primaryImages = [
     {
-      id: 24,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733315568/dev/category/2024-12-04/10/of9wm3hbwxywnklsgha8.jpg',
       format: 'jpg',
       width: 262,
@@ -219,7 +209,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   subCategory.name = 'Van Turu';
   subCategory.primaryImages = [
     {
-      id: 25,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733315579/dev/category/2024-12-04/11/qvihtzlpqcui9fdntgfr.webp',
       format: 'webp',
       width: 262,
@@ -239,7 +228,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   category.name = 'İç Anadolu Turu';
   category.primaryImages = [
     {
-      id: 26,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733315597/dev/category/2024-12-04/12/z0baelybskcdkzuedesj.jpg',
       format: 'jpg',
       width: 262,
@@ -260,7 +248,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   subCategory.name = 'Kapadokya Turu';
   subCategory.primaryImages = [
     {
-      id: 27,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733315610/dev/category/2024-12-04/13/bmqqmlycd2i0majtg7bz.jpg',
       format: 'jpg',
       width: 262,
@@ -280,7 +267,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   category.name = 'Orta Avrupa - Balkan Turu';
   category.primaryImages = [
     {
-      id: 28,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733315848/dev/category/2024-12-04/14/tdduvw7l3yru95p4ixgr.jpg',
       format: 'jpg',
       width: 262,
@@ -300,7 +286,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   category.name = 'Avrupa Turu';
   category.primaryImages = [
     {
-      id: 29,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733315857/dev/category/2024-12-04/15/ngv2ff1cowmzdmq6qxig.jpg',
       format: 'jpg',
       width: 262,
@@ -320,7 +305,6 @@ const seedTourCategories = async (dataSource: DataSource) => {
   category.name = 'İtalya - Yunanistan Turu';
   category.primaryImages = [
     {
-      id: 30,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733315866/dev/category/2024-12-04/16/uheyjxyi0aq587jtxk3j.jpg',
       format: 'jpg',
       width: 262,

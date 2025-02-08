@@ -217,7 +217,6 @@ const DoguKaradenizTuru = async (dataSource: DataSource) => {
 
   tour.primaryImages = [
     {
-      id: 1,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733308046/dev/tour/2024-12-04/1/w7hlcp0yi6ygvapsqxlo.jpg',
       format: 'jpg',
       width: 806,
@@ -391,7 +390,6 @@ const BatıKaradenizTuru = async (dataSource: DataSource) => {
 
   tour.primaryImages = [
     {
-      id: 2,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733308937/dev/tour/2024-12-04/2/n5lhbjlycjor05nwnkb1.png',
       format: 'png',
       width: 806,
@@ -583,7 +581,6 @@ const UrfaTuru = async (dataSource: DataSource) => {
 
   tour.primaryImages = [
     {
-      id: 3,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733309539/dev/tour/2024-12-04/3/skcc7fgzgwjxfaeoj7zf.jpg',
       format: 'jpg',
       width: 806,
@@ -755,7 +752,6 @@ const KapadokyaTuru = async (dataSource: DataSource) => {
 
   tour.primaryImages = [
     {
-      id: 7,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733310181/dev/tour/2024-12-04/4/jtrycadhi5kumlczzt7z.jpg',
       format: 'jpg',
       width: 806,
@@ -964,7 +960,6 @@ const KuzeyEgeTuru = async (dataSource: DataSource) => {
 
   tour.primaryImages = [
     {
-      id: 8,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733310358/dev/tour/2024-12-04/5/h0yjgu23jwdl9g6gxbu8.webp',
       format: 'webp',
       width: 806,
@@ -1192,7 +1187,6 @@ const GuneyDoguTuru = async (dataSource: DataSource) => {
 
   tour.primaryImages = [
     {
-      id: 9,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733310467/dev/tour/2024-12-04/6/zi65u6v0piroxjudemfk.jpg',
       format: 'jpg',
       width: 806,
@@ -1364,7 +1358,6 @@ const AnkaraEskisehirTuru = async (dataSource: DataSource) => {
 
   tour.primaryImages = [
     {
-      id: 10,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733310742/dev/tour/2024-12-04/7/xt5fyorimzdngotdk9pv.jpg',
       format: 'jpg',
       width: 806,
@@ -1678,7 +1671,6 @@ const OrtaAvrupaBalkanTuru = async (dataSource: DataSource) => {
 
   tour.primaryImages = [
     {
-      id: 11,
       url: 'http://res.cloudinary.com/furkannn/image/upload/v1733311320/dev/tour/2024-12-04/8/eyk01pxbyurpl8mhhzpi.jpg',
       format: 'jpg',
       width: 806,

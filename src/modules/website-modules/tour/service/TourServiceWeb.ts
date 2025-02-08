@@ -77,6 +77,7 @@ export class TourServiceWeb implements ITourServiceWeb {
       },
       relations: ['dates', 'dates.prices', 'primaryImages', 'category'],
     });
+    console.log({ tours });
 
     const toursWithMostRecentDate = tours.map((tour) => {
       const mostRecentDate = tour.dates.reduce((latest, current) => {
@@ -92,7 +93,6 @@ export class TourServiceWeb implements ITourServiceWeb {
     const categoryIdsAndTourCount = (await categoryRepo.find({ relations: ['tours'] })).map((s) => {
       return { id: s.id, tourCount: s.tours.length };
     });
-    console.log({ categoryIdsAndTourCount });
     const featuredTours = toursWithMostRecentDate.map((tour) => {
       const featuredTour = new FeaturedTourDto();
       featuredTour.id = tour.id;

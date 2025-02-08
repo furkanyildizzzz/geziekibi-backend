@@ -7,11 +7,15 @@ import seedTourServices from './TourServicesSeed';
 import seedTags from './TagsSeed';
 import seedTours from './ToursSeed';
 import seedBlogs from './BlogsSeed';
+import seedHomepageSliders from './HomepageSlidersSeed';
 
 const runSeeder = async () => {
   try {
     console.log('Connecting to database...');
     await AppDataSource.initialize();
+
+    console.log('Seeding sliders ...');
+    await seedHomepageSliders(AppDataSource);
 
     console.log('Seeding users...');
     await seedUsers(AppDataSource);
