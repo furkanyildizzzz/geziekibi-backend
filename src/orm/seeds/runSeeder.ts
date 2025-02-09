@@ -1,4 +1,3 @@
-import AppDataSource from 'config/migration-database';
 import seedTourPaths from './TourPathSeed';
 import seedUsers from './UsersSeed';
 import seedBlogCategories from './BlogCategoriesSeed';
@@ -8,6 +7,7 @@ import seedTags from './TagsSeed';
 import seedTours from './ToursSeed';
 import seedBlogs from './BlogsSeed';
 import seedHomepageSliders from './HomepageSlidersSeed';
+import AppDataSource from 'config/seed-database';
 
 const runSeeder = async () => {
   try {
