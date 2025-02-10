@@ -1,3 +1,23 @@
+import { Blog } from 'orm/entities/blog/Blog';
+import { BlogCategory } from 'orm/entities/blog/BlogCategory';
+import { Catalog } from 'orm/entities/catalog/Catalog';
+import { ContactForm } from 'orm/entities/contactForm/ContactForm';
+import { FAQ } from 'orm/entities/faq/FAQ';
+import { HomepageSlider } from 'orm/entities/homepageSlider/HomepageSlider';
+import { Image } from 'orm/entities/image/Image';
+import { Service } from 'orm/entities/service/Service';
+import { StaticPage } from 'orm/entities/static-page/StaticPage';
+import { Tag } from 'orm/entities/tag/Tag';
+import { Tour } from 'orm/entities/tour/Tour';
+import { TourCategory } from 'orm/entities/tour/TourCategory';
+import { TourDaily } from 'orm/entities/tour/TourDaily';
+import { TourDailyPath } from 'orm/entities/tour/TourDailyPath';
+import { TourDailyVisitingPlace } from 'orm/entities/tour/TourDailyVisitingPlace';
+import { TourDate } from 'orm/entities/tour/TourDate';
+import { TourPrice } from 'orm/entities/tour/TourPrice';
+import TourService from 'orm/entities/tour/TourService';
+import { User } from 'orm/entities/users/User';
+import { UserAddress } from 'orm/entities/users/UserAddress';
 import { DataSource } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
@@ -11,27 +31,33 @@ const AppDataSource = new DataSource({
   database: `${process.env.POSTGRES_DB}`,
   synchronize: false,
   logging: false,
-  entities: ['src/orm/entities/**/*.{ts,js}'],
+  //entities: ['src/orm/entities/**/*.{ts,js}'],
+  entities: [
+    Blog,
+    BlogCategory,
+    Catalog,
+    ContactForm,
+    FAQ,
+    HomepageSlider,
+    Image,
+    Service,
+    StaticPage,
+    Tag,
+    Tour,
+    TourCategory,
+    TourDaily,
+    TourDailyPath,
+    TourDailyVisitingPlace,
+    TourDate,
+    TourPrice,
+    TourService,
+    User,
+    UserAddress,
+  ],
   migrations: ['src/orm/migrations/**/*.{ts,js}'],
   subscribers: ['src/orm/subscriber/**/*.{ts,js}'],
   namingStrategy: new SnakeNamingStrategy(),
 });
-
-// const AppDataSource = new DataSource({
-//   type: 'postgres',
-//   name: 'default',
-//   host: 'localhost',
-//   port: Number(process.env.PG_PORT),
-//   username: 'postgres',
-//   password: 'postgres',
-//   database: 'geziekibi',
-//   synchronize: false,
-//   logging: false,
-//   entities: ['src/orm/entities/**/*.ts'],
-//   migrations: ['src/orm/migrations/**/*.ts'],
-//   subscribers: ['src/orm/subscriber/**/*.ts'],
-//   namingStrategy: new SnakeNamingStrategy(),
-// });
 
 export const initializeDatabase = async () => {
   if (!AppDataSource.isInitialized) {
