@@ -1,10 +1,7 @@
-import AppDataSource from 'config/database';
 import { ITagRepository } from 'modules/tag/interfaces/ITagRepository';
 import { inject, injectable } from 'inversify';
 import { Tag } from 'orm/entities/tag/Tag';
-import { IDatabaseService } from 'core/interface/IDatabaseService';
-import { InternalServerErrorException, NotFoundException } from 'shared/errors/allException';
-import { getRepository, Repository } from 'typeorm';
+import { InternalServerErrorException } from 'shared/errors/allException';
 import { INTERFACE_TYPE } from 'core/types';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
 

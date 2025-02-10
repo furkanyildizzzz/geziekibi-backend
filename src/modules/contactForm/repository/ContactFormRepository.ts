@@ -1,10 +1,7 @@
-import AppDataSource from 'config/database';
 import { IContactFormRepository } from 'modules/contactForm/interfaces/IContactFormRepository';
 import { inject, injectable } from 'inversify';
 import { ContactForm } from 'orm/entities/contactForm/ContactForm';
-import { IDatabaseService } from 'core/interface/IDatabaseService';
-import { InternalServerErrorException, NotFoundException } from 'shared/errors/allException';
-import { getRepository, Repository } from 'typeorm';
+import { InternalServerErrorException } from 'shared/errors/allException';
 import { INTERFACE_TYPE } from 'core/types';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
 

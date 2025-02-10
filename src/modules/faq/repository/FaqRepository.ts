@@ -1,9 +1,6 @@
-import AppDataSource from 'config/database';
 import { IFaqRepository } from 'modules/faq/interfaces/IFaqRepository';
 import { inject, injectable } from 'inversify';
-import { IDatabaseService } from 'core/interface/IDatabaseService';
-import { InternalServerErrorException, NotFoundException } from 'shared/errors/allException';
-import { getRepository, Repository } from 'typeorm';
+import { InternalServerErrorException } from 'shared/errors/allException';
 import { INTERFACE_TYPE } from 'core/types';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import { FAQ } from 'orm/entities/faq/FAQ';
