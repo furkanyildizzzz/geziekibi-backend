@@ -33,4 +33,15 @@ const AppDataSource = new DataSource({
 //   namingStrategy: new SnakeNamingStrategy(),
 // });
 
-export = AppDataSource;
+export const initializeDatabase = async () => {
+  if (!AppDataSource.isInitialized) {
+    try {
+      await AppDataSource.initialize();
+      console.log('Database connection established successfully.');
+    } catch (error) {
+      console.error('Database connection failed:', error);
+    }
+  }
+};
+
+export default AppDataSource;

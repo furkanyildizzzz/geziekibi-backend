@@ -16,6 +16,7 @@ import { cloudinaryConfig } from 'config/cloudinaryConfig';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import container from 'core/container';
 import 'modules/contactForm/controller/ContactFormController';
+import { initializeDatabase } from 'config/database';
 
 export const server = new InversifyExpressServer(container, null, { rootPath: '/v1' });
 server.setConfig((app) => {
@@ -43,14 +44,16 @@ server.setErrorConfig((app) => {
 });
 
 (async () => {
-  try {
-    let app = server.build();
-    const port = process.env.PORT || 4000;
-    app.listen(port, () => {
-      console.log(`Server running on port ${port}`);
-    });
-  } catch (err) {
-    console.error('Failed to connect to the database', err);
-    process.exit(1); // Exit the process if the DB connection fails
-  }
+  initializeDatabase().then(() => {
+    try {
+      let app = server.build();
+      const port = process.env.PORT || 4000;
+      app.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+      });
+    } catch (err) {
+      console.error('Failed to connect to the database', err);
+      process.exit(1); // Exit the process if the DB connection fails
+    }
+  });
 })();

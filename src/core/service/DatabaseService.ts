@@ -7,19 +7,17 @@ import AppDataSource from 'config/database';
 
 @injectable()
 export class DatabaseService implements IDatabaseService {
-  private queryRunner?: QueryRunner;
-  private static myDataSource: DataSource;
   constructor(@inject(INTERFACE_TYPE.Logger) private readonly logger: Logger) {}
 
   public async getConnection(): Promise<DataSource> {
-    if (DatabaseService.myDataSource?.isInitialized) {
+    if (AppDataSource.isInitialized) {
       this.logger.info('Connection Already Established!');
       console.log('Connection Already Established!');
-      return DatabaseService.myDataSource;
+      return AppDataSource;
     }
 
     try {
-      DatabaseService.myDataSource = await AppDataSource.initialize();
+      await AppDataSource.initialize();
       this.logger.info('Connection Established!');
       console.log('Connection Established!');
     } catch (error) {
@@ -27,7 +25,7 @@ export class DatabaseService implements IDatabaseService {
       console.log(`Connection Failed. Error: ${error}`);
     }
 
-    return DatabaseService.myDataSource;
+    return AppDataSource;
   }
 
   public async getRepository(entity: ObjectType<any>): Promise<Repository<any>> {
