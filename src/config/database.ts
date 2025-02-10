@@ -11,9 +11,9 @@ const AppDataSource = new DataSource({
   database: `${process.env.POSTGRES_DB}`,
   synchronize: false,
   logging: false,
-  entities: ['src/orm/entities/**/*.ts'],
-  migrations: ['src/orm/migrations/**/*.ts'],
-  subscribers: ['src/orm/subscriber/**/*.ts'],
+  entities: ['src/orm/entities/**/*.{ts,js}'],
+  migrations: ['src/orm/migrations/**/*.{ts,js}'],
+  subscribers: ['src/orm/subscriber/**/*.{ts,js}'],
   namingStrategy: new SnakeNamingStrategy(),
 });
 
