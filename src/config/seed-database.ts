@@ -3,7 +3,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 const AppDataSource = new DataSource({
   type: 'postgres',
-  name: 'default',
+  name: 'seed',
   host: `${process.env.PG_HOST}`,
   port: Number(`${process.env.PG_PORT}`),
   username: `${process.env.POSTGRES_USER}`,
