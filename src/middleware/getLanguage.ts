@@ -5,6 +5,6 @@ import { Language } from 'orm/entities/users/types';
 export const getLanguage = (req: Request, res: Response, next: NextFunction) => {
   const acceptLanguageHeader = req.get('Accept-Language') as Language | null;
   if (!acceptLanguageHeader) req.language = 'en-US';
-  req.language = acceptLanguageHeader;
+  req.language = acceptLanguageHeader!;
   return next();
 };
