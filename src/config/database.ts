@@ -55,8 +55,8 @@ const AppDataSource = new DataSource({
     User,
     UserAddress,
   ],
-  migrations: ['src/orm/migrations/**/*.{ts,js}'],
-  subscribers: ['src/orm/subscriber/**/*.{ts,js}'],
+  //migrations: ['src/orm/migrations/**/*.{ts,js}'],
+  //subscribers: ['src/orm/subscriber/**/*.{ts,js}'],
   namingStrategy: new SnakeNamingStrategy(),
 });
 
