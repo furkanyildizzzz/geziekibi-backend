@@ -29,6 +29,18 @@ server.setConfig((app) => {
     }),
   );
 
+  // Preflight (OPTIONS) isteği için özel yanıt
+  app.options('*', (req, res) => {
+    res.header('Access-Control-Allow-Origin', [
+      'https://geziekibi-test.vercel.app',
+      'https://www.geziekibi-panel.com.tr/',
+    ]);
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.sendStatus(204); // CORS preflight yanıtı
+  });
+
   app.use(helmet());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
