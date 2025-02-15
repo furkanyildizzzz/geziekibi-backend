@@ -17,24 +17,24 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 import container from 'core/container';
 import 'modules/contactForm/controller/ContactFormController';
 import { initializeDatabase } from 'config/database';
+const allowedOrigins = ['https://www.geziekibi-panel.com.tr', 'https://geziekibi-test.vercel.app'];
 
 export const server = new InversifyExpressServer(container, null, { rootPath: '/v1' });
 server.setConfig((app) => {
   app.use(
     cors({
-      origin: ['https://geziekibi-test.vercel.app', 'https://www.geziekibi-panel.com.tr/'], // İzin verilen frontend URL'leri
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Kullanılan HTTP metodları
-      allowedHeaders: ['Content-Type', 'Authorization'], // İzin verilen header'lar
-      credentials: true, // Tarayıcıdaki çerezleri göndermek için gerekli
+      origin: allowedOrigins,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      credentials: true,
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
     }),
   );
 
   // Preflight (OPTIONS) isteği için özel yanıt
   app.options('*', (req, res) => {
-    res.header('Access-Control-Allow-Origin', [
-      'https://geziekibi-test.vercel.app',
-      'https://www.geziekibi-panel.com.tr/',
-    ]);
+    res.header('Access-Control-Allow-Origin', allowedOrigins);
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.header('Access-Control-Allow-Credentials', 'true');
