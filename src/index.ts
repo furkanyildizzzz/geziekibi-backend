@@ -20,7 +20,14 @@ import { initializeDatabase } from 'config/database';
 
 export const server = new InversifyExpressServer(container, null, { rootPath: '/v1' });
 server.setConfig((app) => {
-  app.use(cors());
+  app.use(
+    cors({
+      origin: ['https://geziekibi-test.vercel.app', 'https://www.geziekibi-panel.com.tr/'], // İzin verilen frontend URL'leri
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Kullanılan HTTP metodları
+      allowedHeaders: ['Content-Type', 'Authorization'], // İzin verilen header'lar
+      credentials: true, // Tarayıcıdaki çerezleri göndermek için gerekli
+    }),
+  );
 
   app.use(helmet());
   app.use(bodyParser.json());
