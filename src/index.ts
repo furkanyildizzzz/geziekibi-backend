@@ -17,28 +17,39 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 import container from 'core/container';
 import 'modules/contactForm/controller/ContactFormController';
 import { initializeDatabase } from 'config/database';
-const allowedOrigins = ['https://www.geziekibi-panel.com.tr', 'https://geziekibi-test.vercel.app'];
+const allowedOrigins = [
+  'https://www.geziekibi-panel.com.tr',
+  'https://geziekibi-test.vercel.app',
+  'http://localhost:3000',
+];
 
 export const server = new InversifyExpressServer(container, null, { rootPath: '/v1' });
 server.setConfig((app) => {
   app.use(
     cors({
-      origin: allowedOrigins,
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error('CORS hatası: Bu origin izinli değil!'));
+        }
+      },
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
       credentials: true,
-      preflightContinue: false,
-      optionsSuccessStatus: 204,
     }),
   );
 
-  // Preflight (OPTIONS) isteği için özel yanıt
+  // 🔹 Preflight (OPTIONS) İsteğini Doğru Yapılandıralım:
   app.options('*', (req, res) => {
-    res.header('Access-Control-Allow-Origin', allowedOrigins);
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.sendStatus(204); // CORS preflight yanıtı
+    const origin = req.headers.origin;
+    if (origin && allowedOrigins.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+    res.sendStatus(204);
   });
 
   app.use(helmet());
