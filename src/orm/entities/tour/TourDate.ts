@@ -11,9 +11,10 @@ import {
 import { Tour } from './Tour';
 import { Expose } from 'class-transformer';
 import { TourPrice } from './TourPrice';
+import { BaseEntity } from '../BaseEntity';
 
-@Entity('tourDates')
-export class TourDate {
+@Entity('tour_dates')
+export class TourDate extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Expose()
   id: number;

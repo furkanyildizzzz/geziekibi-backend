@@ -3,9 +3,10 @@ import { Tour } from './Tour';
 import { Service } from '../service/Service';
 import { ServiceType } from 'shared/utils/enum';
 import { Expose } from 'class-transformer';
+import { BaseEntity } from '../BaseEntity';
 
 @Entity('tour_services')
-export class TourService {
+export class TourService extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Expose()
   id: number;

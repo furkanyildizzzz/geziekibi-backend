@@ -1,9 +1,9 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { StaticPageType } from 'shared/utils/enum';
 import { Expose } from 'class-transformer';
-
-@Entity('staticPages')
-export class StaticPage {
+import { BaseEntity } from '../BaseEntity';
+@Entity('static_pages')
+export class StaticPage extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Expose()
   id: number;

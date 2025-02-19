@@ -4,9 +4,10 @@ import { TourService } from './TourService';
 import { Expose } from 'class-transformer';
 import { TourDailyVisitingPlace } from './TourDailyVisitingPlace';
 import { TourDailyPath } from './TourDailyPath';
+import { BaseEntity } from '../BaseEntity';
 
-@Entity('tourDaily')
-export class TourDaily {
+@Entity('tour_dailies')
+export class TourDaily extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

@@ -10,9 +10,10 @@ import {
 } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { PublishStatus } from 'shared/utils/enum';
+import { BaseEntity } from '../BaseEntity';
 
 @Entity('catalogs')
-export class Catalog {
+export class Catalog extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Expose()
   id: number;

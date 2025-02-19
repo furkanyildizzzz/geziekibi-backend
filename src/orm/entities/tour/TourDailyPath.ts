@@ -2,9 +2,10 @@ import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColum
 import { Tour } from './Tour';
 import { TourService } from './TourService';
 import { Expose } from 'class-transformer';
+import { BaseEntity } from '../BaseEntity';
 
-@Entity('tourDailyPaths')
-export class TourDailyPath {
+@Entity('tour_daily_paths')
+export class TourDailyPath extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Expose()
   id: number;

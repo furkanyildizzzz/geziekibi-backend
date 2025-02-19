@@ -2,9 +2,10 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'ty
 import { Expose } from 'class-transformer';
 import { Image } from '../image/Image';
 import { Blog } from './Blog';
+import { BaseEntity } from '../BaseEntity';
 
 @Entity('blog_categories')
-export class BlogCategory {
+export class BlogCategory extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Expose()
   id: number;

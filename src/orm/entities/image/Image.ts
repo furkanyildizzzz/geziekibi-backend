@@ -6,9 +6,10 @@ import { TourCategory } from '../tour/TourCategory';
 import { BlogCategory } from '../blog/BlogCategory';
 import { Blog } from '../blog/Blog';
 import { HomepageSlider } from '../homepageSlider/HomepageSlider';
+import { BaseEntity } from '../BaseEntity';
 
 @Entity('images')
-export class Image {
+export class Image extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Expose()
   id: number;

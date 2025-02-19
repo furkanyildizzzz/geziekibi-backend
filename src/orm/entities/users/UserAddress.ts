@@ -1,20 +1,11 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { Country } from 'shared/utils/enum';
 import { User } from './User';
+import { BaseEntity } from '../BaseEntity';
 
-@Entity('userAddress')
-export class UserAddress {
+@Entity('user_addresses')
+export class UserAddress extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

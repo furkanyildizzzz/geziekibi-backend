@@ -2,9 +2,10 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'ty
 import { Tour } from './Tour';
 import { Expose } from 'class-transformer';
 import { Image } from '../image/Image';
+import { BaseEntity } from '../BaseEntity';
 
 @Entity('tour_categories')
-export class TourCategory {
+export class TourCategory extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Expose()
   id: number;

@@ -1,8 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, IsNull } from 'typeorm';
 import { Length, IsEmail, Matches, IsOptional, IsBoolean } from 'class-validator';
+import { BaseEntity } from '../BaseEntity';
 
 @Entity('contact_form')
-export class ContactForm {
+export class ContactForm extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

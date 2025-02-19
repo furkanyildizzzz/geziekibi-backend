@@ -13,9 +13,10 @@ import { Tag } from '../tag/Tag';
 import { Image } from '../image/Image';
 import { Expose } from 'class-transformer';
 import { BlogCategory } from './BlogCategory';
+import { BaseEntity } from '../BaseEntity';
 
 @Entity('blogs')
-export class Blog {
+export class Blog extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Expose()
   id: number;

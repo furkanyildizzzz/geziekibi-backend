@@ -2,9 +2,10 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, JoinTable, ManyToMany, Prim
 import { Tour } from '../tour/Tour';
 import { validateOrReject } from 'class-validator';
 import { classToPlain, Exclude, Expose, instanceToPlain } from 'class-transformer';
+import { BaseEntity } from '../BaseEntity';
 
 @Entity('faqs')
-export class FAQ {
+export class FAQ extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Expose()
   id: number;

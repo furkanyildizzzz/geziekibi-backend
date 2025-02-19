@@ -3,9 +3,10 @@ import { Tour } from './Tour';
 import { Expose } from 'class-transformer';
 import { Currency } from 'shared/utils/enum';
 import { TourDate } from './TourDate';
+import { BaseEntity } from '../BaseEntity';
 
 @Entity('tour_prices')
-export class TourPrice {
+export class TourPrice extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Expose()
   id: number;
