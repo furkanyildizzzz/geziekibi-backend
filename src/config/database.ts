@@ -19,6 +19,7 @@ import { TourPrice } from 'orm/entities/tour/TourPrice';
 import { TourService } from 'orm/entities/tour/TourService';
 import { User } from 'orm/entities/users/User';
 import { UserAddress } from 'orm/entities/users/UserAddress';
+import { AuditSubscriber } from 'orm/subscribers/auditSubscriber';
 import { DataSource } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
@@ -57,7 +58,7 @@ const AppDataSource = new DataSource({
     UserAddress,
   ],
   //migrations: ['src/orm/migrations/**/*.{ts,js}'],
-  subscribers: ['src/orm/subscribers/**/*.{ts,js}'],
+  subscribers: [AuditSubscriber],
   namingStrategy: new SnakeNamingStrategy(),
 });
 
