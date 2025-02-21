@@ -51,6 +51,7 @@ export class TagService implements ITagService {
     const newTag = new Tag();
     newTag.name = tagData.name;
     newTag.seoLink = await this.seoLinkService.generateUniqueSeoLink(tagData.name, 'tag', newTag.id);
+
     return await this.repository.create(newTag);
   }
 

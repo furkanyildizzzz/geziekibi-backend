@@ -11,18 +11,14 @@ export class DatabaseService implements IDatabaseService {
 
   public async getConnection(): Promise<DataSource> {
     if (AppDataSource.isInitialized) {
-      this.logger.info('Connection Already Established!');
-      console.log('Connection Already Established!');
       return AppDataSource;
     }
 
     try {
       await AppDataSource.initialize();
       this.logger.info('Connection Established!');
-      console.log('Connection Established!');
     } catch (error) {
       this.logger.error(`Connection Failed. Error: ${error}`);
-      console.log(`Connection Failed. Error: ${error}`);
     }
 
     return AppDataSource;

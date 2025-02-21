@@ -13,7 +13,6 @@ import { UpdateContactFormDTO } from '../dto/UpdateContactFormDTO';
 export class ContactFormController {
   private readonly service: IContactFormService;
   constructor(@inject(INTERFACE_TYPE.IContactFormService) service: IContactFormService) {
-    console.log('ContactFormController initialized');
     this.service = service;
   }
 

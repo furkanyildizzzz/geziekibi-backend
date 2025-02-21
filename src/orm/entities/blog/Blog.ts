@@ -17,10 +17,6 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity('blogs')
 export class Blog extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  @Expose()
-  id: number;
-
   @Column({ nullable: false })
   @Expose()
   title: string;

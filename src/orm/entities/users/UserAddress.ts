@@ -6,9 +6,6 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity('user_addresses')
 export class UserAddress extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column({
     name: 'secondEmail',
     nullable: true,

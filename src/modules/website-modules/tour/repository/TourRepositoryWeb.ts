@@ -4,7 +4,7 @@ import { INTERFACE_TYPE } from 'core/types';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import { Tour } from 'orm/entities/tour/Tour';
 import { InternalServerErrorException, NotFoundException } from 'shared/errors/allException';
-import TourService from 'orm/entities/tour/TourService';
+import { TourService } from 'orm/entities/tour/TourService';
 import { Tag } from 'orm/entities/tag/Tag';
 import { TourDate } from 'orm/entities/tour/TourDate';
 import { TourDaily } from 'orm/entities/tour/TourDaily';

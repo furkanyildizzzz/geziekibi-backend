@@ -7,10 +7,6 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity('tour_services')
 export class TourService extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  @Expose()
-  id: number;
-
   @ManyToOne(() => Tour, (tour) => tour.tourServices, { onDelete: 'CASCADE' })
   tour: Tour;
 
@@ -25,4 +21,3 @@ export class TourService extends BaseEntity {
   @Expose()
   type: ServiceType;
 }
-export default TourService;

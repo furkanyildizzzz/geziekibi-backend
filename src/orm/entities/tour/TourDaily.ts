@@ -8,9 +8,6 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity('tour_dailies')
 export class TourDaily extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column()
   name: string; // Tour name
 

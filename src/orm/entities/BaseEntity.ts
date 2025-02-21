@@ -1,6 +1,11 @@
-import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Expose } from 'class-transformer';
+import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export abstract class BaseEntity {
+  @PrimaryGeneratedColumn()
+  @Expose()
+  id: number;
+
   @CreateDateColumn({ name: 'insert_date' })
   insertDate: Date;
 

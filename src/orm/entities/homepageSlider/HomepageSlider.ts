@@ -5,10 +5,6 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity('homepage_sliders')
 export class HomepageSlider extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  @Expose()
-  id: number;
-
   @Column()
   @Expose()
   order: number;

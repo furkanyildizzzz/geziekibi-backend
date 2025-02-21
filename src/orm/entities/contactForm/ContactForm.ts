@@ -4,9 +4,6 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity('contact_form')
 export class ContactForm extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column({ length: 50 })
   @Length(1, 50, { message: 'Zorunlu Alan' })
   firstName: string;

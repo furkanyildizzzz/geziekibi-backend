@@ -6,10 +6,6 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity('services')
 export class Service extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  @Expose()
-  id: number;
-
   @Column({ unique: true, nullable: false })
   @Expose()
   name: string;

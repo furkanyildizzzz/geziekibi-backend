@@ -4,9 +4,6 @@ import { BaseEntity } from '../BaseEntity';
 // TourDailyPath entity
 @Entity('tour_daily_visiting_places')
 export class TourDailyVisitingPlace extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column()
   name: string; // Title of the daily path (e.g., "Day 1", "Day 2")
 

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { Blog } from 'orm/entities/blog/Blog';
 import { BlogCategory } from 'orm/entities/blog/BlogCategory';
 import { Catalog } from 'orm/entities/catalog/Catalog';
@@ -15,7 +16,7 @@ import { TourDailyPath } from 'orm/entities/tour/TourDailyPath';
 import { TourDailyVisitingPlace } from 'orm/entities/tour/TourDailyVisitingPlace';
 import { TourDate } from 'orm/entities/tour/TourDate';
 import { TourPrice } from 'orm/entities/tour/TourPrice';
-import TourService from 'orm/entities/tour/TourService';
+import { TourService } from 'orm/entities/tour/TourService';
 import { User } from 'orm/entities/users/User';
 import { UserAddress } from 'orm/entities/users/UserAddress';
 import { DataSource } from 'typeorm';
@@ -24,12 +25,12 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 const AppDataSource = new DataSource({
   type: 'postgres',
   name: 'default',
-  url: `${process.env.PG_URL}`,
-  // host: `${process.env.PG_HOST}`,
-  // port: Number(`${process.env.PG_PORT}`),
-  // username: `${process.env.POSTGRES_USER}`,
-  // password: `${process.env.POSTGRES_PASSWORD}`,
-  // database: `${process.env.POSTGRES_DB}`,
+  //url: `${process.env.PG_URL}`,
+  host: process.env.NODE_ENV === 'dev' ? 'host.docker.internal' : process.env.PG_HOST,
+  port: Number(process.env.PG_PORT || 5432),
+  username: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
+  database: process.env.POSTGRES_DB,
   synchronize: false,
   logging: false,
   //entities: ['src/orm/entities/**/*.{ts,js}'],
@@ -56,7 +57,7 @@ const AppDataSource = new DataSource({
     UserAddress,
   ],
   //migrations: ['src/orm/migrations/**/*.{ts,js}'],
-  //subscribers: ['src/orm/subscriber/**/*.{ts,js}'],
+  subscribers: ['src/orm/subscribers/**/*.{ts,js}'],
   namingStrategy: new SnakeNamingStrategy(),
 });
 

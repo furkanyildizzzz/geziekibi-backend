@@ -6,7 +6,7 @@ import { Tour } from 'orm/entities/tour/Tour';
 import { InternalServerErrorException, NotFoundException } from 'shared/errors/allException';
 import { Tag } from 'orm/entities/tag/Tag';
 import { TourDate } from 'orm/entities/tour/TourDate';
-import TourService from 'orm/entities/tour/TourService';
+import { TourService } from 'orm/entities/tour/TourService';
 import { TourDaily } from 'orm/entities/tour/TourDaily';
 import { Image } from 'orm/entities/image/Image';
 

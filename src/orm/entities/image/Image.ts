@@ -10,10 +10,6 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity('images')
 export class Image extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  @Expose()
-  id: number;
-
   @Column({ name: 'originalName', nullable: true })
   @Expose()
   originalName: string;

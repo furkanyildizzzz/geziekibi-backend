@@ -15,7 +15,7 @@ import { Tag } from 'orm/entities/tag/Tag';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import { TourCategory } from 'orm/entities/tour/TourCategory';
 import { Service } from 'orm/entities/service/Service';
-import TourServiceEntity from 'orm/entities/tour/TourService';
+import { TourService as TourServiceEntity } from 'orm/entities/tour/TourService';
 import { In, Repository } from 'typeorm';
 import { Currency, ServiceType } from 'shared/utils/enum';
 import { TourPrice } from 'orm/entities/tour/TourPrice';

@@ -6,11 +6,6 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity('tags')
 export class Tag extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  // @Exclude({ toPlainOnly: true })
-  @Expose()
-  id: number;
-
   @Column({ unique: true, nullable: false })
   @Expose()
   name: string;

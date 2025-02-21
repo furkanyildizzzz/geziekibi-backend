@@ -17,6 +17,8 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 import container from 'core/container';
 import 'modules/contactForm/controller/ContactFormController';
 import { initializeDatabase } from 'config/database';
+import { authMiddleware } from 'middleware/authMiddleware';
+import { userContextMiddleware } from 'middleware/userContextMiddleware';
 const allowedOrigins = [
   'https://www.geziekibi-panel.com.tr',
   'https://geziekibi-test.vercel.app',
@@ -56,6 +58,9 @@ server.setConfig((app) => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(getLanguage);
+  app.use(authMiddleware);
+  app.use(userContextMiddleware);
+
   cloudinaryConfig();
 
   try {

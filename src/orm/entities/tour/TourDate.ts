@@ -15,10 +15,6 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity('tour_dates')
 export class TourDate extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  @Expose()
-  id: number;
-
   @Column()
   @CreateDateColumn()
   @Expose()

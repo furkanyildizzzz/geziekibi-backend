@@ -4,10 +4,6 @@ import { Expose } from 'class-transformer';
 import { BaseEntity } from '../BaseEntity';
 @Entity('static_pages')
 export class StaticPage extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  @Expose()
-  id: number;
-
   @Column({ nullable: false })
   @Expose()
   title: string;

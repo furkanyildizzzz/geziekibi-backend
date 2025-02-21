@@ -14,10 +14,6 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity('catalogs')
 export class Catalog extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  @Expose()
-  id: number;
-
   @Column({ name: 'originalName', nullable: true })
   @Expose()
   originalName: string;

@@ -1,5 +1,6 @@
 import { Blog } from 'orm/entities/blog/Blog';
 import { BlogCategory } from 'orm/entities/blog/BlogCategory';
+import { Image } from 'orm/entities/image/Image';
 import { Tag } from 'orm/entities/tag/Tag';
 import { TourDailyPath } from 'orm/entities/tour/TourDailyPath';
 import { PublishStatus } from 'shared/utils/enum';
@@ -52,6 +53,20 @@ const seedBlogs = async (dataSource: DataSource) => {
 <h2><strong>Bursa Kaplıcaları: Doğal Şifa ve Huzur Kaynakları</strong></h2>
 <p>Bursa kaplıcaları, çeşitli hastalıklara ve rahatsızlıklara şifa kaynağı olarak görülür. Romatizma, eklem ağrıları, cilt hastalıkları, sinirsel rahatsızlıklar ve solunum yolları problemleri gibi birçok sağlık sorununa iyi geldiği bilinir. Siz de Bursa gezilecek yerler doğal şifası ile yenilenmenizi sağlasın istiyorsanız kaplıcalar sizin için doğru adres olabilir. <a href="https://www.jollytur.com/bursa-termal-oteller">Bursa termal oteller</a>; masaj, cilt bakımı ve diğer spa uygulamaları ile ziyaretçiler için sağlığın ve huzurun merkezi hâline gelir.</p>
 <figure class="wp-block-image size-large"><img loading="lazy" width="1024" height="768" src="https://blog.jollytur.com/wp-content/uploads/2015/04/Mavi-göl-eigen-werk-self-made-1024x768.jpg" alt="" class="wp-image-5222" srcset="https://blog.jollytur.com/wp-content/uploads/2015/04/Mavi-göl-eigen-werk-self-made.jpg 1024w, https://blog.jollytur.com/wp-content/uploads/2015/04/Mavi-göl-eigen-werk-self-made-300x225.jpg 300w, https://blog.jollytur.com/wp-content/uploads/2015/04/Mavi-göl-eigen-werk-self-made-600x450.jpg 600w" sizes="(max-width: 1024px) 100vw, 1024px"><figcaption>Açık alan kaplıcaları düşündüğünüzden çok daha fazla yerde bulunur. | Fotoğraf: Eigen Werk / self made</figcaption></figure>`;
+  blog.primaryImages = [
+    {
+      url: 'http://res.cloudinary.com/furkannn/image/upload/v1733426995/dev/blog/2024-12-05/1/rr497lezpbtlr8q39pbv.jpg',
+      format: 'jpg',
+      width: 806,
+      height: 646,
+      publicId: 'dev/blog/2024-12-05/1/rr497lezpbtlr8q39pbv',
+      secureUrl:
+        'https://res.cloudinary.com/furkannn/image/upload/v1733426995/dev/blog/2024-12-05/1/rr497lezpbtlr8q39pbv.jpg',
+      order: 1,
+      createdAt: new Date('2024-12-04T07:27:26.000Z'),
+      originalName: 'bursa-806-646.jpg',
+    } as Image,
+  ];
   await repo.save(blog);
 
   blog = new Blog();
@@ -65,6 +80,21 @@ const seedBlogs = async (dataSource: DataSource) => {
 
   blog.body = `<div><div class="box-image-video"> <img src="/assets/imgs/page/blog/img-video.png" alt="Travilla"><a class="btn-play-video popup-youtube"></a><p>In a world filled with wonders waiting to be discovered, the allure of  the road less traveled beckons to the adventurous soul. Join me on a  journey beyond the beaten path, where each destination promises unique  experiences and unforgettable memories. From hidden paradises to  cultural gems, let's embark on an odyssey of exploration and discovery.</p><h6>1. Embracing Serenity in the Scottish Highlands:</h6><p>Our adventure begins amidst the rugged beauty of the Scottish Highlands,  where mist-covered mountains and shimmering lochs create a landscape  straight out of a fairytale. Far from the hustle and bustle of city  life, we'll wander along winding trails, breathing in the crisp Highland  air and immersing ourselves in the tranquility of nature. From the  ancient ruins of castles to the timeless charm of quaint villages, every  corner of this enchanting region holds the promise of adventure.</p><h6>2. Chasing Waterfalls in the Heart of Costa Rica:</h6><p>Next, we'll journey to the lush rainforests of Costa Rica, a land of  unparalleled biodiversity and natural splendor. Here, hidden within the  emerald green canopy, lie some of the world's most breathtaking  waterfalls. We'll trek through dense jungle trails, listening to the  symphony of exotic birdsong and the gentle rush of cascading water as we  discover hidden oases tucked away from the beaten path. With each  plunge into crystal-clear pools beneath thundering falls, we'll find  renewal and connection with the raw power of nature.</p><h6>3. Uncovering Ancient Mysteries in the Temples of Myanmar:</h6><p>Our quest for adventure takes us to the enchanting land of Myanmar,  where ancient temples and pagodas whisper tales of bygone eras. From the  sprawling plains of Bagan to the serene shores of Inle Lake, we'll  journey through a landscape steeped in spirituality and tradition.  Amidst the golden spires and intricate carvings of centuries-old  monuments, we'll uncover the timeless beauty of Burmese culture and the  enduring legacy of a land shrouded in mystery.</p><h6>4. Sailing into the Unknown in the Galápagos Islands:</h6><p>Our voyage of discovery leads us to the remote shores of the Galápagos  Islands, a haven of biodiversity teeming with life found nowhere else on  Earth. Setting sail on azure waters, we'll explore pristine beaches,  volcanic landscapes, and bustling seabird colonies. Snorkeling alongside  graceful sea turtles and playful sea lions, we'll witness the delicate  balance of life in one of the world's most pristine marine ecosystems,  leaving us humbled by the wonders of the natural world.</p><h6>5. Lost in Time: Exploring the Medieval Villages of Transylvania, Romania:</h6><p>Our final destination transports us to the storied land of Transylvania,  where medieval castles and fortified churches dot the landscape like  something out of a Gothic fairy tale. Venturing off the beaten path,  we'll wander through cobblestone streets and labyrinthine alleyways,  immersing ourselves in the rich history and folklore of this captivating  region. From the haunting beauty of Bran Castle to the picturesque  charm of Sighisoara, every corner of Transylvania holds a story waiting  to be discovered.</p></div>
   </div>`;
+
+  blog.primaryImages = [
+    {
+      url: 'http://res.cloudinary.com/furkannn/image/upload/v1733501282/dev/blog/2024-12-06/2/mopecvl0h0ssjjqrumfo.jpg',
+      format: 'jpg',
+      width: 806,
+      height: 646,
+      publicId: 'dev/blog/2024-12-06/2/mopecvl0h0ssjjqrumfo',
+      secureUrl:
+        'https://res.cloudinary.com/furkannn/image/upload/v1733501282/dev/blog/2024-12-06/2/mopecvl0h0ssjjqrumfo.jpg',
+      order: 1,
+      createdAt: new Date('2024-12-04T07:27:26.000Z'),
+      originalName: 'wanderlust-806-646.jpg',
+    } as Image,
+  ];
   await repo.save(blog);
 
   console.log('All blogs have been seeded!');

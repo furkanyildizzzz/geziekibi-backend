@@ -7,10 +7,6 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity('tour_prices')
 export class TourPrice extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  @Expose()
-  id: number;
-
   @Column({ nullable: false })
   @Expose()
   name: string;

@@ -8,7 +8,7 @@ import { TourDaily } from 'orm/entities/tour/TourDaily';
 import { TourDailyPath } from 'orm/entities/tour/TourDailyPath';
 import { TourDailyVisitingPlace } from 'orm/entities/tour/TourDailyVisitingPlace';
 import { TourDate } from 'orm/entities/tour/TourDate';
-import TourService from 'orm/entities/tour/TourService';
+import { TourService } from 'orm/entities/tour/TourService';
 import { PublishStatus, ServiceType, TourType } from 'shared/utils/enum';
 import { generateUniqueSeoLink } from 'shared/utils/generateSeoLink';
 import { DataSource } from 'typeorm';

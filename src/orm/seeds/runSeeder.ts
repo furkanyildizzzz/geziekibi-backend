@@ -14,11 +14,11 @@ const runSeeder = async () => {
     console.log('Connecting to database...');
     await AppDataSource.initialize();
 
-    console.log('Seeding sliders ...');
-    await seedHomepageSliders(AppDataSource);
-
     console.log('Seeding users...');
     await seedUsers(AppDataSource);
+
+    console.log('Seeding sliders ...');
+    await seedHomepageSliders(AppDataSource);
 
     console.log('Seeding blog categories...');
     await seedBlogCategories(AppDataSource);
