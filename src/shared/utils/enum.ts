@@ -84,4 +84,5 @@ export enum StaticPageType {
   PageCookiePolicy = 'page-cookie-policy',
   PageMembershipAgreementPolicy = 'page-membership-agreement-policy',
   PageHumanResources = 'page-human-resources',
+  PageTourPacketAgreement = 'tour-packet-agreement',
 }
