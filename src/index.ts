@@ -45,11 +45,11 @@ async function updateTrustedProxies(app) {
 }
 
 server.setConfig(async (app) => {
-  // if (process.env.NODE_ENV === 'production') {
-  //   await updateTrustedProxies(app); // Dynamically update trusted proxies
-  // } else {
-  //   app.set('trust proxy', 0); // Don't trust any proxy in development
-  // }
+  if (process.env.NODE_ENV === 'production') {
+    await updateTrustedProxies(app); // Dynamically update trusted proxies
+  } else {
+    app.set('trust proxy', 0); // Don't trust any proxy in development
+  }
 
   app.use(
     cors({
