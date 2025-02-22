@@ -9,10 +9,14 @@ import { JwtPayload } from 'types/JwtPayload';
 import { Role } from 'orm/entities/users/types';
 import { createJwtToken } from 'shared/utils/createJwtToken';
 import { User } from 'orm/entities/users/User';
+import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 
 @injectable()
 export class AuthService implements IAuthService {
-  constructor(@inject(INTERFACE_TYPE.IAuthRepository) private readonly repository: IAuthRepository) {}
+  constructor(
+    @inject(INTERFACE_TYPE.IAuthRepository) private readonly repository: IAuthRepository,
+    @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
+  ) {}
 
   async signIn(payload: SignInCredentialsDto): Promise<UserResponse> {
     const { email, password } = payload;
@@ -72,9 +76,11 @@ export class AuthService implements IAuthService {
         newUser.firstName = firstName;
         newUser.lastName = lastName;
         newUser.hashPassword();
+        newUser.seoLink = await this.seoLinkService.generateUniqueSeoLink(newUser.name, 'user', newUser.id);
+
         await this.repository.save(newUser);
       } catch (err) {
-        const customError = new BadRequestException(`User '${email}' can't be created`);
+        const customError = new InternalServerErrorException(`User '${email}' can't be created. Error: ${err.message}`);
         throw customError;
       }
     } catch (err) {

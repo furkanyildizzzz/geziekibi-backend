@@ -14,11 +14,9 @@ export class SignUpCredentialsDto {
 
   @IsString()
   @MinLength(3)
-  @MaxLength(10)
   password: string;
 
   @IsString()
   @MinLength(3)
-  @MaxLength(10)
   passwordConfirm: string;
 }

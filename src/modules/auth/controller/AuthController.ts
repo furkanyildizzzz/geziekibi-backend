@@ -11,7 +11,7 @@ import { instanceToPlain } from 'class-transformer';
 export class AuthController {
   constructor(@inject(INTERFACE_TYPE.IAuthService) private readonly authService: AuthService) {}
 
-  @httpPost('/signup', DtoValidationMiddleware(SignUpCredentialsDto))
+  @httpPost('/register', DtoValidationMiddleware(SignUpCredentialsDto))
   public async signup(@requestBody() body: SignUpCredentialsDto, req: Request, res: Response) {
     const msg = await this.authService.signUp(body);
     return res.customSuccess(200, 'User registered successfully', msg);
