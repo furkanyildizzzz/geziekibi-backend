@@ -8,6 +8,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 
 import './shared/response/customSuccess';
 import { errorHandler } from 'middleware/errorHandler';
@@ -23,6 +24,7 @@ const allowedOrigins = [
   'https://www.geziekibi-panel.com.tr',
   'https://geziekibi-test.vercel.app',
   'http://localhost:3000',
+  'http://localhost:3004',
 ];
 
 export const server = new InversifyExpressServer(container, null, { rootPath: '/v1' });
@@ -57,6 +59,7 @@ server.setConfig((app) => {
   app.use(helmet());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(cookieParser()); // Cookie'leri req.cookies içine parse eder
   app.use(getLanguage);
   app.use(authMiddleware);
   app.use(userContextMiddleware);

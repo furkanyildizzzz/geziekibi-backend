@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { CustomError } from 'shared/errors/CustomError';
 
 declare global {
   namespace Express {
@@ -16,27 +17,51 @@ export const publicRoutes = [
   '/v1/panel/auth/signin',
   '/v1/panel/auth/register',
   '/v1/panel/auth/forgot-password',
-  // Add any other public routes
+  '/v1/website/homepage/featuredTours',
+  '/v1/website',
 ];
 
+// Middleware
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  // Skip authentication for public routes
-  console.log(req.path);
-  if (publicRoutes.includes(req.path)) {
+  // Public route'ları kontrol et (alt yolları da dahil et)
+  if (publicRoutes.some((route) => req.path.startsWith(route))) {
     return next();
   }
 
-  const token = req.headers.authorization?.split(' ')[1];
+  let token = req.cookies.token;
+  if (!token) {
+    const authHeader = req.get('Authorization');
+    if (!authHeader) {
+      const customError = new CustomError(400, 'BAD REQUEST', 'Authorization header not provided');
+      return next(customError);
+    }
+
+    token = authHeader.split(' ')[1];
+  }
 
   if (!token) {
-    return res.status(401).json({ message: 'Authentication required' });
+    const customError = new CustomError(401, 'UNAUTHORIZED', 'Authentication required');
+    return next(customError);
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    req.user = decoded as { id: number };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    if (!decoded || typeof decoded !== 'object' || !decoded.id) {
+      const customError = new CustomError(401, 'UNAUTHORIZED', 'Invalid token');
+      return next(customError);
+    }
+
+    req.user = { id: decoded.id };
     next();
   } catch (error) {
-    return res.status(401).json({ message: 'Invalid token' });
+    if (error instanceof jwt.TokenExpiredError) {
+      const customError = new CustomError(401, 'UNAUTHORIZED', 'Token expired');
+      return next(customError);
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      const customError = new CustomError(401, 'UNAUTHORIZED', 'Invalid token');
+      return next(customError);
+    }
+    const customError = new CustomError(500, 'INTERNAL SERVER ERROR', 'Internal server error');
+    return next(customError);
   }
 };

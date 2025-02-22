@@ -20,7 +20,21 @@ export class AuthController {
   @httpPost('/signin', DtoValidationMiddleware(SignInCredentialsDto))
   public async signIn(@requestBody() body: SignInCredentialsDto, req: Request, res: Response) {
     const user = await this.authService.signIn(body);
+
+    res.cookie('token', user.accessToken, {
+      httpOnly: true, // JS ile erişilemez
+      secure: process.env.NODE_ENV === 'production', // Prod ortamında HTTPS zorunlu
+      sameSite: 'lax', // CSRF koruması için
+      path: '/', // Tüm endpointlerde erişilebilir
+    });
+
     return res.customSuccess(200, 'Login successfully', instanceToPlain(user));
+  }
+
+  @httpPost('/logout')
+  public async logout(req: Request, res: Response) {
+    res.clearCookie('token', { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+    return res.customSuccess(200, 'Logged out successfully');
   }
 
   //   @httpPost('/refresh-token', INTERFACE_TYPE.AuthenticationMiddleware)
