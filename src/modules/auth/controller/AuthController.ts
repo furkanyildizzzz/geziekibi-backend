@@ -24,7 +24,7 @@ export class AuthController {
     res.cookie('token', user.accessToken, {
       httpOnly: true, // JS ile erişilemez
       secure: process.env.NODE_ENV === 'production', // Prod ortamında HTTPS zorunlu
-      sameSite: 'lax', // CSRF koruması için
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // CSRF koruması için
       path: '/', // Tüm endpointlerde erişilebilir
     });
 
