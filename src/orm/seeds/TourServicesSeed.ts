@@ -27,6 +27,7 @@ const seedTourServices = async (dataSource: DataSource) => {
   for (const serviceName of includedServices) {
     const service = new Service();
     service.name = serviceName;
+    service.insertUserId = 1;
     await serviceRepository.save(service);
   }
 
@@ -48,6 +49,7 @@ const seedTourServices = async (dataSource: DataSource) => {
   for (const serviceName of excludedServices) {
     const service = new Service();
     service.name = serviceName;
+    service.insertUserId = 1;
     await serviceRepository.save(service);
   }
 

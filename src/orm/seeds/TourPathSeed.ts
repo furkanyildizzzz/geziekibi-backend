@@ -93,6 +93,7 @@ const seedTourPaths = async (dataSource: DataSource) => {
     if (!exists) {
       const tourPath = new TourDailyPath();
       tourPath.name = city;
+      tourPath.insertUserId = 1;
       await tourPathRepository.save(tourPath);
     }
   }

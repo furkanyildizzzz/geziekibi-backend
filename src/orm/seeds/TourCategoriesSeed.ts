@@ -25,6 +25,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
+  category.insertUserId = 1;
   await repo.save(category);
 
   let subCategory = new TourCategory();
@@ -45,6 +46,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
+  subCategory.insertUserId = 1;
   await repo.save(subCategory);
 
   subCategory = new TourCategory();
@@ -65,6 +67,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
+  subCategory.insertUserId = 1;
   await repo.save(subCategory);
 
   subCategory = new TourCategory();
@@ -85,6 +88,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
+  subCategory.insertUserId = 1;
   await repo.save(subCategory);
 
   category = new TourCategory();
@@ -104,6 +108,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
+  category.insertUserId = 1;
   await repo.save(category);
 
   subCategory = new TourCategory();
@@ -124,6 +129,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
+  subCategory.insertUserId = 1;
   await repo.save(subCategory);
 
   subCategory = new TourCategory();
@@ -144,6 +150,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
+  subCategory.insertUserId = 1;
   await repo.save(subCategory);
 
   category = new TourCategory();
@@ -163,6 +170,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
+  category.insertUserId = 1;
   await repo.save(category);
 
   subCategory = new TourCategory();
@@ -183,6 +191,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
+  subCategory.insertUserId = 1;
   await repo.save(subCategory);
 
   category = new TourCategory();
@@ -202,6 +211,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
+  category.insertUserId = 1;
   await repo.save(category);
 
   subCategory = new TourCategory();
@@ -222,6 +232,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
+  subCategory.insertUserId = 1;
   await repo.save(subCategory);
 
   category = new TourCategory();
@@ -241,6 +252,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
+  category.insertUserId = 1;
   await repo.save(category);
 
   subCategory = new TourCategory();
@@ -261,6 +273,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   subCategory.seoLink = await generateUniqueSeoLink(subCategory.name, 'tourCategory');
+  subCategory.insertUserId = 1;
   await repo.save(subCategory);
 
   category = new TourCategory();
@@ -280,6 +293,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
+  category.insertUserId = 1;
   await repo.save(category);
 
   category = new TourCategory();
@@ -299,6 +313,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
+  category.insertUserId = 1;
   await repo.save(category);
 
   category = new TourCategory();
@@ -318,6 +333,7 @@ const seedTourCategories = async (dataSource: DataSource) => {
     } as Image,
   ];
   category.seoLink = await generateUniqueSeoLink(category.name, 'tourCategory');
+  category.insertUserId = 1;
   await repo.save(category);
 
   console.log('All tour categories have been seeded!');

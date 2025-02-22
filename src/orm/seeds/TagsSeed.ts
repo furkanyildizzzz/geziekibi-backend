@@ -79,6 +79,7 @@ const seedTags = async (dataSource: DataSource) => {
     const tag = new Tag();
     tag.name = tagName;
     tag.seoLink = await generateUniqueSeoLink(tag.name, 'tag');
+    tag.insertUserId = 1;
     await tagRepository.save(tag);
   }
 

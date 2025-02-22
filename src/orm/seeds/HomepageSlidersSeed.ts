@@ -9,6 +9,7 @@ const seedHomepageSliders = async (dataSource: DataSource) => {
     {
       order: 1,
       isActive: true,
+      insertUserId: 1,
       image: {
         url: 'http://res.cloudinary.com/furkannn/image/upload/v1737900403/dev/homepageSlider/lkwbckr3l1ulsnpxw1jw.jpg',
         format: 'jpg',
@@ -19,11 +20,13 @@ const seedHomepageSliders = async (dataSource: DataSource) => {
           'https://res.cloudinary.com/furkannn/image/upload/v1737900403/dev/homepageSlider/lkwbckr3l1ulsnpxw1jw.jpg',
         order: 1,
         originalName: 'Geziekibi',
+        insertUserId: 1,
       } as Image,
     },
     {
       order: 2,
       isActive: true,
+      insertUserId: 1,
       image: {
         url: 'http://res.cloudinary.com/furkannn/image/upload/v1737900425/dev/homepageSlider/tnojfpjub35vwnd0hjwj.jpg',
         format: 'jpg',
@@ -34,11 +37,13 @@ const seedHomepageSliders = async (dataSource: DataSource) => {
           'https://res.cloudinary.com/furkannn/image/upload/v1737900425/dev/homepageSlider/tnojfpjub35vwnd0hjwj.jpg',
         order: 1,
         originalName: 'Geziekibi',
+        insertUserId: 1,
       } as Image,
     },
     {
       order: 3,
       isActive: true,
+      insertUserId: 1,
       image: {
         url: 'http://res.cloudinary.com/furkannn/image/upload/v1737900437/dev/homepageSlider/ku0ikzypnhyjpjxbrrgp.jpg',
         format: 'jpg',
@@ -49,6 +54,7 @@ const seedHomepageSliders = async (dataSource: DataSource) => {
           'https://res.cloudinary.com/furkannn/image/upload/v1737900437/dev/homepageSlider/ku0ikzypnhyjpjxbrrgp.jpg',
         order: 1,
         originalName: 'Geziekibi',
+        insertUserId: 1,
       } as Image,
     },
   ];
