@@ -20,6 +20,8 @@ import 'modules/contactForm/controller/ContactFormController';
 import { initializeDatabase } from 'config/database';
 import { authMiddleware } from 'middleware/authMiddleware';
 import { userContextMiddleware } from 'middleware/userContextMiddleware';
+import axios from 'axios';
+
 const allowedOrigins = [
   'https://www.geziekibi-panel.com.tr',
   'https://geziekibi-test.vercel.app',
@@ -28,7 +30,27 @@ const allowedOrigins = [
 ];
 
 export const server = new InversifyExpressServer(container, null, { rootPath: '/v1' });
-server.setConfig((app) => {
+
+async function updateTrustedProxies(app) {
+  try {
+    const res = await axios.get('https://www.cloudflare.com/ips-v4');
+    const cloudflareIps = res.data.split('\n').filter((ip) => ip.trim() !== '');
+
+    app.set('trust proxy', ['loopback', ...cloudflareIps]);
+    console.log('✅ Updated trusted proxies:', cloudflareIps);
+  } catch (error) {
+    console.error('❌ Failed to update Cloudflare IPs', error);
+    app.set('trust proxy', 'loopback'); // Fallback to loopback
+  }
+}
+
+server.setConfig(async (app) => {
+  if (process.env.NODE_ENV === 'production') {
+    await updateTrustedProxies(app); // Dynamically update trusted proxies
+  } else {
+    app.set('trust proxy', 0); // Don't trust any proxy in development
+  }
+
   app.use(
     cors({
       origin: (origin, callback) => {
