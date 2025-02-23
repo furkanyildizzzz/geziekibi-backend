@@ -8,6 +8,7 @@ import seedTours from './ToursSeed';
 import seedBlogs from './BlogsSeed';
 import seedHomepageSliders from './HomepageSlidersSeed';
 import AppDataSource from 'config/seed-database';
+import seedStaticPages from './StaticPagesSeed';
 
 const runSeeder = async () => {
   try {
@@ -40,6 +41,9 @@ const runSeeder = async () => {
 
     console.log('Seeding blogs ...');
     await seedBlogs(AppDataSource);
+
+    console.log('Seeding static pages ...');
+    await seedStaticPages(AppDataSource);
 
     console.log('Seeding completed!');
     await AppDataSource.destroy();
