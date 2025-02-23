@@ -9,6 +9,9 @@ import seedBlogs from './BlogsSeed';
 import seedHomepageSliders from './HomepageSlidersSeed';
 import AppDataSource from 'config/seed-database';
 import seedStaticPages from './StaticPagesSeed';
+import seedEmailTemplates from './EmailTemplatesSeed';
+import seedCatalogs from './CatalogSeed';
+import seedFAQs from './FAQsSeed';
 
 const runSeeder = async () => {
   try {
@@ -44,6 +47,15 @@ const runSeeder = async () => {
 
     console.log('Seeding static pages ...');
     await seedStaticPages(AppDataSource);
+
+    console.log('Seeding email templates ...');
+    await seedEmailTemplates(AppDataSource);
+
+    console.log('Seeding catalog ...');
+    await seedCatalogs(AppDataSource);
+
+    console.log('Seeding faqs ...');
+    await seedFAQs(AppDataSource);
 
     console.log('Seeding completed!');
     await AppDataSource.destroy();

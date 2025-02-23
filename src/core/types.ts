@@ -59,4 +59,5 @@ export const INTERFACE_TYPE = {
   HomepageSliderController: Symbol.for('HomepageSliderController'),
   IHomepageSliderService: Symbol.for('IHomepageSliderService'),
   IHomepageSliderRepository: Symbol.for('IHomepageSliderRepository'),
+  IEmailService: Symbol.for('IEmailService'),
 };

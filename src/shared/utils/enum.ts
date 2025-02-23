@@ -86,3 +86,12 @@ export enum StaticPageType {
   PageHumanResources = 'page-human-resources',
   PageTourPacketAgreement = 'tour-packet-agreement',
 }
+
+export enum EmailTemplateEnum {
+  USER_WELCOME = 'USER_WELCOME',
+  ADMIN_NEW_USER = 'ADMIN_NEW_USER',
+  USER_TOUR_REGISTRATION = 'USER_TOUR_REGISTRATION',
+  ADMIN_TOUR_NOTIFICATION = 'ADMIN_TOUR_NOTIFICATION',
+  USER_CONTACT_FORM = 'USER_CONTACT_FORM',
+  ADMIN_CONTACT_NOTIFICATION = 'ADMIN_CONTACT_NOTIFICATION',
+}
