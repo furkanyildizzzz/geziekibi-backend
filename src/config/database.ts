@@ -3,6 +3,7 @@ import { Blog } from 'orm/entities/blog/Blog';
 import { BlogCategory } from 'orm/entities/blog/BlogCategory';
 import { Catalog } from 'orm/entities/catalog/Catalog';
 import { ContactForm } from 'orm/entities/contactForm/ContactForm';
+import { EmailTemplate } from 'orm/entities/emailTemplate/EmailTemplate';
 import { FAQ } from 'orm/entities/faq/FAQ';
 import { HomepageSlider } from 'orm/entities/homepageSlider/HomepageSlider';
 import { Image } from 'orm/entities/image/Image';
@@ -56,6 +57,7 @@ const AppDataSource = new DataSource({
     TourService,
     User,
     UserAddress,
+    EmailTemplate,
   ],
   //migrations: ['src/orm/migrations/**/*.{ts,js}'],
   subscribers: [AuditSubscriber],

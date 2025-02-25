@@ -106,6 +106,7 @@ import { HomepageSliderService } from 'modules/homepageSlider/service/HomepageSl
 import { HomepageSliderRepository } from 'modules/homepageSlider/repository/HomepageSliderRepository';
 import { IEmailService } from 'shared/interfaces/IEmailService';
 import { EmailService } from 'shared/services/EmailService';
+import { EmailController } from 'modules/email/controller/EmailController';
 
 const container = new Container();
 
@@ -190,5 +191,6 @@ container.bind<IHomepageSliderService>(INTERFACE_TYPE.IHomepageSliderService).to
 container.bind(INTERFACE_TYPE.HomepageSliderController).to(HomepageSliderController);
 
 container.bind<IEmailService>(INTERFACE_TYPE.IEmailService).to(EmailService);
+container.bind(INTERFACE_TYPE.IEmailController).to(EmailController);
 
 export default container;
