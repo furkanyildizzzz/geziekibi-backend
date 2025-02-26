@@ -8,6 +8,7 @@ import { checkRole } from 'middleware/checkRole';
 import { DtoValidationMiddleware } from 'middleware/dtoValidation';
 import { DeleteMultipleContactFormDto } from '../dto/DeleteMultipleContactFormDto';
 import { UpdateContactFormDTO } from '../dto/UpdateContactFormDTO';
+import { ResponseContactFormDTO } from '../dto/ResponseContactFormDTO';
 
 @controller('/panel/contactForm')
 export class ContactFormController {
@@ -18,6 +19,7 @@ export class ContactFormController {
 
   @httpGet('/')
   public async getAll(req: Request, res: Response, next: NextFunction) {
+    console.log('I am here!');
     const contactForms = await this.service.getAll();
     return res.customSuccess(200, 'ContactForms found', contactForms);
   }
@@ -47,5 +49,17 @@ export class ContactFormController {
   public async deleteMultiple(req: Request, res: Response, nex: NextFunction) {
     await this.service.deleteMultipleContactForm(req.body);
     return res.customSuccess(200, 'ContactForms deleted successfully');
+  }
+
+  @httpPost(
+    '/response/:id([0-9]+)',
+    checkJwt,
+    checkRole(['ADMINISTRATOR']),
+    DtoValidationMiddleware(ResponseContactFormDTO),
+  )
+  public async response(req: Request, res: Response, nex: NextFunction) {
+    const id = req.params.id;
+    const contactForm = await this.service.responseContactForm(id, req.body);
+    return res.customSuccess(200, 'ContactForm responded successfully', contactForm);
   }
 }

@@ -8,7 +8,7 @@ import { IsNull, LessThan, LessThanOrEqual } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import tourFunctions from 'shared/utils/tourFunctions';
 import { TourCategory } from 'orm/entities/tour/TourCategory';
-import { PublishStatus, StaticPageType } from 'shared/utils/enum';
+import { EmailTemplateEnum, PublishStatus, StaticPageType } from 'shared/utils/enum';
 import { BlogDto } from '../dto/BlogDto';
 import { Blog } from 'orm/entities/blog/Blog';
 import { DailyPathDto } from '../dto/DailyPathDto';
@@ -23,10 +23,14 @@ import { FAQsDto } from '../dto/FAQsDto';
 import { FAQ } from 'orm/entities/faq/FAQ';
 import { SliderDto } from '../dto/SliderDto';
 import { HomepageSlider } from 'orm/entities/homepageSlider/HomepageSlider';
+import { EmailService } from 'shared/services/EmailService';
 
 @injectable()
 export class HomepageService implements IHomepageService {
-  constructor(@inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork) {}
+  constructor(
+    @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
+    @inject(INTERFACE_TYPE.IEmailService) private readonly emailService: EmailService,
+  ) {}
 
   public async getFeaturedTours(): Promise<FeaturedTourDto[]> {
     const tourRepo = await this.unitOfWork.getRepository(Tour);
@@ -230,6 +234,16 @@ export class HomepageService implements IHomepageService {
       contactForm.message = contactFormDto.message;
       contactForm.agreeToTerms = contactFormDto.agreeToTerms;
       await repo.save(contactForm);
+
+      await this.emailService.sendEmail(process.env.SMTP_EMAIL, EmailTemplateEnum.ADMIN_CONTACT_NOTIFICATION, {
+        name: contactForm.fullName,
+        message: contactForm.message,
+      });
+
+      await this.emailService.sendEmail(contactForm.email, EmailTemplateEnum.USER_CONTACT_FORM_RECEIVED, {
+        name: contactForm.fullName,
+        message: contactForm.message,
+      });
 
       return true;
     } catch (error) {

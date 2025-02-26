@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, IsNull } from 'typeorm';
 import { Length, IsEmail, Matches, IsOptional, IsBoolean } from 'class-validator';
 import { BaseEntity } from '../BaseEntity';
+import { Expose } from 'class-transformer';
 
 @Entity('contact_form')
 export class ContactForm extends BaseEntity {
@@ -45,4 +46,9 @@ export class ContactForm extends BaseEntity {
     message: 'Mesajınızda zararlı içerik bulunmaktadır.',
   })
   response?: string;
+
+  @Expose({ name: 'fullName' })
+  get fullName(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
 }

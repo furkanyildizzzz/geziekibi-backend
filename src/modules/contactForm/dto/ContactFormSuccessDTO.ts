@@ -1,12 +1,14 @@
-export class ContactFormSuccessDTO {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
-  message: string;
-  response?: string;
-  isResponded: boolean;
+import { Expose } from 'class-transformer';
 
-  agreeToTerms: boolean;
+export class ContactFormSuccessDTO {
+  @Expose() id: number;
+  @Expose() firstName: string;
+  @Expose() lastName: string;
+  @Expose() email: string;
+  @Expose() phone?: string;
+  @Expose() message: string;
+  @Expose() response?: string;
+  @Expose() isResponded: boolean;
+  @Expose() fullName: string;
+  @Expose() agreeToTerms: boolean;
 }
