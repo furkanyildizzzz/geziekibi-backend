@@ -15,15 +15,15 @@ const seedUsers = async (dataSource: DataSource) => {
   user.seoLink = 'mustafa-basak';
   await userRepository.save(user);
 
-  // user = new User();
-  // user.firstName = 'Jesse';
-  // user.lastName = 'Pinkman';
-  // user.email = 'standard@standard.com';
-  // user.password = 'test';
-  // user.hashPassword();
-  // user.role = 'STANDARD' as Role;
-  // user.seoLink = 'jesse-pinkman';
-  // await userRepository.save(user);
+  user = new User();
+  user.firstName = 'Furkan';
+  user.lastName = 'Yıldız';
+  user.email = 'admin@admin.com';
+  user.password = 'test';
+  user.hashPassword();
+  user.role = 'ADMINISTRATOR' as Role;
+  user.seoLink = 'admin';
+  await userRepository.save(user);
 
   // user = new User();
   // user.firstName = 'Skyler';
