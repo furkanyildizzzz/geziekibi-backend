@@ -35,7 +35,7 @@ export class User {
   lastName: string;
 
   @Column({
-    default: 'STANDART' as Role,
+    default: 'STANDARD' as Role,
     length: 30,
   })
   role: string;

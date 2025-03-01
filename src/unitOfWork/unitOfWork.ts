@@ -10,22 +10,19 @@ export class UnitOfWork {
 
   constructor(@inject(INTERFACE_TYPE.IDatabaseService) private readonly database: IDatabaseService) {}
 
-  /**
-   * Bağlantıyı lazily al, böylece gereksiz bağlantı oluşturulmaz.
-   */
-  private async getDataSource(): Promise<DataSource> {
-    if (!this.dataSource) {
-      this.dataSource = await this.database.getConnection();
-    }
-    return this.dataSource;
+  async initialize() {
+    this.dataSource = await this.database.getConnection();
   }
 
   async startTransaction() {
+    if (!this.dataSource) {
+      await this.initialize(); // Bağlantıyı başlat
+    }
     if (this.queryRunner) {
       throw new Error('Transaction is already active');
     }
-    const ds = await this.getDataSource();
-    this.queryRunner = ds.createQueryRunner();
+    // const ds = await this.getDataSource();
+    this.queryRunner = this.dataSource.createQueryRunner();
     await this.queryRunner.connect();
     await this.queryRunner.startTransaction();
   }
@@ -55,7 +52,10 @@ export class UnitOfWork {
   }
 
   async getRepository<T>(entity: { new (): T }) {
-    const ds = await this.getDataSource();
-    return this.queryRunner ? this.queryRunner.manager.getRepository(entity) : ds.getRepository(entity);
+    if (!this.queryRunner) {
+      if (!this.dataSource) await this.initialize(); // Bağlantıyı başlat
+      return this.dataSource.getRepository(entity);
+    }
+    return this.queryRunner.manager.getRepository(entity);
   }
 }

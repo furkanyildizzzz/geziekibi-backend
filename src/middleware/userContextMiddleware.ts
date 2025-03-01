@@ -7,9 +7,9 @@ export const userContextMiddleware = async (req: Request, res: Response, next: N
     // For public routes, just continue without setting user context
     return next();
   }
-
+  
   if (req.user?.id) {
-    await setCurrentUser(req.user.id, async () => {
+    await setCurrentUser(req.user, async () => {
       next();
     });
   } else {

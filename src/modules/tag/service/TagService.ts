@@ -3,7 +3,7 @@ import { ITagService } from 'modules/tag/interfaces/ITagService';
 import { ITagRepository } from 'modules/tag/interfaces/ITagRepository';
 import { inject, injectable, named } from 'inversify';
 import { Tag } from 'orm/entities/tag/Tag';
-import { BadRequestException, NotFoundException } from 'shared/errors/allException';
+import { BadRequestException, InternalServerErrorException, NotFoundException } from 'shared/errors/allException';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import { INTERFACE_TYPE } from 'core/types';
 import { CreateTagDto } from '../dto/CreateTagDto';
@@ -56,11 +56,19 @@ export class TagService implements ITagService {
   }
 
   async updateTag(id: string, tagData: CreateTagDto): Promise<Tag> {
-    const tag = await this.repository.getById(Number(id));
-    if (!tag) throw new NotFoundException(`Tag with id:'${id}' is not found`);
-    tag.name = tagData.name;
-    tag.seoLink = await this.seoLinkService.generateUniqueSeoLink(tagData.name, 'tag', tag.id);
-    return await this.repository.update(Number(id), tag);
+    try {
+      const tag = await this.repository.getById(Number(id));
+      if (!tag) throw new NotFoundException(`Tag with id:'${id}' is not found`);
+
+      const existingTag = await this.repository.getByName(tagData.name);
+      if (existingTag) throw new NotFoundException(`Tag with name:'${tagData.name}' is already exists`);
+
+      tag.name = tagData.name;
+      tag.seoLink = await this.seoLinkService.generateUniqueSeoLink(tagData.name, 'tag', tag.id);
+      return await this.repository.update(Number(id), tag);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message)
+    }
   }
 
   async deleteTag(id: string): Promise<void> {

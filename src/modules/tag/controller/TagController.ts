@@ -29,27 +29,27 @@ export class TagController {
     return res.customSuccess(200, 'Tag found', tag);
   }
 
-  @httpPost('/', checkJwt, checkRole(['ADMINISTRATOR']), DtoValidationMiddleware(CreateTagDto))
+  @httpPost('/', checkJwt, checkRole(['ADMINISTRATOR', 'STANDARD']), DtoValidationMiddleware(CreateTagDto))
   public async create(req: Request, res: Response, nex: NextFunction) {
     const tag = await this.service.createTag(req.body);
     return res.customSuccess(200, 'Tag created successfully', tag);
   }
 
-  @httpPost('/:id([0-9]+)', checkJwt, checkRole(['ADMINISTRATOR']), DtoValidationMiddleware(CreateTagDto))
+  @httpPost('/:id([0-9]+)', checkJwt, checkRole(['ADMINISTRATOR','STANDARD']), DtoValidationMiddleware(CreateTagDto))
   public async update(req: Request, res: Response, nex: NextFunction) {
     const id = req.params.id;
     const tag = await this.service.updateTag(id, req.body);
     return res.customSuccess(200, 'Tag updated successfully', tag);
   }
 
-  @httpDelete('/:id([0-9]+)', checkJwt, checkRole(['ADMINISTRATOR']))
+  @httpDelete('/:id([0-9]+)', checkJwt, checkRole(['ADMINISTRATOR','STANDARD']))
   public async delete(req: Request, res: Response, nex: NextFunction) {
     const id = req.params.id;
     await this.service.deleteTag(id);
     return res.customSuccess(200, 'Tag deleted successfully');
   }
 
-  @httpDelete('/', checkJwt, checkRole(['ADMINISTRATOR']), DtoValidationMiddleware(DeleteMultipleTagDto))
+  @httpDelete('/', checkJwt, checkRole(['ADMINISTRATOR','STANDARD']), DtoValidationMiddleware(DeleteMultipleTagDto))
   public async deleteMultiple(req: Request, res: Response, nex: NextFunction) {
     await this.service.deleteMultipleTag(req.body);
     return res.customSuccess(200, 'Tags deleted successfully');
