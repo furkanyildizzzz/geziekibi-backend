@@ -1,10 +1,11 @@
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { INTERFACE_TYPE } from 'core/types';
 import { inject } from 'inversify';
 import { Image } from 'orm/entities/image/Image';
 import { BadRequestException, InternalServerErrorException } from 'shared/errors/allException';
 import { IImageRepository } from 'shared/interfaces/IImageRepository';
 import { IImageService } from 'shared/interfaces/IImageService';
+import streamifier from 'streamifier';
 
 export class ImageService implements IImageService {
     constructor(@inject(INTERFACE_TYPE.IImageRepository) private readonly imageRepository: IImageRepository) {
@@ -66,7 +67,6 @@ export class ImageService implements IImageService {
         return savedImages;
     }
 
-
     public async uploadBodyImage(folderName: string, file: Express.Multer.File): Promise<string> {
         try {
             const imageStr = 'data:image/jpeg;base64,' + file.buffer.toString('base64');
@@ -88,4 +88,21 @@ export class ImageService implements IImageService {
             );
         }
     }
+
+    public async uploadStream (buffer: Buffer, folderName: string): Promise<UploadApiResponse> {
+      return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: `${process.env.NODE_ENV}/${folderName}`,
+            use_filename: true,
+            upload_preset: 'ml_default',
+          },
+          (error: Error, result: UploadApiResponse) => {
+            if (result) resolve(result);
+            else reject(error);
+          },
+        );
+        streamifier.createReadStream(buffer).pipe(uploadStream);
+      });
+    };
 }

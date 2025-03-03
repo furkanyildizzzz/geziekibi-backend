@@ -10,6 +10,7 @@ import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import uploadStream from 'shared/services/uploadStream';
 import { UpdateCatalogDto } from '../dto/UpdateCatalogDto';
 import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
+import { IImageService } from 'shared/interfaces/IImageService';
 
 @injectable()
 export class CatalogService implements ICatalogService {
@@ -17,12 +18,13 @@ export class CatalogService implements ICatalogService {
     @inject(INTERFACE_TYPE.ICatalogRepository) private readonly repository: ICatalogRepository,
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
+    @inject(INTERFACE_TYPE.IImageService) private readonly imageService: IImageService,
   ) {}
 
   public async getAll(): Promise<Catalog[]> {
-    const tourCategories = await this.repository.getAll();
-    if (tourCategories && tourCategories.length)
-      return plainToInstance(Catalog, tourCategories.reverse(), {
+    const catalogs = await this.repository.getAll();
+    if (catalogs && catalogs.length)
+      return plainToInstance(Catalog, catalogs.reverse(), {
         excludeExtraneousValues: true,
         enableCircularCheck: true,
       });
@@ -65,7 +67,7 @@ export class CatalogService implements ICatalogService {
       const folderDate = `${year}-${month}-${day}`; //_${hour}-${minute};
 
       try {
-        const result = await uploadStream(file.buffer, `/catalog/${folderDate}`);
+        const result = await this.imageService.uploadStream(file.buffer, `/catalog/${folderDate}`);
         console.log({ result });
         const newCatalog = new Catalog();
         newCatalog.originalName = file.originalname;

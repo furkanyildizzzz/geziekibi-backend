@@ -56,6 +56,8 @@ const multerUploads = multer({ storage, fileFilter: fileFilter }).fields([
 // const multerUploads = multer({ storage, fileFilter: fileFilter }).any();
 
 const uploadMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  console.log("I am her")
+
   const store = asyncLocalStorage.getStore(); // Bağlamı al
 
   multerUploads(req, res, (err: any) => {
