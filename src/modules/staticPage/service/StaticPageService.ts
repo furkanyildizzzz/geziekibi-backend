@@ -13,12 +13,14 @@ import { v2 } from 'cloudinary';
 import { Image } from 'orm/entities/image/Image';
 import { StaticPageType } from 'shared/utils/enum';
 import { StaticPage } from 'orm/entities/static-page/StaticPage';
+import { ImageService } from 'shared/services/ImageService';
 
 @injectable()
 export class StaticPageService implements IStaticPageService {
   constructor(
     @inject(INTERFACE_TYPE.IStaticPageRepository) private readonly repository: IStaticPageRepository,
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
+    @inject(INTERFACE_TYPE.IImageService) private readonly imageService: ImageService,
   ) {}
 
   public async getAll(): Promise<StaticPageListDto[]> {
@@ -56,7 +58,7 @@ export class StaticPageService implements IStaticPageService {
       staticPage.body = staticPageData.body;
       staticPage.pageType = staticPageData.pageType;
 
-      await this.repository.save(staticPage);
+      await this.repository.create(staticPage);
 
       return plainToInstance(StaticPageDto, staticPage, {
         excludeExtraneousValues: true,
@@ -97,21 +99,27 @@ export class StaticPageService implements IStaticPageService {
   }
 
   public async uploadBodyImage(file: Express.Multer.File): Promise<string> {
+    // if (file) {
+    //   const imageStr = 'data:image/jpeg;base64,' + file.buffer.toString('base64');
+    //   return await v2.uploader
+    //     .upload(imageStr, { folder: `${process.env.NODE_ENV}/staticPageBodyImage/` })
+    //     .then((result) => {
+    //       const imageUrl = result.url;
+    //       console.log({ imageUrl });
+    //       return imageUrl;
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //       throw new InternalServerErrorException(err.message);
+    //     });
+    // } else {
+    //   throw new BadRequestException('No file provided');
+    // }
     if (file) {
-      const imageStr = 'data:image/jpeg;base64,' + file.buffer.toString('base64');
-      return await v2.uploader
-        .upload(imageStr, { folder: `${process.env.NODE_ENV}/staticPageBodyImage/` })
-        .then((result) => {
-          const imageUrl = result.url;
-          console.log({ imageUrl });
-          return imageUrl;
-        })
-        .catch((err) => {
-          console.log(err);
-          throw new InternalServerErrorException(err.message);
-        });
+      return await this.imageService.uploadBodyImage("staticPageBodyImage", file)
     } else {
       throw new BadRequestException('No file provided');
     }
   }
+  
 }
