@@ -8,6 +8,7 @@ import { checkRole } from 'middleware/checkRole';
 import { DtoValidationMiddleware } from 'middleware/dtoValidation';
 import { uploadMiddleware } from 'middleware/multer';
 import { CreateBlogDto } from '../dto/CreateBlogDto';
+import { asyncLocalStorage } from 'orm/subscribers/auditSubscriber';
 
 @controller('/panel/blog')
 export class BlogController {
@@ -19,8 +20,9 @@ export class BlogController {
     return res.customSuccess(200, 'Blogs', blogs);
   }
 
-  @httpGet('/:id([0-9]+)')
+  @httpGet('/:id([0-9]+)', checkJwt, checkRole(['ADMINISTRATOR']))
   public async getById(req: Request, res: Response, next: NextFunction) {
+    console.log('Bağlam içi:', asyncLocalStorage.getStore()); // TEST
     const blog = await this.service.getById(req.params.id);
     return res.customSuccess(200, 'Blog found', blog);
   }
@@ -39,6 +41,7 @@ export class BlogController {
     DtoValidationMiddleware(CreateBlogDto, true),
   )
   public async update(req: Request, res: Response, next: NextFunction) {
+
     const blog = await this.service.updateBlog(req.params.id, req.body);
     return res.customSuccess(200, 'Blog updated successfully', blog);
   }

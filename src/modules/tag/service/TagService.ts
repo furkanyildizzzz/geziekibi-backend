@@ -13,16 +13,12 @@ import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 
 @injectable()
 export class TagService implements ITagService {
-  private repository: ITagRepository;
-  private unitOfWork: UnitOfWork;
 
   constructor(
-    @inject(INTERFACE_TYPE.UnitOfWork) unitOfWork: UnitOfWork,
-    @inject(INTERFACE_TYPE.ITagRepository) repository,
+    @inject(INTERFACE_TYPE.UnitOfWork)  private readonly unitOfWork: UnitOfWork,
+    @inject(INTERFACE_TYPE.ITagRepository)  private readonly repository : ITagRepository,
     @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
   ) {
-    this.repository = repository;
-    this.unitOfWork = unitOfWork;
   }
 
   public async getAll(): Promise<TagSuccessDTO[]> {

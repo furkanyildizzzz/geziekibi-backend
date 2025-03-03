@@ -1,11 +1,7 @@
 import { BlogCategory } from 'orm/entities/blog/BlogCategory';
+import { IBaseRepository } from 'shared/interfaces/IBaseRepository';
 
-export interface IBlogCategoryRepository {
-  getAll(): Promise<BlogCategory[] | void>;
-  getById(id: number): Promise<BlogCategory | void>;
+export interface IBlogCategoryRepository extends IBaseRepository<BlogCategory> {
   getByName(name: string): Promise<BlogCategory | void>;
   getBySeoLink(seoLink: string): Promise<BlogCategory | void>;
-  create(newBlogCategory: BlogCategory): Promise<BlogCategory>;
-  update(id: number, tag: BlogCategory): Promise<BlogCategory>;
-  delete(id: number): Promise<void>;
 }

@@ -11,6 +11,7 @@ import { IBlogCategoryService } from '../interfaces/IBlogCategoryService';
 import { IBlogCategoryRepository } from '../interfaces/IBlogCategoryRepository';
 import { BlogCategory } from 'orm/entities/blog/BlogCategory';
 import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
+import { IImageService } from 'shared/interfaces/IImageService';
 
 @injectable()
 export class BlogCategoryService implements IBlogCategoryService {
@@ -18,10 +19,12 @@ export class BlogCategoryService implements IBlogCategoryService {
     @inject(INTERFACE_TYPE.IBlogCategoryRepository) private readonly repository: IBlogCategoryRepository,
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
-  ) {}
+    @inject(INTERFACE_TYPE.IImageService) private readonly imageService: IImageService,
+
+  ) { }
 
   public async getAll(): Promise<BlogCategorySuccessDto[]> {
-    const tourCategories = await this.repository.getAll();
+    const tourCategories = await this.repository.getAll(['parent', 'primaryImages']);
     if (tourCategories && tourCategories.length)
       return plainToInstance(BlogCategorySuccessDto, tourCategories, {
         excludeExtraneousValues: true,
@@ -49,30 +52,52 @@ export class BlogCategoryService implements IBlogCategoryService {
   }
 
   public async createBlogCategory(blogCategoryData: CreateBlogCategoryDto): Promise<BlogCategorySuccessDto> {
-    console.log({ parentId: blogCategoryData.parentId });
-    const newBlogCategory = new BlogCategory();
-    const blogCategory = await this.repository.getByName(blogCategoryData.name);
-    if (blogCategory) throw new BadRequestException(`Blog Category '${blogCategoryData.name}' is already exists`);
-    newBlogCategory.name = blogCategoryData.name;
-    newBlogCategory.seoLink = await this.seoLinkService.generateUniqueSeoLink(
-      blogCategoryData.name,
-      'blogCategory',
-      newBlogCategory.id,
-    );
+    try {
+      let newBlogCategory = new BlogCategory();
+      const blogCategory = await this.repository.getByName(blogCategoryData.name);
+      if (blogCategory) throw new BadRequestException(`Blog Category '${blogCategoryData.name}' is already exists`);
+      newBlogCategory.name = blogCategoryData.name;
+      newBlogCategory.seoLink = await this.seoLinkService.generateUniqueSeoLink(
+        blogCategoryData.name,
+        'blogCategory',
+        newBlogCategory.id,
+      );
 
-    if (blogCategoryData.parentId > 0) {
-      const parentBlogCategory = await this.repository.getById(blogCategoryData.parentId);
-      if (!parentBlogCategory)
-        throw new NotFoundException(`Parent Blog Category with id:${blogCategoryData.parentId} not found`);
-      newBlogCategory.parent = parentBlogCategory;
+      if (blogCategoryData.parentId > 0) {
+        const parentBlogCategory = await this.repository.getById(blogCategoryData.parentId);
+        if (!parentBlogCategory)
+          throw new NotFoundException(`Parent Blog Category with id:${blogCategoryData.parentId} not found`);
+        newBlogCategory.parent = parentBlogCategory;
+      }
+
+      if (!blogCategoryData.primaryImages.length) {
+        throw new BadRequestException(`Please provide a primary image`);
+      }
+
+      newBlogCategory.description = blogCategoryData.description;
+      // await this.repository.create(newBlogCategory);
+
+      newBlogCategory = await this.repository.create(newBlogCategory);
+      //#region Images
+
+      const primaryImages = await this.imageService.saveImages(
+        'blogCategory',
+        newBlogCategory.id,
+        blogCategoryData.primaryImages,
+        [],
+        'blogCategory'
+      );
+
+      newBlogCategory.primaryImages = primaryImages
+
+      return plainToInstance(BlogCategorySuccessDto, newBlogCategory, {
+        excludeExtraneousValues: true,
+        enableCircularCheck: true,
+      });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(error.message);
     }
-
-    newBlogCategory.description = blogCategoryData.description;
-    await this.repository.create(newBlogCategory);
-    return plainToInstance(BlogCategorySuccessDto, blogCategory, {
-      excludeExtraneousValues: true,
-      enableCircularCheck: true,
-    });
   }
   public async updateBlogCategory(
     id: string,
@@ -108,60 +133,23 @@ export class BlogCategoryService implements IBlogCategoryService {
       }
       blogCategory.description = blogCategoryData.description;
 
-      await this.repository.update(Number(id), blogCategory);
-
+      await this.repository.save(Number(id), blogCategory);
       //#region Images
-      const ImageRepository = await this.unitOfWork.getRepository(Image);
-      const now = new Date();
+      const primaryImages = await this.imageService.saveImages(
+        'blogCategory',
+        blogCategory.id,
+        blogCategoryData.primaryImages,
+        blogCategoryData.uploadedPrimaryImages.map(s => s.id),
+        'blogCategory'
+      );
 
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-      const day = String(now.getDate()).padStart(2, '0');
-      // const hour = String(now.getHours()).padStart(2, '0');
-      // const minute = String(now.getMinutes()).padStart(2, '0');
-
-      const folderDate = `${year}-${month}-${day}`; //_${hour}-${minute};
-
-      if (blogCategoryData.primaryImages && blogCategoryData.primaryImages.length) {
-        const databaseImages = await ImageRepository.find({ where: { category: { id: blogCategory.id } } });
-        console.log({ databaseImages });
-        const uploadedImagesIds = blogCategoryData.uploadedPrimaryImages.map((s) => s.id);
-        console.log({ uploadedImagesIds });
-        const ImageIdsWillBeDeleted = databaseImages.filter((s) => !uploadedImagesIds.includes(s.id)).map((s) => s.id);
-        console.log({ ImageIdsWillBeDeleted });
-        if (ImageIdsWillBeDeleted.length) await ImageRepository.delete(ImageIdsWillBeDeleted);
-
-        const primaryImages: Image[] = [];
-        const imageStr = 'data:image/jpeg;base64,' + blogCategoryData.primaryImages[0].buffer.toString('base64');
-        await v2.uploader
-          .upload(imageStr, { folder: `${process.env.NODE_ENV}/category/${folderDate}/${id}` })
-          .then(async (result) => {
-            const newImage = new Image();
-            newImage.originalName = blogCategoryData.primaryImages[0].originalname;
-            newImage.publicId = result.public_id;
-            newImage.url = result.url;
-            newImage.secureUrl = result.secure_url;
-            newImage.format = result.format;
-            newImage.width = result.width;
-            newImage.height = result.height;
-            newImage.createdAt = new Date(result.created_at);
-            newImage.blogCategory = blogCategory;
-            await ImageRepository.save(newImage);
-            primaryImages.push(newImage);
-
-            console.log({ imageUrl: result.url });
-          })
-          .catch((err) => {
-            throw new InternalServerErrorException(
-              `Something went wrong while uploading ${blogCategoryData.primaryImages[0].originalname} to cloudinary`,
-            );
-          });
-      }
+      blogCategory.primaryImages = primaryImages
 
       return plainToInstance(BlogCategorySuccessDto, blogCategory, {
         excludeExtraneousValues: true,
         enableCircularCheck: true,
       });
+
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(error.message);

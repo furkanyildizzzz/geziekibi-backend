@@ -107,6 +107,10 @@ import { HomepageSliderRepository } from 'modules/homepageSlider/repository/Home
 import { IEmailService } from 'shared/interfaces/IEmailService';
 import { EmailService } from 'shared/services/EmailService';
 import { EmailController } from 'modules/email/controller/EmailController';
+import { IImageRepository } from 'shared/interfaces/IImageRepository';
+import { ImageService } from 'shared/services/ImageService';
+import { IImageService } from 'shared/interfaces/IImageService';
+import { ImageRepository } from 'shared/repositories/ImageRepository';
 
 const container = new Container();
 
@@ -193,4 +197,6 @@ container.bind(INTERFACE_TYPE.HomepageSliderController).to(HomepageSliderControl
 container.bind<IEmailService>(INTERFACE_TYPE.IEmailService).to(EmailService);
 container.bind(INTERFACE_TYPE.IEmailController).to(EmailController);
 
+container.bind<IImageRepository>(INTERFACE_TYPE.IImageRepository).to(ImageRepository);
+container.bind<IImageService>(INTERFACE_TYPE.IImageService).to(ImageService);
 export default container;

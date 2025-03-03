@@ -1,6 +1,7 @@
 import path from 'path';
 import { NextFunction, Request, Response } from 'express';
 import multer from 'multer';
+import { asyncLocalStorage } from 'orm/subscribers/auditSubscriber';
 
 const storage = multer.memoryStorage();
 
@@ -55,12 +56,17 @@ const multerUploads = multer({ storage, fileFilter: fileFilter }).fields([
 // const multerUploads = multer({ storage, fileFilter: fileFilter }).any();
 
 const uploadMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const store = asyncLocalStorage.getStore(); // Bağlamı al
+
   multerUploads(req, res, (err: any) => {
-    if (err) {
-      return res.status(400).json({ message: 'File upload failed', error: err });
-    }
-    return next();
+    asyncLocalStorage.run(store, () => { // Bağlamı tekrar başlat
+      if (err) {
+        return res.status(400).json({ message: 'File upload failed', error: err });
+      }
+      return next();
+    });
   });
 };
+
 
 export { uploadMiddleware };

@@ -25,7 +25,7 @@ export class BlogCategoryController {
     return res.customSuccess(200, 'Blog Category', blogCategory);
   }
 
-  @httpPost('/', checkJwt, checkRole(['ADMINISTRATOR']), DtoValidationMiddleware(CreateBlogCategoryDto))
+  @httpPost('/', checkJwt, checkRole(['ADMINISTRATOR']),uploadMiddleware, DtoValidationMiddleware(CreateBlogCategoryDto))
   public async create(req: Request, res: Response, nex: NextFunction) {
     const blogCategory = await this.service.createBlogCategory(req.body);
     return res.customSuccess(200, `Blog Category '${blogCategory.name}' created successfully`, blogCategory);

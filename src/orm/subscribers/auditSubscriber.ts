@@ -5,8 +5,11 @@ import { Role } from 'orm/entities/users/types';
 
 export const asyncLocalStorage = new AsyncLocalStorage<{ id: number, role: Role }>();
 
-export const setCurrentUser = (user: { id: number, role: Role }, callback: () => Promise<void>) => {
-  return asyncLocalStorage.run(user, callback);
+export const setCurrentUser = async (user: { id: number, role: Role }, callback:  () => Promise<void>) => {
+  asyncLocalStorage.run(user, async () => {
+    await callback(); // Burada bağlam kaybolmamalı
+  });
+  // return asyncLocalStorage.run(user, callback);
 };
 
 @EventSubscriber()
@@ -36,7 +39,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
   // }
 
   afterUpdate(event: UpdateEvent<any>) {
-    console.log('🔥 After Update Triggered!', event.entity);
+    console.log('🔥 After Update Triggered!');
 
     if (event.entity instanceof BaseEntity) {
       const user = asyncLocalStorage.getStore();

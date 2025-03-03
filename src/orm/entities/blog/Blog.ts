@@ -65,7 +65,7 @@ export class Blog extends BaseEntity {
   @Column({ unique: true })
   seoLink: string;
 
-  @ManyToMany(() => Tag, (tag) => tag.tours, { cascade: true })
+  @ManyToMany(() => Tag, (tag) => tag.blogs, { cascade: true })
   @JoinTable()
   @Expose()
   tags: Tag[];
