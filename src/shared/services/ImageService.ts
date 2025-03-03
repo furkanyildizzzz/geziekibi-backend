@@ -37,7 +37,7 @@ export class ImageService implements IImageService {
         // 📌 Yeni görselleri yükle
         const savedImages: Image[] = [];
         const uploadFolder = this.getUploadFolder(entityType, entityId);
-
+        console.log({ images })
         for (const file of images) {
             try {
                 const imageStr = `data:image/jpeg;base64,${file.buffer.toString('base64')}`;

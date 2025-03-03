@@ -11,16 +11,18 @@ import { Image } from 'orm/entities/image/Image';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import { v2 } from 'cloudinary';
 import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
+import { ImageService } from 'shared/services/ImageService';
 
 @injectable()
 export class HomepageSliderService implements IHomepageSliderService {
   constructor(
     @inject(INTERFACE_TYPE.IHomepageSliderRepository) private readonly repository: IHomepageSliderRepository,
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
-  ) {}
+    @inject(INTERFACE_TYPE.IImageService) private readonly imageService: ImageService
+  ) { }
 
   public async getAll(): Promise<HomepageSliderSuccessDto[]> {
-    const tourCategories = await this.repository.getAll();
+    const tourCategories = await this.repository.getAll(['image']);
     if (tourCategories && tourCategories.length)
       return plainToInstance(HomepageSliderSuccessDto, tourCategories, {
         excludeExtraneousValues: true,
@@ -43,41 +45,49 @@ export class HomepageSliderService implements IHomepageSliderService {
     files: Express.Multer.File[],
   ): Promise<HomepageSliderSuccessDto> {
     try {
-      const newHomepageSlider = new HomepageSlider();
-      console.log(homepageSliderData);
-      newHomepageSlider.order = homepageSliderData.order;
-      newHomepageSlider.isActive = homepageSliderData.isActive;
-      await this.repository.create(newHomepageSlider);
 
-      //#region Images
-      const ImageRepository = await this.unitOfWork.getRepository(Image);
-      if (files && files['homepageSlider'] && files['homepageSlider'].length) {
-        const newImage = new Image();
-        const imageStr = 'data:image/jpeg;base64,' + files['homepageSlider'][0].buffer.toString('base64');
-        await v2.uploader
-          .upload(imageStr, { folder: `${process.env.NODE_ENV}/homepageSlider/` })
-          .then(async (result) => {
-            newImage.publicId = result.public_id;
-            newImage.url = result.url;
-            newImage.secureUrl = result.secure_url;
-            newImage.format = result.format;
-            newImage.width = result.width;
-            newImage.height = result.height;
-            newImage.createdAt = new Date(result.created_at);
-            newImage.homepageSlider = newHomepageSlider;
-            await ImageRepository.save(newImage);
-            newHomepageSlider.image = newImage;
-            return plainToInstance(Image, newImage, {
-              excludeExtraneousValues: true,
-              enableCircularCheck: true,
-            });
-          })
-          .catch((error) => {
-            throw new InternalServerErrorException(error.message);
-          });
-      } else {
+      if (!files || !files['homepageSlider'] || !files['homepageSlider'].length) {
         throw new BadRequestException(`Please provide an image`);
       }
+
+      let newHomepageSlider = new HomepageSlider();
+      newHomepageSlider.order = homepageSliderData.order;
+      newHomepageSlider.isActive = homepageSliderData.isActive;
+      newHomepageSlider = await this.repository.create(newHomepageSlider);
+
+      //#region Images
+      const image = await this.imageService.saveImages("homepageSlider", newHomepageSlider.id, files['homepageSlider'], [], "homepageSlider")
+
+      newHomepageSlider.image = image[0]
+
+      // const ImageRepository = await this.unitOfWork.getRepository(Image);
+      // if (files && files['homepageSlider'] && files['homepageSlider'].length) {
+      //   const newImage = new Image();
+      //   const imageStr = 'data:image/jpeg;base64,' + files['homepageSlider'][0].buffer.toString('base64');
+      //   await v2.uploader
+      //     .upload(imageStr, { folder: `${process.env.NODE_ENV}/homepageSlider/` })
+      //     .then(async (result) => {
+      //       newImage.publicId = result.public_id;
+      //       newImage.url = result.url;
+      //       newImage.secureUrl = result.secure_url;
+      //       newImage.format = result.format;
+      //       newImage.width = result.width;
+      //       newImage.height = result.height;
+      //       newImage.createdAt = new Date(result.created_at);
+      //       newImage.homepageSlider = newHomepageSlider;
+      //       await ImageRepository.save(newImage);
+      //       newHomepageSlider.image = newImage;
+      //       return plainToInstance(Image, newImage, {
+      //         excludeExtraneousValues: true,
+      //         enableCircularCheck: true,
+      //       });
+      //     })
+      //     .catch((error) => {
+      //       throw new InternalServerErrorException(error.message);
+      //     });
+      // } else {
+      //   throw new BadRequestException(`Please provide an image`);
+      // }
 
       return plainToInstance(HomepageSliderSuccessDto, newHomepageSlider, {
         excludeExtraneousValues: true,
@@ -101,7 +111,7 @@ export class HomepageSliderService implements IHomepageSliderService {
       homepageSlider.isActive = homepageSliderData.isActive ?? homepageSlider.isActive;
       console.log(homepageSlider);
 
-      await this.repository.update(Number(id), homepageSlider);
+      await this.repository.save(Number(id), homepageSlider);
 
       // //#region Images
       // const ImageRepository = await this.unitOfWork.getRepository(Image);

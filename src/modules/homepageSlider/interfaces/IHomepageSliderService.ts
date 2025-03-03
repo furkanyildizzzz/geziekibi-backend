@@ -5,12 +5,12 @@ export interface IHomepageSliderService {
   getAll(): Promise<HomepageSliderSuccessDto[]>;
   getById(id: string): Promise<HomepageSliderSuccessDto>;
   createHomepageSlider(
-    tourCategoryData: CreateHomepageSliderDto,
+    homepageSliderData: CreateHomepageSliderDto,
     files: Express.Multer.File[],
   ): Promise<HomepageSliderSuccessDto>;
   updateHomepageSlider(
     id: string,
-    tourCategoryData: CreateHomepageSliderDto,
+    homepageSliderData: CreateHomepageSliderDto,
     files: Express.Multer.File[],
   ): Promise<HomepageSliderSuccessDto>;
   deleteHomepageSlider(id: string): Promise<void>;
