@@ -28,16 +28,6 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     }
   }
 
-  // beforeUpdate(event: UpdateEvent<any>) {
-  //   console.log('I am here!');
-  //   if (event.entity instanceof BaseEntity) {
-  //     const userId = asyncLocalStorage.getStore();
-  //     if (userId) {
-  //       event.entity.updateUserId = userId;
-  //     }
-  //   }
-  // }
-
   afterUpdate(event: UpdateEvent<any>) {
     console.log('🔥 After Update Triggered!');
 

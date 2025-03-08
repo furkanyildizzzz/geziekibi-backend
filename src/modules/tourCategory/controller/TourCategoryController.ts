@@ -11,7 +11,7 @@ import { uploadMiddleware } from 'middleware/multer';
 
 @controller('/panel/tour/category')
 export class TourCategoryController {
-  constructor(@inject(INTERFACE_TYPE.ITourCategoryService) private readonly service: ITourCategoryService) {}
+  constructor(@inject(INTERFACE_TYPE.ITourCategoryService) private readonly service: ITourCategoryService) { }
 
   @httpGet('/')
   public async getAll(req: Request, res: Response, next: NextFunction) {
@@ -25,7 +25,7 @@ export class TourCategoryController {
     return res.customSuccess(200, 'Tour Category', tourCategory);
   }
 
-  @httpPost('/', checkJwt, checkRole(['ADMINISTRATOR']), DtoValidationMiddleware(CreateTourCategoryDto))
+  @httpPost('/', checkJwt, checkRole(['ADMINISTRATOR']), uploadMiddleware, DtoValidationMiddleware(CreateTourCategoryDto))
   public async create(req: Request, res: Response, nex: NextFunction) {
     const tourCategory = await this.service.createTourCategory(req.body);
     return res.customSuccess(200, `Tour Category '${tourCategory.name}' created successfully`, tourCategory);

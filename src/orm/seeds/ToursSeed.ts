@@ -46,7 +46,7 @@ const DoguKaradenizTuru = async (dataSource: DataSource) => {
   tour.category = { id: 4 } as TourCategory;
   tour.tags = [{ id: 1 } as Tag, { id: 2 } as Tag, { id: 4 } as Tag, { id: 5 } as Tag];
 
-  tour.dates = [
+  tour.tourDates = [
     {
       insertUserId: 1,
       startDate: '2024-12-10',
@@ -299,7 +299,7 @@ const BatıKaradenizTuru = async (dataSource: DataSource) => {
   tour.category = { id: 3 } as TourCategory;
   tour.tags = [{ id: 1 } as Tag, { id: 2 } as Tag, { id: 4 } as Tag, { id: 5 } as Tag];
 
-  tour.dates = [
+  tour.tourDates = [
     {
       insertUserId: 1,
       startDate: '2024-10-10',
@@ -551,7 +551,7 @@ const UrfaTuru = async (dataSource: DataSource) => {
     { id: 52 } as Tag,
   ];
 
-  tour.dates = [
+  tour.tourDates = [
     {
       insertUserId: 1,
       startDate: '2024-10-15',
@@ -801,7 +801,7 @@ const KapadokyaTuru = async (dataSource: DataSource) => {
   tour.category = { id: 13 } as TourCategory;
   tour.tags = [{ id: 1 } as Tag, { id: 2 } as Tag, { id: 4 } as Tag, { id: 5 } as Tag];
 
-  tour.dates = [
+  tour.tourDates = [
     {
       insertUserId: 1,
       startDate: '2024-3-10',
@@ -1043,7 +1043,7 @@ const KuzeyEgeTuru = async (dataSource: DataSource) => {
   tour.category = { id: 5 } as TourCategory;
   tour.tags = [{ id: 1 } as Tag, { id: 2 } as Tag, { id: 4 } as Tag, { id: 5 } as Tag];
 
-  tour.dates = [
+  tour.tourDates = [
     {
       insertUserId: 1,
       startDate: '2024-06-10',
@@ -1324,7 +1324,7 @@ const GuneyDoguTuru = async (dataSource: DataSource) => {
     { id: 52 } as Tag,
   ];
 
-  tour.dates = [
+  tour.tourDates = [
     {
       insertUserId: 1,
       startDate: '2024-6-1',
@@ -1674,7 +1674,7 @@ const AnkaraEskisehirTuru = async (dataSource: DataSource) => {
   tour.category = { id: 8 } as TourCategory;
   tour.tags = [{ id: 31 } as Tag, { id: 20 } as Tag];
 
-  tour.dates = [
+  tour.tourDates = [
     {
       insertUserId: 1,
       startDate: '2024-11-10',
@@ -1938,7 +1938,7 @@ const OrtaAvrupaBalkanTuru = async (dataSource: DataSource) => {
   tour.category = { id: 14 } as TourCategory;
   tour.tags = [{ id: 3 } as Tag, { id: 4 } as Tag];
 
-  tour.dates = [
+  tour.tourDates = [
     {
       insertUserId: 1,
       startDate: '2024-07-14',

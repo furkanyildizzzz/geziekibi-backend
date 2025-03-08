@@ -17,7 +17,7 @@ export class TourRepositoryWeb implements ITourRepositoryWeb {
   public async getAll(): Promise<Tour[] | void> {
     try {
       const repo = await this.unitOfWork.getRepository(Tour);
-      const tours = await repo.find({ relations: ['tags', 'dates', 'category', 'tourServices', 'primaryImages'] });
+      const tours = await repo.find({ relations: ['tags', 'tourDates', 'category', 'tourServices', 'primaryImages'] });
       return tours;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
@@ -46,8 +46,8 @@ export class TourRepositoryWeb implements ITourRepositoryWeb {
       const tour = await repo
         .createQueryBuilder('tour')
         .leftJoinAndSelect('tour.tags', 'tags')
-        .leftJoinAndSelect('tour.dates', 'dates')
-        .leftJoinAndSelect('dates.prices', 'prices')
+        .leftJoinAndSelect('tour.tourDates', 'tourDates')
+        .leftJoinAndSelect('tourDates.prices', 'prices')
         .leftJoinAndSelect('tour.category', 'category')
         .leftJoinAndSelect('tour.tourServices', 'tourServices')
         .leftJoinAndSelect('tourServices.service', 'service')
@@ -148,7 +148,7 @@ export class TourRepositoryWeb implements ITourRepositoryWeb {
 
       // Step 3: Attach related data to the main entity
       // tour.tags = tags;
-      tour.dates = dates;
+      tour.tourDates = dates;
       tour.tourServices = tourServices;
       tour.dailyForms = dailyForms;
       tour.galleryImages = galleryImages;

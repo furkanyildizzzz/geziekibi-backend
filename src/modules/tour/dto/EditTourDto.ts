@@ -210,7 +210,7 @@ export class EditTourDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => TourDateDto)
-  dates?: TourDateDto[];
+  tourDates?: TourDateDto[];
 
   @IsOptional()
   @ValidateNested()

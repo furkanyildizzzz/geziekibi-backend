@@ -16,7 +16,7 @@ export const DtoValidationMiddleware = (type: any, skipMissingProperties = false
         'tags',
         'prices',
         'category',
-        'dates',
+        'tourDates',
         'tourServices',
         'uploadedGalleryImages',
         'uploadedPrimaryImages',

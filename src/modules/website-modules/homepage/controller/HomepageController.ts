@@ -52,7 +52,6 @@ export class HomepageController {
 
   @httpGet('/faqs')
   public async getFAQs(req: Request, res: Response, next: NextFunction) {
-    console.log('I am here!');
     const faqs = await this.service.getFAQs();
     return res.customSuccess(200, 'FAQs', faqs);
   }

@@ -1,4 +1,4 @@
-import { DeepPartial, Repository, SelectQueryBuilder } from 'typeorm';
+import { DeepPartial, EntityMetadata, Repository, SelectQueryBuilder } from 'typeorm';
 import { BaseEntity } from 'orm/entities/BaseEntity';
 import { AsyncLocalStorage } from 'async_hooks';
 import { IBaseRepository } from 'shared/interfaces/IBaseRepository';
@@ -32,18 +32,14 @@ export class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> 
 
     applyUserFilter(queryBuilder: SelectQueryBuilder<T>, applyFilter = true) {
         const user = asyncLocalStorage.getStore();
+
         if (user && user.role != 'ADMINISTRATOR' && applyFilter) {
+            console.log("ı am here")
             queryBuilder.andWhere(`${queryBuilder.alias}.insertUserId = :userId`, { userId: user.id });
         }
         return queryBuilder;
     }
 
-    // async getAll(applyFilter = true): Promise<T[]> {
-    //     const repo = await this.getRepository();
-    //     const queryBuilder = repo.createQueryBuilder("entity");
-    //     this.applyUserFilter(queryBuilder, applyFilter); // Opsiyonel olarak filtre uygula
-    //     return queryBuilder.getMany();
-    // }
 
     async getAll(relations = [], applyFilter = true): Promise<T[]> {
         const repo = await this.getRepository();
@@ -60,19 +56,11 @@ export class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> 
         return queryBuilder.getMany();
     }
 
-    // async getById(id: number, applyFilter = true): Promise<T | null> {
-    //     const repo = await this.getRepository();
-    //     const queryBuilder = repo.createQueryBuilder("entity")
-    //         .where("entity.id = :id", { id });
 
-    //     this.applyUserFilter(queryBuilder, applyFilter); // Opsiyonel olarak filtre uygula
-    //     return queryBuilder.getOne();
-    // }
 
-    async getById(id: number, applyFilter = true): Promise<T | null> {
+    async getById(id: number, relations = [], applyFilter = true): Promise<T | null> {
         try {
             const repo = await this.getRepository();
-            const relations = this.getRelations(repo);
 
             // Önce sadece ana entity'yi çekiyoruz (kritik ilişkiler dahil)
             const queryBuilder = repo.createQueryBuilder("entity")
@@ -85,62 +73,77 @@ export class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> 
                     queryBuilder.leftJoinAndSelect(`entity.${relation}`, relation);
                 });
 
+            // Derin ilişkileri ekleyelim (nokta içeren ilişkiler)
+            relations
+                .filter((relation) => relation.includes("."))
+                .forEach((relation) => {
+                    const parts = relation.split(".");
+                    const parentRelation = parts[0];
+                    const deepRelation = parts.slice(1).join(".");
+
+                    queryBuilder.leftJoinAndSelect(`${parentRelation}.${deepRelation}`, deepRelation);
+                });
+
+            // Kullanıcı filtrelerini uygulayalım (isteğe bağlı)
             this.applyUserFilter(queryBuilder, applyFilter);
+
+            // Veriyi alalım
             const entity = await queryBuilder.getOne();
 
             if (!entity) {
                 return null;
             }
 
-            // Derin ilişkileri ayrı yükleyelim (performans için)
-            await this.loadDeepRelations(repo, entity, relations);
-
             return entity;
         } catch (error) {
-            console.log("I am here")
-            console.log({error})
-            throw new InternalServerErrorException(error.message)
+            console.log({ error });
+            throw new InternalServerErrorException(error.message);
         }
     }
 
-    private async loadDeepRelations(repo: Repository<T>, entity: T, relations: string[]) {
-        // Paralel olarak ilişkili verileri getiriyoruz
-        const relationPromises = relations
-            .filter((relation) => relation.includes(".")) // Derin ilişkileri seç
-            .map(async (relation) => {
-                const parts = relation.split(".");
-                const parentRelation = parts[0]; // İlk seviye ilişki
-                const deepRelation = parts.slice(1).join("."); // Derin ilişki
+    async getByIds(ids: number[], relations = [], applyFilter = true): Promise<T[] | null> {
+        try {
+            if (!ids.length) return []; // Eğer boşsa direkt boş dizi dön.
 
-                // İlgili repository'yi al
-                const relationRepo = await repo.manager.getRepository(parentRelation);
-                const relatedEntity = entity[parentRelation];
+            const repo = await this.getRepository();
 
-                if (relatedEntity) {
-                    // Derin ilişkileri yükleyelim
-                    const deepEntities = await relationRepo
-                        .createQueryBuilder(parentRelation)
-                        .leftJoinAndSelect(`${parentRelation}.${deepRelation}`, deepRelation)
-                        .where(`${parentRelation}.id = :id`, { id: relatedEntity.id })
-                        .getMany();
+            // Query builder oluştur
+            const queryBuilder = repo.createQueryBuilder("entity")
+                .where("entity.id IN (:...ids)", { ids });
 
-                    entity[parentRelation][deepRelation] = deepEntities;
-                }
-            });
+            // Ana ilişkileri ekleyelim (derin join yerine sadece temel olanları seçiyoruz)
+            relations
+                .filter((relation) => !relation.includes(".")) // Derin ilişkileri hariç tut
+                .forEach((relation) => {
+                    queryBuilder.leftJoinAndSelect(`entity.${relation}`, relation);
+                });
 
-        await Promise.all(relationPromises);
-    }
+            // Derin ilişkileri ekleyelim (nokta içeren ilişkiler)
+            relations
+                .filter((relation) => relation.includes("."))
+                .forEach((relation) => {
+                    const parts = relation.split(".");
+                    const parentRelation = parts[0];
+                    const deepRelation = parts.slice(1).join(".");
 
-    private getRelations(repo: Repository<T>): string[] {
-        const metadata = repo.metadata;
-        return metadata.relations.map((relation) => relation.propertyName);
+                    queryBuilder.leftJoinAndSelect(`${parentRelation}.${deepRelation}`, deepRelation);
+                });
+
+            // Kullanıcı filtrelerini uygulayalım (isteğe bağlı)
+            this.applyUserFilter(queryBuilder, applyFilter);
+
+            return queryBuilder.getMany();
+        } catch (error) {
+            console.log({ error });
+            throw new InternalServerErrorException(error.message);
+        }
     }
 
     async create(entity: DeepPartial<T>): Promise<T> {
         const repo = await this.getRepository();
         const newEntity = repo.create(entity);
         await repo.save(newEntity);
-        console.log({newEntity})
+        console.log({ newEntity })
         return await this.getById(newEntity.id);
     }
 
@@ -251,11 +254,14 @@ export class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> 
     }
 
     public async findByIds(ids: number[], applyFilter = true): Promise<T[]> {
+        if (!ids.length) return []; // Eğer boşsa direkt boş dizi dön.
+
         const repo = await this.getRepository();
         const queryBuilder = repo.createQueryBuilder("entity")
             .where("entity.id IN (:...ids)", { ids });
 
         this.applyUserFilter(queryBuilder, applyFilter); // Opsiyonel olarak filtre uygula
+
         return queryBuilder.getMany();
     }
 

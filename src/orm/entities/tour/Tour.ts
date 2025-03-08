@@ -92,7 +92,7 @@ export class Tour extends BaseEntity {
 
   @OneToMany(() => TourDate, (date) => date.tour, { nullable: true, cascade: true })
   @Expose()
-  dates: TourDate[];
+  tourDates: TourDate[];
 
   // One-to-Many relationship with Image (Gallery Images)
   @OneToMany(() => Image, (image) => image.tour, { nullable: true, cascade: true })

@@ -61,9 +61,9 @@ export class Image extends BaseEntity {
   user: User;
 
   // One-to-Many relationship with Tour (Tour can have multiple gallery images)
-  @ManyToOne(() => TourCategory, (category) => category.primaryImages, { nullable: true, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'categoryId' })
-  category: TourCategory;
+  @ManyToOne(() => TourCategory, (tourCategory) => tourCategory.primaryImages, { nullable: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'tourCategoryId' })
+  tourCategory: TourCategory;
 
   @ManyToOne(() => BlogCategory, (blogCategory) => blogCategory.primaryImages, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'blogCategoryId' })

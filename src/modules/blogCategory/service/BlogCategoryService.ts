@@ -34,7 +34,7 @@ export class BlogCategoryService implements IBlogCategoryService {
   }
 
   public async getById(id: string): Promise<BlogCategorySuccessDto> {
-    const blogCategory = await this.repository.getById(Number(id));
+    const blogCategory = await this.repository.getById(Number(id),['parent', 'primaryImages']);
     if (!blogCategory) throw new NotFoundException(`Blog Category with id:${id} not found`);
     return plainToInstance(BlogCategorySuccessDto, blogCategory, {
       excludeExtraneousValues: true,

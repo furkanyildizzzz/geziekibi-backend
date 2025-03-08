@@ -71,17 +71,17 @@ export class TourServiceWeb implements ITourServiceWeb {
     const tours = await tourRepo.find({
       where: whereCondition,
       order: {
-        dates: {
+        tourDates: {
           startDate: 'DESC',
         },
       },
-      relations: ['dates', 'dates.prices', 'primaryImages', 'category'],
+      relations: ['tourDates', 'tourDates.prices', 'primaryImages', 'category'],
     });
 
     const toursWithMostRecentDate = tours.map((tour) => {
-      const mostRecentDate = tour.dates.reduce((latest, current) => {
+      const mostRecentDate = tour.tourDates.reduce((latest, current) => {
         return current.startDate > latest.startDate ? current : latest;
-      }, tour.dates[0]);
+      }, tour.tourDates[0]);
 
       return {
         ...tour,
@@ -173,16 +173,16 @@ export class TourServiceWeb implements ITourServiceWeb {
     const tours = await tourRepo.find({
       where: whereConditions,
       order: {
-        dates: {
+        tourDates: {
           startDate: 'DESC',
         },
       },
-      relations: ['dates', 'dates.prices', 'primaryImages', 'category', 'dailyForms', 'dailyForms.dailyPaths'],
+      relations: ['tourDates', 'tourDates.prices', 'primaryImages', 'category', 'dailyForms', 'dailyForms.dailyPaths'],
     });
     const toursWithMostRecentDate = tours.map((tour) => {
-      const mostRecentDate = tour.dates.reduce((latest, current) => {
+      const mostRecentDate = tour.tourDates.reduce((latest, current) => {
         return current.startDate > latest.startDate ? current : latest;
-      }, tour.dates[0]);
+      }, tour.tourDates[0]);
 
       return {
         ...tour,

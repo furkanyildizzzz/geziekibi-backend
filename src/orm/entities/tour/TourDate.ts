@@ -15,12 +15,12 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity('tour_dates')
 export class TourDate extends BaseEntity {
-  @Column()
+  @Column({ type: 'timestamp' })
   @CreateDateColumn()
   @Expose()
   startDate: Date;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   @CreateDateColumn()
   @Expose()
   endDate: Date;
@@ -33,7 +33,7 @@ export class TourDate extends BaseEntity {
   @Expose()
   isActive: boolean;
 
-  @ManyToOne(() => Tour, (tour) => tour.dates, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Tour, (tour) => tour.tourDates, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'tourId' })
   tour: Tour;
 

@@ -32,7 +32,7 @@ export class HomepageSliderService implements IHomepageSliderService {
   }
 
   public async getById(id: string): Promise<HomepageSliderSuccessDto> {
-    const homepageSlider = await this.repository.getById(Number(id));
+    const homepageSlider = await this.repository.getById(Number(id),['image']);
     if (!homepageSlider) throw new NotFoundException(`Homepage Slider with id:${id} not found`);
     return plainToInstance(HomepageSliderSuccessDto, homepageSlider, {
       excludeExtraneousValues: true,

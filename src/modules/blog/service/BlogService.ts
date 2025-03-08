@@ -41,7 +41,7 @@ export class BlogService implements IBlogService {
   }
 
   public async getById(id: string): Promise<BlogDto> {
-    const blog = await this.repository.getById(Number(id));
+    const blog = await this.repository.getById(Number(id),['tags', 'category', 'primaryImages']);
     if (!blog) throw new NotFoundException(`Blog with id:${id} not found`);
     return plainToInstance(BlogDto, blog, {
       excludeExtraneousValues: true,

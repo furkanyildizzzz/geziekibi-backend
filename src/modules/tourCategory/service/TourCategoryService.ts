@@ -11,6 +11,7 @@ import { Image } from 'orm/entities/image/Image';
 import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import { v2 } from 'cloudinary';
 import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
+import { IImageService } from 'shared/interfaces/IImageService';
 
 @injectable()
 export class TourCategoryService implements ITourCategoryService {
@@ -18,10 +19,12 @@ export class TourCategoryService implements ITourCategoryService {
     @inject(INTERFACE_TYPE.ITourCategoryRepository) private readonly repository: ITourCategoryRepository,
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
-  ) {}
+    @inject(INTERFACE_TYPE.IImageService) private readonly imageService: IImageService,
+
+  ) { }
 
   public async getAll(): Promise<TourCategorySuccessDto[]> {
-    const tourCategories = await this.repository.getAll();
+    const tourCategories = await this.repository.getAll(['parent', 'primaryImages']);
     if (tourCategories && tourCategories.length)
       return plainToInstance(TourCategorySuccessDto, tourCategories, {
         excludeExtraneousValues: true,
@@ -31,7 +34,7 @@ export class TourCategoryService implements ITourCategoryService {
   }
 
   public async getById(id: string): Promise<TourCategorySuccessDto> {
-    const tourCategory = await this.repository.getById(Number(id));
+    const tourCategory = await this.repository.getById(Number(id), ['parent', 'subCategories', 'primaryImages']);
     if (!tourCategory) throw new NotFoundException(`Tour Category with id:${id} not found`);
     return plainToInstance(TourCategorySuccessDto, tourCategory, {
       excludeExtraneousValues: true,
@@ -49,8 +52,7 @@ export class TourCategoryService implements ITourCategoryService {
   }
 
   public async createTourCategory(tourCategoryData: CreateTourCategoryDto): Promise<TourCategorySuccessDto> {
-    console.log({ parentId: tourCategoryData.parentId });
-    const newTourCategory = new TourCategory();
+    let newTourCategory = new TourCategory();
     const tourCategory = await this.repository.getByName(tourCategoryData.name);
     if (tourCategory) throw new BadRequestException(`Tour Category '${tourCategoryData.name}' is already exists`);
     newTourCategory.name = tourCategoryData.name;
@@ -67,8 +69,25 @@ export class TourCategoryService implements ITourCategoryService {
       newTourCategory.parent = parentTourCategory;
     }
 
+    if (!tourCategoryData.primaryImages.length) {
+      throw new BadRequestException(`Please provide a primary image`);
+    }
+
     newTourCategory.description = tourCategoryData.description;
-    await this.repository.create(newTourCategory);
+
+    newTourCategory = await this.repository.create(newTourCategory);
+      //#region Images
+
+      const primaryImages = await this.imageService.saveImages(
+        'tourCategory',
+        newTourCategory.id,
+        tourCategoryData.primaryImages,
+        [],
+        'tourCategory'
+      );
+
+      newTourCategory.primaryImages = primaryImages
+
     return plainToInstance(TourCategorySuccessDto, tourCategory, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -108,55 +127,65 @@ export class TourCategoryService implements ITourCategoryService {
       }
       tourCategory.description = tourCategoryData.description;
 
-      await this.repository.update(Number(id), tourCategory);
+      await this.repository.save(Number(id), tourCategory);
 
       //#region Images
-      const ImageRepository = await this.unitOfWork.getRepository(Image);
-      const now = new Date();
+      const primaryImages = await this.imageService.saveImages(
+        'tourCategory',
+        tourCategory.id,
+        tourCategoryData.primaryImages,
+        tourCategoryData.uploadedPrimaryImages.map(s => s.id),
+        'tourCategory'
+      );
 
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-      const day = String(now.getDate()).padStart(2, '0');
-      // const hour = String(now.getHours()).padStart(2, '0');
-      // const minute = String(now.getMinutes()).padStart(2, '0');
+      tourCategory.primaryImages = primaryImages
 
-      const folderDate = `${year}-${month}-${day}`; //_${hour}-${minute};
+      // const ImageRepository = await this.unitOfWork.getRepository(Image);
+      // const now = new Date();
 
-      if (tourCategoryData.primaryImages && tourCategoryData.primaryImages.length) {
-        const databaseImages = await ImageRepository.find({ where: { category: { id: tourCategory.id } } });
-        console.log({ databaseImages });
-        const uploadedImagesIds = tourCategoryData.uploadedPrimaryImages.map((s) => s.id);
-        console.log({ uploadedImagesIds });
-        const ImageIdsWillBeDeleted = databaseImages.filter((s) => !uploadedImagesIds.includes(s.id)).map((s) => s.id);
-        console.log({ ImageIdsWillBeDeleted });
-        if (ImageIdsWillBeDeleted.length) await ImageRepository.delete(ImageIdsWillBeDeleted);
+      // const year = now.getFullYear();
+      // const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+      // const day = String(now.getDate()).padStart(2, '0');
+      // // const hour = String(now.getHours()).padStart(2, '0');
+      // // const minute = String(now.getMinutes()).padStart(2, '0');
 
-        const primaryImages: Image[] = [];
-        const imageStr = 'data:image/jpeg;base64,' + tourCategoryData.primaryImages[0].buffer.toString('base64');
-        await v2.uploader
-          .upload(imageStr, { folder: `${process.env.NODE_ENV}/category/${folderDate}/${id}` })
-          .then(async (result) => {
-            const newImage = new Image();
-            newImage.originalName = tourCategoryData.primaryImages[0].originalname;
-            newImage.publicId = result.public_id;
-            newImage.url = result.url;
-            newImage.secureUrl = result.secure_url;
-            newImage.format = result.format;
-            newImage.width = result.width;
-            newImage.height = result.height;
-            newImage.createdAt = new Date(result.created_at);
-            newImage.category = tourCategory;
-            await ImageRepository.save(newImage);
-            primaryImages.push(newImage);
+      // const folderDate = `${year}-${month}-${day}`; //_${hour}-${minute};
 
-            console.log({ imageUrl: result.url });
-          })
-          .catch((err) => {
-            throw new InternalServerErrorException(
-              `Something went wrong while uploading ${tourCategoryData.primaryImages[0].originalname} to cloudinary`,
-            );
-          });
-      }
+      // if (tourCategoryData.primaryImages && tourCategoryData.primaryImages.length) {
+      //   const databaseImages = await ImageRepository.find({ where: { category: { id: tourCategory.id } } });
+      //   console.log({ databaseImages });
+      //   const uploadedImagesIds = tourCategoryData.uploadedPrimaryImages.map((s) => s.id);
+      //   console.log({ uploadedImagesIds });
+      //   const ImageIdsWillBeDeleted = databaseImages.filter((s) => !uploadedImagesIds.includes(s.id)).map((s) => s.id);
+      //   console.log({ ImageIdsWillBeDeleted });
+      //   if (ImageIdsWillBeDeleted.length) await ImageRepository.delete(ImageIdsWillBeDeleted);
+
+      //   const primaryImages: Image[] = [];
+      //   const imageStr = 'data:image/jpeg;base64,' + tourCategoryData.primaryImages[0].buffer.toString('base64');
+      //   await v2.uploader
+      //     .upload(imageStr, { folder: `${process.env.NODE_ENV}/category/${folderDate}/${id}` })
+      //     .then(async (result) => {
+      //       const newImage = new Image();
+      //       newImage.originalName = tourCategoryData.primaryImages[0].originalname;
+      //       newImage.publicId = result.public_id;
+      //       newImage.url = result.url;
+      //       newImage.secureUrl = result.secure_url;
+      //       newImage.format = result.format;
+      //       newImage.width = result.width;
+      //       newImage.height = result.height;
+      //       newImage.createdAt = new Date(result.created_at);
+      //       newImage.category = tourCategory;
+      //       await ImageRepository.save(newImage);
+      //       primaryImages.push(newImage);
+
+      //       console.log({ imageUrl: result.url });
+      //     })
+      //     .catch((err) => {
+      //       throw new InternalServerErrorException(
+      //         `Something went wrong while uploading ${tourCategoryData.primaryImages[0].originalname} to cloudinary`,
+      //       );
+      //     });
+      // }
 
       return plainToInstance(TourCategorySuccessDto, tourCategory, {
         excludeExtraneousValues: true,

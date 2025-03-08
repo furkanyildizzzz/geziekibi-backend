@@ -3,7 +3,8 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 
 export interface IBaseRepository<T extends BaseEntity> {
   getAll(relations?: string[], disableFilter?: boolean): Promise<T[] | void>;
-  getById(id: number, disableFilter?: boolean): Promise<T | void>;
+  getById(id: number, relations?: string[],disableFilter?: boolean): Promise<T | void>;
+  getByIds(ids: number[], relations?: string[],disableFilter?: boolean): Promise<T[] | void>;
   create(entity: T): Promise<T>;
   update(id: number, entity: QueryDeepPartialEntity<T>): Promise<T | null>;
   save(id: number, entity: T): Promise<T | null>;

@@ -37,9 +37,9 @@ export class HomepageService implements IHomepageService {
 
     const today = new Date();
     const tours = await tourRepo.find({
-      where: { dates: { startDate: LessThanOrEqual(today) }, publishStatus: PublishStatus.PUBLISH },
+      where: { tourDates: { startDate: LessThanOrEqual(today) }, publishStatus: PublishStatus.PUBLISH },
       order: {
-        dates: {
+        tourDates: {
           startDate: 'DESC',
         },
       },
@@ -48,9 +48,9 @@ export class HomepageService implements IHomepageService {
     });
 
     const toursWithMostRecentDate = tours.map((tour) => {
-      const mostRecentDate = tour.dates.reduce((latest, current) => {
+      const mostRecentDate = tour.tourDates.reduce((latest, current) => {
         return current.startDate > latest.startDate ? current : latest;
-      }, tour.dates[0]);
+      }, tour.tourDates[0]);
 
       return {
         ...tour,
@@ -123,20 +123,20 @@ export class HomepageService implements IHomepageService {
 
     const today = new Date();
     const tours = await tourRepo.find({
-      where: { dates: { startDate: LessThanOrEqual(today) }, publishStatus: PublishStatus.PUBLISH },
+      where: { tourDates: { startDate: LessThanOrEqual(today) }, publishStatus: PublishStatus.PUBLISH },
       order: {
-        dates: {
+        tourDates: {
           startDate: 'DESC',
         },
       },
       take: 6,
-      relations: ['dates', 'dates.prices', 'primaryImages', 'category', 'category.tours'],
+      relations: ['tourDates', 'tourDates.prices', 'primaryImages', 'category', 'category.tours'],
     });
 
     const toursWithMostRecentDate = tours.map((tour) => {
-      const mostRecentDate = tour.dates.reduce((latest, current) => {
+      const mostRecentDate = tour.tourDates.reduce((latest, current) => {
         return current.startDate > latest.startDate ? current : latest;
-      }, tour.dates[0]);
+      }, tour.tourDates[0]);
 
       return {
         ...tour,

@@ -19,7 +19,6 @@ export class ContactFormController {
 
   @httpGet('/')
   public async getAll(req: Request, res: Response, next: NextFunction) {
-    console.log('I am here!');
     const contactForms = await this.service.getAll();
     return res.customSuccess(200, 'ContactForms found', contactForms);
   }

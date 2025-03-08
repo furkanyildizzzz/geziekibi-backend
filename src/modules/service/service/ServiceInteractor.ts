@@ -12,12 +12,12 @@ import { TourService } from 'orm/entities/tour/TourService';
 
 @injectable()
 export class ServiceInteractor implements IServiceInteractor {
-  constructor(@inject(INTERFACE_TYPE.IServiceRepository) private readonly repository: IServiceRepository) {}
+  constructor(@inject(INTERFACE_TYPE.IServiceRepository) private readonly repository: IServiceRepository) { }
 
   public async getAll(): Promise<ServiceSuccessDto[]> {
-    const tourCategories = await this.repository.getAll();
-    if (tourCategories && tourCategories.length)
-      return plainToInstance(ServiceSuccessDto, tourCategories, {
+    const tourServices = await this.repository.getAll();
+    if (tourServices && tourServices.length)
+      return plainToInstance(ServiceSuccessDto, tourServices, {
         excludeExtraneousValues: true,
         enableCircularCheck: true,
       });
@@ -38,7 +38,12 @@ export class ServiceInteractor implements IServiceInteractor {
     const service = await this.repository.getByName(serviceData.name);
     if (service) throw new BadRequestException(`Service '${service.name}' already exists`);
     newService.name = serviceData.name;
-    return await this.repository.create(newService);
+    newService.description = serviceData.description;
+    await this.repository.create(newService);
+    return plainToInstance(ServiceSuccessDto, service, {
+      excludeExtraneousValues: true,
+      enableCircularCheck: true,
+    });
   }
 
   public async updateService(id: string, serviceData: CreateServiceDto): Promise<ServiceSuccessDto> {

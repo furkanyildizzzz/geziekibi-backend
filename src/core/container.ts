@@ -111,6 +111,12 @@ import { IImageRepository } from 'shared/interfaces/IImageRepository';
 import { ImageService } from 'shared/services/ImageService';
 import { IImageService } from 'shared/interfaces/IImageService';
 import { ImageRepository } from 'shared/repositories/ImageRepository';
+import { ITourDailyRepository } from 'modules/tour/interfaces/ITourDailyRepository';
+import { TourDailyRepository } from 'modules/tour/repository/TourDailyRepository';
+import { TourDateRepository } from 'modules/tour/repository/TourDateRepository';
+import { ITourDateRepository } from 'modules/tour/interfaces/ITourDateRepository';
+import { TourPriceRepository } from 'modules/tour/repository/TourPriceRepository';
+import { ITourPriceRepository } from 'modules/tour/interfaces/ITourPriceRepository';
 
 const container = new Container();
 
@@ -153,6 +159,10 @@ container.bind(INTERFACE_TYPE.TourController).to(TourController);
 container.bind<ITourDailyPathRepository>(INTERFACE_TYPE.ITourDailyPathRepository).to(TourDailyPathRepository);
 container.bind<ITourDailyPathService>(INTERFACE_TYPE.ITourDailyPathService).to(TourDailyPathService);
 container.bind(INTERFACE_TYPE.TourDailyPathController).to(TourDailyPathController);
+
+container.bind<ITourDailyRepository>(INTERFACE_TYPE.ITourDailyRepository).to(TourDailyRepository);
+container.bind<ITourDateRepository>(INTERFACE_TYPE.ITourDateRepository).to(TourDateRepository);
+container.bind<ITourPriceRepository>(INTERFACE_TYPE.ITourPriceRepository).to(TourPriceRepository);
 
 container.bind<IBlogCategoryRepository>(INTERFACE_TYPE.IBlogCategoryRepository).to(BlogCategoryRepository);
 container.bind<IBlogCategoryService>(INTERFACE_TYPE.IBlogCategoryService).to(BlogCategoryService);

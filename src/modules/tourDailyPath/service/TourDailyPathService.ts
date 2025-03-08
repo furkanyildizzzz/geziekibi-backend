@@ -41,6 +41,7 @@ export class TourDailyPathService implements ITourDailyPathService {
   }
 
   public async updateTourDailyPath(id: string, tourPathData: CreateTourDailyPathDto): Promise<TourDailyPathSuccessDto> {
+    
     const tourPath = await this.repository.getById(Number(id));
     if (!tourPath) throw new NotFoundException(`Tour Path with id:'${id}' is not found`);
 

@@ -28,7 +28,7 @@ export class TourCategory extends BaseEntity {
   @OneToMany(() => TourCategory, (category) => category.parent)
   subCategories: TourCategory[];
 
-  @OneToMany(() => Image, (image) => image.category, { nullable: true, cascade: true })
+  @OneToMany(() => Image, (image) => image.tourCategory, { nullable: true, cascade: true })
   @Expose()
   primaryImages: Image[];
 }
