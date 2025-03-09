@@ -52,36 +52,5 @@ export class BlogRepositoryWeb implements IBlogRepositoryWeb {
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
-  public async save(newBlog: Blog): Promise<Blog> {
-    try {
-      await this.unitOfWork.startTransaction();
-      await (await this.unitOfWork.getRepository(Blog)).save(newBlog);
-      await this.unitOfWork.commitTransaction();
-      return newBlog;
-    } catch (error) {
-      await this.unitOfWork.rollbackTransaction();
-      throw new InternalServerErrorException(error.message);
-    }
-  }
-  public async update(id: number, blog: Blog): Promise<Blog> {
-    try {
-      await this.unitOfWork.startTransaction();
-      await (await this.unitOfWork.getRepository(Blog)).save({ id, ...blog });
-      await this.unitOfWork.commitTransaction();
-      return blog;
-    } catch (error) {
-      await this.unitOfWork.rollbackTransaction();
-      throw new InternalServerErrorException(error.message);
-    }
-  }
-  public async delete(id: number): Promise<void> {
-    try {
-      await this.unitOfWork.startTransaction();
-      await (await this.unitOfWork.getRepository(Blog)).delete(id);
-      await this.unitOfWork.commitTransaction();
-    } catch (error) {
-      await this.unitOfWork.rollbackTransaction();
-      throw new InternalServerErrorException(error.message);
-    }
-  }
+  
 }
