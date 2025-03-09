@@ -12,6 +12,7 @@ import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import { v2 } from 'cloudinary';
 import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 import { IImageService } from 'shared/interfaces/IImageService';
+import { Transactional } from 'shared/decorators/Transactional';
 
 @injectable()
 export class TourCategoryService implements ITourCategoryService {
@@ -50,7 +51,7 @@ export class TourCategoryService implements ITourCategoryService {
       enableCircularCheck: true,
     });
   }
-
+  @Transactional()
   public async createTourCategory(tourCategoryData: CreateTourCategoryDto): Promise<TourCategorySuccessDto> {
     let newTourCategory = new TourCategory();
     const tourCategory = await this.repository.getByName(tourCategoryData.name);
@@ -93,6 +94,8 @@ export class TourCategoryService implements ITourCategoryService {
       enableCircularCheck: true,
     });
   }
+  
+  @Transactional()
   public async updateTourCategory(
     id: string,
     tourCategoryData: CreateTourCategoryDto,

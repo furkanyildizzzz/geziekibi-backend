@@ -9,6 +9,7 @@ import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 import { CreateFaqDto } from '../dto/CreateFaqDto';
 import { FAQ } from 'orm/entities/faq/FAQ';
 import { DeleteMultipleFaqDto } from '../dto/DeleteMultipleFaqDto';
+import { Transactional } from 'shared/decorators/Transactional';
 
 @injectable()
 export class FaqService implements IFaqService {
@@ -37,6 +38,7 @@ export class FaqService implements IFaqService {
     throw new NotFoundException('Faq not found');
   }
 
+  @Transactional()
   async createFaq(faqData: CreateFaqDto): Promise<FAQ> {
     const newFaq = new FAQ();
     newFaq.Question = faqData.Question;
@@ -45,6 +47,7 @@ export class FaqService implements IFaqService {
     return await this.repository.create(newFaq);
   }
 
+  @Transactional()
   async updateFaq(id: string, faqData: CreateFaqDto): Promise<FAQ> {
     const faq = await this.repository.getById(Number(id));
     if (!faq) throw new NotFoundException(`Faq with id:'${id}' is not found`);

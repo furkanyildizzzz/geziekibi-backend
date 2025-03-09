@@ -11,6 +11,7 @@ import uploadStream from 'shared/services/uploadStream';
 import { UpdateCatalogDto } from '../dto/UpdateCatalogDto';
 import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 import { IImageService } from 'shared/interfaces/IImageService';
+import { Transactional } from 'shared/decorators/Transactional';
 
 @injectable()
 export class CatalogService implements ICatalogService {
@@ -19,7 +20,7 @@ export class CatalogService implements ICatalogService {
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
     @inject(INTERFACE_TYPE.IImageService) private readonly imageService: IImageService,
-  ) {}
+  ) { }
 
   public async getAll(): Promise<Catalog[]> {
     const catalogs = await this.repository.getAll();
@@ -58,6 +59,7 @@ export class CatalogService implements ICatalogService {
     });
   }
 
+  @Transactional()
   public async uploadCatalog(file: Express.Multer.File): Promise<Catalog> {
     if (file) {
       const now = new Date();

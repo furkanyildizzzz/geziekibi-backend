@@ -8,10 +8,11 @@ import { ITourDailyPathService } from '../interfaces/ITourDailyPathService';
 import { ITourDailyPathRepository } from '../interfaces/ITourDailyPathRepository';
 import { CreateTourDailyPathDto } from '../dto/CreateTourDailyPathDto';
 import { DeleteMultipleTourDailyPathDto } from '../dto/DeleteMultipleTourDailyPathDto';
+import { Transactional } from 'shared/decorators/Transactional';
 
 @injectable()
 export class TourDailyPathService implements ITourDailyPathService {
-  constructor(@inject(INTERFACE_TYPE.ITourDailyPathRepository) private readonly repository: ITourDailyPathRepository) {}
+  constructor(@inject(INTERFACE_TYPE.ITourDailyPathRepository) private readonly repository: ITourDailyPathRepository) { }
 
   public async getAll(): Promise<TourDailyPathSuccessDto[]> {
     const tourPaths = await this.repository.getAll();
@@ -32,6 +33,7 @@ export class TourDailyPathService implements ITourDailyPathService {
     });
   }
 
+  @Transactional()
   public async createTourDailyPath(tourPathData: CreateTourDailyPathDto): Promise<TourDailyPathSuccessDto> {
     const newTourPath = new Service();
     const tourPath = await this.repository.getByName(tourPathData.name);
@@ -40,8 +42,9 @@ export class TourDailyPathService implements ITourDailyPathService {
     return await this.repository.create(newTourPath);
   }
 
+  @Transactional()
   public async updateTourDailyPath(id: string, tourPathData: CreateTourDailyPathDto): Promise<TourDailyPathSuccessDto> {
-    
+
     const tourPath = await this.repository.getById(Number(id));
     if (!tourPath) throw new NotFoundException(`Tour Path with id:'${id}' is not found`);
 

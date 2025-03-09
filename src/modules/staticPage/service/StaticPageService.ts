@@ -14,6 +14,7 @@ import { Image } from 'orm/entities/image/Image';
 import { StaticPageType } from 'shared/utils/enum';
 import { StaticPage } from 'orm/entities/static-page/StaticPage';
 import { ImageService } from 'shared/services/ImageService';
+import { Transactional } from 'shared/decorators/Transactional';
 
 @injectable()
 export class StaticPageService implements IStaticPageService {
@@ -21,7 +22,7 @@ export class StaticPageService implements IStaticPageService {
     @inject(INTERFACE_TYPE.IStaticPageRepository) private readonly repository: IStaticPageRepository,
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.IImageService) private readonly imageService: ImageService,
-  ) {}
+  ) { }
 
   public async getAll(): Promise<StaticPageListDto[]> {
     const staticPages = await this.repository.getAll();
@@ -51,6 +52,7 @@ export class StaticPageService implements IStaticPageService {
     });
   }
 
+  @Transactional()
   public async createStaticPage(staticPageData: CreateStaticPageDto): Promise<StaticPageDto> {
     try {
       const staticPage = new StaticPage();
@@ -70,6 +72,7 @@ export class StaticPageService implements IStaticPageService {
     }
   }
 
+  @Transactional()
   public async updateStaticPage(id: string, staticPageData: CreateStaticPageDto): Promise<StaticPageDto> {
     const staticPage = await this.repository.getById(Number(id));
     if (!staticPage) throw new NotFoundException(`StaticPage with id:${id} not found`);
@@ -121,5 +124,5 @@ export class StaticPageService implements IStaticPageService {
       throw new BadRequestException('No file provided');
     }
   }
-  
+
 }

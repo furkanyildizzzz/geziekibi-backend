@@ -9,6 +9,7 @@ import { Service } from 'orm/entities/service/Service';
 import { DeleteMultipleServiceDto } from '../dto/DeleteMultipleServiceDto';
 import { plainToInstance } from 'class-transformer';
 import { TourService } from 'orm/entities/tour/TourService';
+import { Transactional } from 'shared/decorators/Transactional';
 
 @injectable()
 export class ServiceInteractor implements IServiceInteractor {
@@ -33,6 +34,7 @@ export class ServiceInteractor implements IServiceInteractor {
     });
   }
 
+  @Transactional()
   public async createService(serviceData: CreateServiceDto): Promise<ServiceSuccessDto> {
     const newService = new Service();
     const service = await this.repository.getByName(serviceData.name);
@@ -46,6 +48,7 @@ export class ServiceInteractor implements IServiceInteractor {
     });
   }
 
+  @Transactional()
   public async updateService(id: string, serviceData: CreateServiceDto): Promise<ServiceSuccessDto> {
     const service = await this.repository.getById(Number(id));
     if (!service) throw new NotFoundException(`Service with id:'${id}' is not found`);

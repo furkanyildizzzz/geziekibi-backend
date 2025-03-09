@@ -12,6 +12,7 @@ import { UnitOfWork } from 'unitOfWork/unitOfWork';
 import { v2 } from 'cloudinary';
 import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 import { ImageService } from 'shared/services/ImageService';
+import { Transactional } from 'shared/decorators/Transactional';
 
 @injectable()
 export class HomepageSliderService implements IHomepageSliderService {
@@ -32,7 +33,7 @@ export class HomepageSliderService implements IHomepageSliderService {
   }
 
   public async getById(id: string): Promise<HomepageSliderSuccessDto> {
-    const homepageSlider = await this.repository.getById(Number(id),['image']);
+    const homepageSlider = await this.repository.getById(Number(id), ['image']);
     if (!homepageSlider) throw new NotFoundException(`Homepage Slider with id:${id} not found`);
     return plainToInstance(HomepageSliderSuccessDto, homepageSlider, {
       excludeExtraneousValues: true,
@@ -40,6 +41,7 @@ export class HomepageSliderService implements IHomepageSliderService {
     });
   }
 
+  @Transactional()
   public async createHomepageSlider(
     homepageSliderData: CreateHomepageSliderDto,
     files: Express.Multer.File[],
@@ -97,6 +99,7 @@ export class HomepageSliderService implements IHomepageSliderService {
       throw new InternalServerErrorException(error.message);
     }
   }
+  @Transactional()
   public async updateHomepageSlider(
     id: string,
     homepageSliderData: CreateHomepageSliderDto,

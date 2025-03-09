@@ -14,6 +14,7 @@ import { ResponseContactFormDTO } from '../dto/ResponseContactFormDTO';
 import { EmailService } from 'shared/services/EmailService';
 import { EmailTemplateEnum } from 'shared/utils/enum';
 import { plainToInstance } from 'class-transformer';
+import { Transactional } from 'shared/decorators/Transactional';
 
 @injectable()
 export class ContactFormService implements IContactFormService {
@@ -52,6 +53,7 @@ export class ContactFormService implements IContactFormService {
     throw new NotFoundException('ContactForm not found');
   }
 
+  @Transactional()
   async updateContactForm(id: string, contactFormData: UpdateContactFormDTO): Promise<ContactFormSuccessDTO> {
     const contactForm = (await this.repository.getById(Number(id))) || new ContactForm();
     // if (!contactForm) throw new NotFoundException(`ContactForm with id:'${id}' is not found`);
@@ -78,6 +80,7 @@ export class ContactFormService implements IContactFormService {
     await this.repository.deleteMultiple(contactForms.ids);
   }
 
+  @Transactional()
   async responseContactForm(id: string, answerFormData: ResponseContactFormDTO): Promise<ContactFormSuccessDTO> {
     const contactForm = (await this.repository.getById(Number(id))) || new ContactForm();
     if (!contactForm) throw new NotFoundException(`ContactForm with id:'${id}' is not found`);

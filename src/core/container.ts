@@ -124,7 +124,7 @@ container.bind<IDatabaseService>(INTERFACE_TYPE.IDatabaseService).to(DatabaseSer
 
 container.bind<Logger>(INTERFACE_TYPE.Logger).to(Logger);
 
-container.bind<UnitOfWork>(INTERFACE_TYPE.UnitOfWork).to(UnitOfWork);
+container.bind<UnitOfWork>(INTERFACE_TYPE.UnitOfWork).to(UnitOfWork).inRequestScope();
 
 container.bind<IJsonWebTokenService>(INTERFACE_TYPE.IJsonWebTokenService).to(JsonWebTokenService);
 

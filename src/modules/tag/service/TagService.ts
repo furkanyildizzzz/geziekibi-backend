@@ -10,13 +10,14 @@ import { CreateTagDto } from '../dto/CreateTagDto';
 import { BadRequestErrorMessageResult } from 'inversify-express-utils/lib/results';
 import { DeleteMultipleTagDto } from '../dto/DeleteMultipleTagDto';
 import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
+import { Transactional } from 'shared/decorators/Transactional';
 
 @injectable()
 export class TagService implements ITagService {
 
   constructor(
-    @inject(INTERFACE_TYPE.UnitOfWork)  private readonly unitOfWork: UnitOfWork,
-    @inject(INTERFACE_TYPE.ITagRepository)  private readonly repository : ITagRepository,
+    @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
+    @inject(INTERFACE_TYPE.ITagRepository) private readonly repository: ITagRepository,
     @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
   ) {
   }
@@ -40,6 +41,7 @@ export class TagService implements ITagService {
     throw new NotFoundException('Tag not found');
   }
 
+  @Transactional()
   async createTag(tagData: CreateTagDto): Promise<Tag> {
     const tag = await this.repository.getByName(tagData.name);
     if (tag) throw new BadRequestException(`Tag '${tag.name}' is already exists`);
@@ -51,6 +53,7 @@ export class TagService implements ITagService {
     return await this.repository.create(newTag);
   }
 
+  @Transactional()
   async updateTag(id: string, tagData: CreateTagDto): Promise<Tag> {
     try {
       const tag = await this.repository.getById(Number(id));

@@ -18,6 +18,7 @@ import { Blog } from 'orm/entities/blog/Blog';
 import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 import { IBlogCategoryRepository } from 'modules/blogCategory/interfaces/IBlogCategoryRepository';
 import { IImageService } from 'shared/interfaces/IImageService';
+import { Transactional } from 'shared/decorators/Transactional';
 
 @injectable()
 export class BlogService implements IBlogService {
@@ -41,7 +42,7 @@ export class BlogService implements IBlogService {
   }
 
   public async getById(id: string): Promise<BlogDto> {
-    const blog = await this.repository.getById(Number(id),['tags', 'category', 'primaryImages']);
+    const blog = await this.repository.getById(Number(id), ['tags', 'category', 'primaryImages']);
     if (!blog) throw new NotFoundException(`Blog with id:${id} not found`);
     return plainToInstance(BlogDto, blog, {
       excludeExtraneousValues: true,
@@ -58,6 +59,7 @@ export class BlogService implements IBlogService {
     });
   }
 
+  @Transactional()
   public async createBlog(blogData: CreateBlogDto): Promise<BlogDto> {
 
     const category = await this.categoryRepository.getById(blogData.category.id);
@@ -66,11 +68,11 @@ export class BlogService implements IBlogService {
     let tags: Tag[] | undefined;
 
     if (blogData.tags && Array.isArray(blogData.tags) && blogData.tags.length > 0) {
-        tags = await this.tagRepository.findByIds(blogData.tags.map((t) => t.id));
-    
-        if (tags.length !== blogData.tags.length) {
-            throw new NotFoundException("One or more tags not found");
-        }
+      tags = await this.tagRepository.findByIds(blogData.tags.map((t) => t.id));
+
+      if (tags.length !== blogData.tags.length) {
+        throw new NotFoundException("One or more tags not found");
+      }
     }
 
     if (!blogData.primaryImages.length) {
@@ -90,7 +92,7 @@ export class BlogService implements IBlogService {
       blog.category = category;
       blog.tags = tags;
 
-      blog =  await this.repository.create(blog);
+      blog = await this.repository.create(blog);
       //#region Images
 
       const primaryImages = await this.imageService.saveImages(
@@ -113,20 +115,21 @@ export class BlogService implements IBlogService {
     }
   }
 
+  @Transactional()
   public async updateBlog(id: string, blogData: CreateBlogDto): Promise<BlogDto> {
-     const blog = await this.repository.getById(Number(id));
+    const blog = await this.repository.getById(Number(id));
     if (!blog) throw new NotFoundException(`Blog with id:${id} not found`);
 
-    const category = await this.categoryRepository.getById( blogData.category.id );
+    const category = await this.categoryRepository.getById(blogData.category.id);
     if (!category) throw new NotFoundException(`Blog Category with id:${blogData.category.id} not found`);
 
     let tags: Tag[] | undefined;
     if (blogData.tags && Array.isArray(blogData.tags) && blogData.tags.length > 0) {
-        tags = await this.tagRepository.findByIds(blogData.tags.map((t) => t.id));
-    
-        if (tags.length !== blogData.tags.length) {
-            throw new NotFoundException("One or more tags not found");
-        }
+      tags = await this.tagRepository.findByIds(blogData.tags.map((t) => t.id));
+
+      if (tags.length !== blogData.tags.length) {
+        throw new NotFoundException("One or more tags not found");
+      }
     }
 
     if (!blogData.uploadedPrimaryImages.length && !blogData.primaryImages.length) {

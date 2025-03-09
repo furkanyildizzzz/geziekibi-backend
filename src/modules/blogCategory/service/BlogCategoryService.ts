@@ -12,6 +12,7 @@ import { IBlogCategoryRepository } from '../interfaces/IBlogCategoryRepository';
 import { BlogCategory } from 'orm/entities/blog/BlogCategory';
 import { ISeoLinkService } from 'shared/interfaces/ISeoLinkService';
 import { IImageService } from 'shared/interfaces/IImageService';
+import { Transactional } from 'shared/decorators/Transactional';
 
 @injectable()
 export class BlogCategoryService implements IBlogCategoryService {
@@ -34,7 +35,7 @@ export class BlogCategoryService implements IBlogCategoryService {
   }
 
   public async getById(id: string): Promise<BlogCategorySuccessDto> {
-    const blogCategory = await this.repository.getById(Number(id),['parent', 'primaryImages']);
+    const blogCategory = await this.repository.getById(Number(id), ['parent', 'primaryImages']);
     if (!blogCategory) throw new NotFoundException(`Blog Category with id:${id} not found`);
     return plainToInstance(BlogCategorySuccessDto, blogCategory, {
       excludeExtraneousValues: true,
@@ -51,6 +52,7 @@ export class BlogCategoryService implements IBlogCategoryService {
     });
   }
 
+  @Transactional()
   public async createBlogCategory(blogCategoryData: CreateBlogCategoryDto): Promise<BlogCategorySuccessDto> {
     try {
       let newBlogCategory = new BlogCategory();
@@ -99,6 +101,7 @@ export class BlogCategoryService implements IBlogCategoryService {
       throw new InternalServerErrorException(error.message);
     }
   }
+  @Transactional()
   public async updateBlogCategory(
     id: string,
     blogCategoryData: CreateBlogCategoryDto,
