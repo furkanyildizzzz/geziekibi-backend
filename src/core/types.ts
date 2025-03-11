@@ -50,6 +50,7 @@ export const INTERFACE_TYPE = {
   ISeoLinkService: Symbol.for('ISeoLinkService'),
   BlogControllerWeb: Symbol.for('BlogControllerWeb'),
   IBlogServiceWeb: Symbol.for('IBlogServiceWeb'),
+  IBlogRepositoryWeb: Symbol.for('IBlogRepositoryWeb'),
   TourControllerWeb: Symbol.for('TourControllerWeb'),
   ITourServiceWeb: Symbol.for('ITourServiceWeb'),
   ITourRepositoryWeb: Symbol.for('ITourRepositoryWeb'),

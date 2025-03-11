@@ -50,7 +50,7 @@ export class FeaturedTourDto {
 
   @Expose()
   @Type(() => TourDate)
-  dates: TourDate[];
+  tourDates: TourDate[];
 
   @Expose()
   @Type(() => FeaturedCategoryDto)

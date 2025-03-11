@@ -12,7 +12,7 @@ import { Image } from 'orm/entities/image/Image';
 
 @injectable()
 export class TourRepositoryWeb implements ITourRepositoryWeb {
-  constructor(@inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork) {}
+  constructor(@inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork) { }
 
   public async getAll(): Promise<Tour[] | void> {
     try {
@@ -57,9 +57,10 @@ export class TourRepositoryWeb implements ITourRepositoryWeb {
         .leftJoinAndSelect('dailyForms.dailyPaths', 'dailyPaths')
         .leftJoinAndSelect('dailyForms.dailyVisitingPlaces', 'dailyVisitingPlaces')
         .where('tour.id = :id', { id })
+        .andWhere('tourDates.startDate >= CURRENT_DATE') // Bugün ve sonrası olan turlar
         .orderBy('dailyForms.id', 'DESC') // Order by dailyForms id
         .getOne();
-
+      console.log(tour.tourDates)
       if (tour) return tour as Tour;
     } catch (error) {
       throw new InternalServerErrorException(`${error.message}`);
@@ -121,6 +122,7 @@ export class TourRepositoryWeb implements ITourRepositoryWeb {
           .createQueryBuilder('tourDates')
           .leftJoinAndSelect('tourDates.prices', 'prices')
           .where('tourDates.tourId = :tourId', { tourId })
+          .andWhere('tourDates.startDate >= CURRENT_DATE') // Bugün ve sonrası olan turlar
           .getMany(),
 
         // Load tour services and their related services
@@ -157,38 +159,6 @@ export class TourRepositoryWeb implements ITourRepositoryWeb {
       if (tour) return tour as Tour;
     } catch (error) {
       throw new InternalServerErrorException(`${error.message}`);
-    }
-  }
-  public async save(newTour: Tour): Promise<Tour> {
-    try {
-      await this.unitOfWork.startTransaction();
-      await (await this.unitOfWork.getRepository(Tour)).save(newTour);
-      await this.unitOfWork.commitTransaction();
-      return newTour;
-    } catch (error) {
-      await this.unitOfWork.rollbackTransaction();
-      throw new InternalServerErrorException(error.message);
-    }
-  }
-  public async update(id: number, tour: Tour): Promise<Tour> {
-    try {
-      await this.unitOfWork.startTransaction();
-      await (await this.unitOfWork.getRepository(Tour)).save({ id, ...tour });
-      await this.unitOfWork.commitTransaction();
-      return tour;
-    } catch (error) {
-      await this.unitOfWork.rollbackTransaction();
-      throw new InternalServerErrorException(error.message);
-    }
-  }
-  public async delete(id: number): Promise<void> {
-    try {
-      await this.unitOfWork.startTransaction();
-      await (await this.unitOfWork.getRepository(Tour)).delete(id);
-      await this.unitOfWork.commitTransaction();
-    } catch (error) {
-      await this.unitOfWork.rollbackTransaction();
-      throw new InternalServerErrorException(error.message);
     }
   }
 }

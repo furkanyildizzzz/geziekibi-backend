@@ -30,7 +30,7 @@ export class HomepageService implements IHomepageService {
   constructor(
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.IEmailService) private readonly emailService: EmailService,
-  ) {}
+  ) { }
 
   public async getFeaturedTours(): Promise<FeaturedTourDto[]> {
     const tourRepo = await this.unitOfWork.getRepository(Tour);
@@ -44,7 +44,7 @@ export class HomepageService implements IHomepageService {
         },
       },
       take: 3,
-      relations: ['dates', 'dates.prices', 'primaryImages', 'category', 'category.tours'],
+      relations: ['tourDates', 'tourDates.prices', 'primaryImages', 'category', 'category.tours'],
     });
 
     const toursWithMostRecentDate = tours.map((tour) => {
@@ -66,7 +66,7 @@ export class HomepageService implements IHomepageService {
       featuredTour.startDate = tour.startDate;
       featuredTour.endDate = tour.endDate;
       featuredTour.pricePerPerson = tour.dates[0].prices[0].price;
-      featuredTour.dates = tour.dates;
+      featuredTour.tourDates = tour.dates;
       featuredTour.uploadedPrimaryImages = tour.primaryImages;
       featuredTour.category = { ...tour.category, tourCount: tour.category.tours.length };
       const { days, nights } = tourFunctions.calculateDaysAndNights(tour.startDate, tour.endDate);
@@ -84,9 +84,10 @@ export class HomepageService implements IHomepageService {
 
   public async getCategories(): Promise<CategoryDto[]> {
     const categoryRepo = await this.unitOfWork.getRepository(TourCategory);
-
+    const today = new Date(); // Bugünün tarihi
+    
     const categories = await categoryRepo.find({
-      relations: ['parent', 'subCategories', 'primaryImages', 'tours', 'subCategories.tours'],
+      relations: ['parent', 'subCategories', 'primaryImages', 'tours', 'tours.tourDates', 'subCategories.tours', 'subCategories.tours.tourDates'],
     });
 
     const calculateTourCount = (category: TourCategory): number => {
@@ -94,7 +95,8 @@ export class HomepageService implements IHomepageService {
       let tourCount =
         category.tours === undefined || category.tours.length === 0
           ? 0
-          : category.tours.filter((tour) => tour.publishStatus === 'publish').length;
+          : category.tours.filter((tour) => tour.publishStatus === 'publish' &&
+            tour.tourDates?.some(tourDate => new Date(tourDate.startDate) >= today)).length;
 
       // Add tour counts from subcategories
       if (category.subCategories && category.subCategories.length > 0) {
@@ -152,7 +154,7 @@ export class HomepageService implements IHomepageService {
       featuredTour.startDate = tour.startDate;
       featuredTour.endDate = tour.endDate;
       featuredTour.pricePerPerson = tour.dates[0].prices[0].price;
-      featuredTour.dates = tour.dates;
+      featuredTour.tourDates = tour.dates;
       featuredTour.uploadedPrimaryImages = tour.primaryImages;
       featuredTour.category = { ...tour.category, tourCount: tour.category.tours.length };
 

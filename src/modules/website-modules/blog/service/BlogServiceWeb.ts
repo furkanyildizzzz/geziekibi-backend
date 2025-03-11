@@ -21,7 +21,7 @@ import { CategoryDto } from '../dto/CategoryDto';
 @injectable()
 export class BlogServiceWeb implements IBlogServiceWeb {
   constructor(
-    @inject(INTERFACE_TYPE.IBlogRepository) private readonly repository: IBlogRepositoryWeb,
+    @inject(INTERFACE_TYPE.IBlogRepositoryWeb) private readonly repository: IBlogRepositoryWeb,
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
   ) {}

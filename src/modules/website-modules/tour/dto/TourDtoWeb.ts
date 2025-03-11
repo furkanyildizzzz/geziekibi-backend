@@ -117,7 +117,7 @@ export class TourDtoWeb {
 
   @Expose()
   @Type(() => TourDate)
-  dates: TourDate[];
+  tourDates: TourDate[];
 
   @Expose()
   @Type(() => TourService)

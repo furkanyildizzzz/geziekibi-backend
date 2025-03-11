@@ -117,6 +117,8 @@ import { TourDateRepository } from 'modules/tour/repository/TourDateRepository';
 import { ITourDateRepository } from 'modules/tour/interfaces/ITourDateRepository';
 import { TourPriceRepository } from 'modules/tour/repository/TourPriceRepository';
 import { ITourPriceRepository } from 'modules/tour/interfaces/ITourPriceRepository';
+import { IBlogRepositoryWeb } from 'modules/website-modules/blog/interfaces/IBlogRepositoryWeb';
+import { BlogRepositoryWeb } from 'modules/website-modules/blog/repository/BlogRepositoryWeb';
 
 const container = new Container();
 
@@ -185,6 +187,7 @@ container.bind(INTERFACE_TYPE.HomepageController).to(HomepageController);
 
 container.bind<ISeoLinkService>(INTERFACE_TYPE.ISeoLinkService).to(SeoLinkService);
 
+container.bind<IBlogRepositoryWeb>(INTERFACE_TYPE.IBlogRepositoryWeb).to(BlogRepositoryWeb);
 container.bind<IBlogServiceWeb>(INTERFACE_TYPE.IBlogServiceWeb).to(BlogServiceWeb);
 container.bind(INTERFACE_TYPE.BlogControllerWeb).to(BlogControllerWeb);
 

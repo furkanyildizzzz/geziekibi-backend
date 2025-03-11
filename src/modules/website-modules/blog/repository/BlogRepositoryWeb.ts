@@ -46,7 +46,6 @@ export class BlogRepositoryWeb implements IBlogRepositoryWeb {
         .where(`blog.seoLink = '${seoLink}'`)
         .limit(1)
         .getOne();
-
       if (blog) return blog as Blog;
     } catch (error) {
       throw new InternalServerErrorException(`${error.message}`);
