@@ -35,17 +35,43 @@ export class HomepageService implements IHomepageService {
   public async getFeaturedTours(): Promise<FeaturedTourDto[]> {
     const tourRepo = await this.unitOfWork.getRepository(Tour);
 
+    // const today = new Date();
+    // const tours = await tourRepo.find({
+    //   where: { tourDates: { startDate: LessThanOrEqual(today) }, publishStatus: PublishStatus.PUBLISH, },
+    //   order: {
+    //     tourDates: {
+    //       startDate: 'DESC',
+    //     },
+    //   },
+    //   take: 3,
+    //   relations: ['tourDates', 'tourDates.prices', 'primaryImages', 'category', 'category.tours'],
+    // });
+
     const today = new Date();
-    const tours = await tourRepo.find({
-      where: { tourDates: { startDate: LessThanOrEqual(today) }, publishStatus: PublishStatus.PUBLISH },
-      order: {
-        tourDates: {
-          startDate: 'DESC',
-        },
-      },
-      take: 3,
-      relations: ['tourDates', 'tourDates.prices', 'primaryImages', 'category', 'category.tours'],
-    });
+
+    const tours = await tourRepo
+      .createQueryBuilder('tour')
+      .leftJoinAndSelect('tour.tourDates', 'tourDates')
+      .leftJoinAndSelect('tourDates.prices', 'prices')
+      .leftJoinAndSelect('tour.primaryImages', 'primaryImages')
+      .leftJoinAndSelect('tour.category', 'category')
+      .leftJoinAndSelect('category.tours', 'categoryTours')
+      .where('tourDates.startDate <= :today', { today })
+      .andWhere('tour.publishStatus = :publishStatus', { publishStatus: PublishStatus.PUBLISH })
+      .andWhere(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('user.id')
+          .from('users', 'user')
+          .where('user.role = :role')
+          .getQuery();
+        return `tour.insertUserId IN ${subQuery}`;
+      })
+      .setParameter('role', 'ADMINISTRATOR')
+      .orderBy('tourDates.startDate', 'DESC')
+      .take(3)
+      .getMany();
+
 
     const toursWithMostRecentDate = tours.map((tour) => {
       const mostRecentDate = tour.tourDates.reduce((latest, current) => {
@@ -85,10 +111,32 @@ export class HomepageService implements IHomepageService {
   public async getCategories(): Promise<CategoryDto[]> {
     const categoryRepo = await this.unitOfWork.getRepository(TourCategory);
     const today = new Date(); // Bugünün tarihi
-    
-    const categories = await categoryRepo.find({
-      relations: ['parent', 'subCategories', 'primaryImages', 'tours', 'tours.tourDates', 'subCategories.tours', 'subCategories.tours.tourDates'],
-    });
+
+    // const categories = await categoryRepo.find({
+    //   where:{tours:{insertUserId}},
+    //   relations: ['parent', 'subCategories', 'primaryImages', 'tours', 'tours.tourDates', 'subCategories.tours', 'subCategories.tours.tourDates'],
+    // });
+
+    const categories = await categoryRepo
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.parent', 'parent')
+      .leftJoinAndSelect('category.subCategories', 'subCategories')
+      .leftJoinAndSelect('category.primaryImages', 'primaryImages')
+      .leftJoinAndSelect('category.tours', 'tours')
+      .leftJoinAndSelect('tours.tourDates', 'tourDates')
+      .leftJoinAndSelect('subCategories.tours', 'subTours')
+      .leftJoinAndSelect('subTours.tourDates', 'subTourDates')
+      .where(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('user.id')
+          .from('users', 'user')
+          .where('user.role = :role')
+          .getQuery();
+        return `tours.insertUserId IN ${subQuery}`;
+      })
+      .setParameter('role', 'ADMINISTRATOR')
+      .getMany();
 
     const calculateTourCount = (category: TourCategory): number => {
       // Count tours in the current category
@@ -123,17 +171,43 @@ export class HomepageService implements IHomepageService {
   public async getTopTours(): Promise<FeaturedTourDto[]> {
     const tourRepo = await this.unitOfWork.getRepository(Tour);
 
+    // const today = new Date();
+    // const tours = await tourRepo.find({
+    //   where: { tourDates: { startDate: LessThanOrEqual(today) }, publishStatus: PublishStatus.PUBLISH },
+    //   order: {
+    //     tourDates: {
+    //       startDate: 'DESC',
+    //     },
+    //   },
+    //   take: 6,
+    //   relations: ['tourDates', 'tourDates.prices', 'primaryImages', 'category', 'category.tours'],
+    // });
+
     const today = new Date();
-    const tours = await tourRepo.find({
-      where: { tourDates: { startDate: LessThanOrEqual(today) }, publishStatus: PublishStatus.PUBLISH },
-      order: {
-        tourDates: {
-          startDate: 'DESC',
-        },
-      },
-      take: 6,
-      relations: ['tourDates', 'tourDates.prices', 'primaryImages', 'category', 'category.tours'],
-    });
+
+    const tours = await tourRepo
+      .createQueryBuilder('tour')
+      .leftJoinAndSelect('tour.tourDates', 'tourDates')
+      .leftJoinAndSelect('tourDates.prices', 'prices')
+      .leftJoinAndSelect('tour.primaryImages', 'primaryImages')
+      .leftJoinAndSelect('tour.category', 'category')
+      .leftJoinAndSelect('category.tours', 'categoryTours')
+      .where('tourDates.startDate <= :today', { today })
+      .andWhere('tour.publishStatus = :publishStatus', { publishStatus: PublishStatus.PUBLISH })
+      .andWhere(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('user.id')
+          .from('users', 'user')
+          .where('user.role = :role')
+          .getQuery();
+        return `tour.insertUserId IN ${subQuery}`;
+      })
+      .setParameter('role', 'ADMINISTRATOR')
+      .orderBy('tourDates.startDate', 'DESC')
+      .take(6)
+      .getMany();
+
 
     const toursWithMostRecentDate = tours.map((tour) => {
       const mostRecentDate = tour.tourDates.reduce((latest, current) => {
@@ -174,15 +248,39 @@ export class HomepageService implements IHomepageService {
   public async getBlogs(): Promise<BlogDto[]> {
     const blogRepo = await this.unitOfWork.getRepository(Blog);
 
+    // const today = new Date();
+    // const blogs = await blogRepo.find({
+    //   where: { publishDate: LessThanOrEqual(today), publishStatus: PublishStatus.PUBLISH },
+    //   order: {
+    //     publishDate: 'DESC',
+    //   },
+    //   take: 6,
+    //   relations: ['tags', 'primaryImages', 'category'],
+    // });
+
     const today = new Date();
-    const blogs = await blogRepo.find({
-      where: { publishDate: LessThanOrEqual(today), publishStatus: PublishStatus.PUBLISH },
-      order: {
-        publishDate: 'DESC',
-      },
-      take: 6,
-      relations: ['tags', 'primaryImages', 'category'],
-    });
+
+    const blogs = await blogRepo
+      .createQueryBuilder('blog')
+      .leftJoinAndSelect('blog.tags', 'tags')
+      .leftJoinAndSelect('blog.primaryImages', 'primaryImages')
+      .leftJoinAndSelect('blog.category', 'category')
+      .where('blog.publishDate <= :today', { today })
+      .andWhere('blog.publishStatus = :publishStatus', { publishStatus: PublishStatus.PUBLISH })
+      .andWhere(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('user.id')
+          .from('users', 'user')
+          .where('user.role = :role')
+          .getQuery();
+        return `blog.insertUserId IN ${subQuery}`;
+      })
+      .setParameter('role', 'ADMINISTRATOR')
+      .orderBy('blog.publishDate', 'DESC')
+      .take(6)
+      .getMany();
+
 
     const blogList = blogs.map((b) => {
       const blog = new BlogDto();
@@ -206,7 +304,22 @@ export class HomepageService implements IHomepageService {
   public async getDailyPaths(): Promise<DailyPathDto[]> {
     const repo = await this.unitOfWork.getRepository(TourDailyPath);
 
-    const dailyPaths = await repo.find();
+    // const dailyPaths = await repo.find();
+
+    const dailyPaths = await repo
+      .createQueryBuilder('dailyPath')
+      .where(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('user.id')
+          .from('users', 'user')
+          .where('user.role = :role')
+          .getQuery();
+        return `dailyPath.insertUserId IN ${subQuery}`;
+      })
+      .setParameter('role', 'ADMINISTRATOR')
+      .getMany();
+
 
     return plainToInstance(DailyPathDto, dailyPaths, {
       excludeExtraneousValues: true,
@@ -217,7 +330,23 @@ export class HomepageService implements IHomepageService {
   public async getStaticPage(pageType: StaticPageType): Promise<StaticPageDto> {
     const repo = await this.unitOfWork.getRepository(StaticPage);
 
-    const staticPage = (await repo.find({ where: { pageType: pageType } })).at(0);
+    // const staticPage = (await repo.find({ where: { pageType: pageType } })).at(0);
+
+    const staticPage = await repo
+      .createQueryBuilder('staticPage')
+      .where('staticPage.pageType = :pageType', { pageType })
+      .andWhere(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('user.id')
+          .from('users', 'user')
+          .where('user.role = :role')
+          .getQuery();
+        return `staticPage.insertUserId IN ${subQuery}`;
+      })
+      .setParameter('role', 'ADMINISTRATOR')
+      .getOne();
+
 
     return plainToInstance(StaticPageDto, staticPage, {
       excludeExtraneousValues: true,
@@ -256,7 +385,21 @@ export class HomepageService implements IHomepageService {
   public async getFAQs(): Promise<FAQsDto[]> {
     const repo = await this.unitOfWork.getRepository(FAQ);
 
-    const faqs = await repo.find();
+    // const faqs = await repo.find();
+
+    const faqs = await repo
+      .createQueryBuilder('faq')
+      .where(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('user.id')
+          .from('users', 'user')
+          .where('user.role = :role')
+          .getQuery();
+        return `faq.insertUserId IN ${subQuery}`;
+      })
+      .setParameter('role', 'ADMINISTRATOR')
+      .getMany();
 
     return plainToInstance(FAQsDto, faqs, {
       excludeExtraneousValues: true,
@@ -267,14 +410,31 @@ export class HomepageService implements IHomepageService {
   public async getHomepageSliders(): Promise<SliderDto[]> {
     const homepageSliderRepo = await this.unitOfWork.getRepository(HomepageSlider);
 
-    const today = new Date();
-    const sliders = await homepageSliderRepo.find({
-      where: { isActive: true },
-      order: {
-        order: 'ASC',
-      },
-      relations: ['image'],
-    });
+    // const today = new Date();
+    // const sliders = await homepageSliderRepo.find({
+    //   where: { isActive: true },
+    //   order: {
+    //     order: 'ASC',
+    //   },
+    //   relations: ['image'],
+    // });
+
+    const sliders = await homepageSliderRepo
+      .createQueryBuilder('slider')
+      .leftJoinAndSelect('slider.image', 'image') // 'image' ilişkisini ekliyoruz
+      .where('slider.isActive = :isActive', { isActive: true })
+      .andWhere(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('user.id')
+          .from('users', 'user')
+          .where('user.role = :role')
+          .getQuery();
+        return `slider.insertUserId IN ${subQuery}`;
+      })
+      .setParameter('role', 'ADMINISTRATOR')
+      .orderBy('slider.order', 'ASC')
+      .getMany();
 
     const sliderList = sliders.map((s) => {
       const slider = new SliderDto();

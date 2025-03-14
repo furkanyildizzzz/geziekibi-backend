@@ -92,9 +92,12 @@ export class TourRepositoryWeb implements ITourRepositoryWeb {
       // Step 1: Fetch the main tour entity with minimal data
       const tour = await repo
         .createQueryBuilder('tour')
+        .leftJoin('users', 'insertUser', 'insertUser.id = tour.insertUserId')
+        .leftJoin('users', 'updateUser', 'updateUser.id = tour.updateUserId')
         .leftJoinAndSelect('tour.category', 'category') // Include only critical joins
         .leftJoinAndSelect('tour.tags', 'tags')
-        .where('tour.seoLink = :seoLink', { seoLink })
+        .where('(insertUser.role = :adminRole OR updateUser.role = :adminRole)', { adminRole: 'ADMINISTRATOR' })
+        .andWhere('tour.seoLink = :seoLink', { seoLink })
         .getOne();
 
       if (!tour) throw new NotFoundException('Tour not found');

@@ -55,37 +55,4 @@ export class TourCategoryRepository extends BaseRepository<TourCategory> impleme
       throw new InternalServerErrorException(`${error.message}`);
     }
   }
-  // public async create(newTourCategory: TourCategory): Promise<TourCategory> {
-  //   try {
-  //     await this.unitOfWork.startTransaction();
-  //     await (await this.unitOfWork.getRepository(TourCategory)).save(newTourCategory);
-  //     await this.unitOfWork.commitTransaction();
-  //     return newTourCategory;
-  //   } catch (error) {
-  //     await this.unitOfWork.rollbackTransaction();
-  //     throw new InternalServerErrorException(error.message);
-  //   }
-  // }
-
-  // public async update(id: number, tourCategory: TourCategory): Promise<TourCategory> {
-  //   try {
-  //     await this.unitOfWork.startTransaction();
-  //     await (await this.unitOfWork.getRepository(TourCategory)).save({ id, ...tourCategory });
-  //     await this.unitOfWork.commitTransaction();
-  //     return tourCategory;
-  //   } catch (error) {
-  //     await this.unitOfWork.rollbackTransaction();
-  //     throw new InternalServerErrorException(error.message);
-  //   }
-  // }
-  // public async delete(id: number): Promise<void> {
-  //   try {
-  //     await this.unitOfWork.startTransaction();
-  //     await (await this.unitOfWork.getRepository(TourCategory)).delete(id);
-  //     await this.unitOfWork.commitTransaction();
-  //   } catch (error) {
-  //     await this.unitOfWork.rollbackTransaction();
-  //     throw new InternalServerErrorException(error.message);
-  //   }
-  // }
 }
