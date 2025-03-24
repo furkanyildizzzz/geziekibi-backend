@@ -61,4 +61,10 @@ export class HomepageController {
     const sliders = await this.service.getHomepageSliders();
     return res.customSuccess(200, 'Homepage Sliders', sliders);
   }
+
+  @httpGet('/catalogs')
+  public async getCatalogs(req: Request, res: Response, next: NextFunction) {
+    const sliders = await this.service.getCatalogs();
+    return res.customSuccess(200, 'Catalogs', sliders);
+  }
 }

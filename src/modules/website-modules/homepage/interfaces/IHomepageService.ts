@@ -7,6 +7,7 @@ import { StaticPageDto } from '../dto/StaticPageDto';
 import { CreateContactFormDto } from '../dto/CreateContactFormDto';
 import { FAQsDto } from '../dto/FAQsDto';
 import { SliderDto } from '../dto/SliderDto';
+import { CatalogDto } from '../dto/CatalogDto';
 
 export interface IHomepageService {
   getFeaturedTours(): Promise<FeaturedTourDto[]>;
@@ -18,4 +19,5 @@ export interface IHomepageService {
   createContactForm(contactFormDto: CreateContactFormDto): Promise<boolean>;
   getFAQs(): Promise<FAQsDto[]>;
   getHomepageSliders(): Promise<SliderDto[]>;
+  getCatalogs(): Promise<CatalogDto[]>;
 }

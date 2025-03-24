@@ -24,13 +24,15 @@ import { FAQ } from 'orm/entities/faq/FAQ';
 import { SliderDto } from '../dto/SliderDto';
 import { HomepageSlider } from 'orm/entities/homepageSlider/HomepageSlider';
 import { EmailService } from 'shared/services/EmailService';
+import { CatalogDto } from '../dto/CatalogDto';
+import { Catalog } from 'orm/entities/catalog/Catalog';
 
 @injectable()
 export class HomepageService implements IHomepageService {
   constructor(
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.IEmailService) private readonly emailService: EmailService,
-  ) { }
+  ) {}
 
   public async getFeaturedTours(): Promise<FeaturedTourDto[]> {
     const tourRepo = await this.unitOfWork.getRepository(Tour);
@@ -58,20 +60,14 @@ export class HomepageService implements IHomepageService {
       .leftJoinAndSelect('category.tours', 'categoryTours')
       .where('tourDates.startDate <= :today', { today })
       .andWhere('tour.publishStatus = :publishStatus', { publishStatus: PublishStatus.PUBLISH })
-      .andWhere(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select('user.id')
-          .from('users', 'user')
-          .where('user.role = :role')
-          .getQuery();
+      .andWhere((qb) => {
+        const subQuery = qb.subQuery().select('user.id').from('users', 'user').where('user.role = :role').getQuery();
         return `tour.insertUserId IN ${subQuery}`;
       })
       .setParameter('role', 'ADMINISTRATOR')
       .orderBy('tourDates.startDate', 'DESC')
       .take(3)
       .getMany();
-
 
     const toursWithMostRecentDate = tours.map((tour) => {
       const mostRecentDate = tour.tourDates.reduce((latest, current) => {
@@ -126,13 +122,8 @@ export class HomepageService implements IHomepageService {
       .leftJoinAndSelect('tours.tourDates', 'tourDates')
       .leftJoinAndSelect('subCategories.tours', 'subTours')
       .leftJoinAndSelect('subTours.tourDates', 'subTourDates')
-      .where(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select('user.id')
-          .from('users', 'user')
-          .where('user.role = :role')
-          .getQuery();
+      .where((qb) => {
+        const subQuery = qb.subQuery().select('user.id').from('users', 'user').where('user.role = :role').getQuery();
         return `tours.insertUserId IN ${subQuery}`;
       })
       .setParameter('role', 'ADMINISTRATOR')
@@ -143,8 +134,11 @@ export class HomepageService implements IHomepageService {
       let tourCount =
         category.tours === undefined || category.tours.length === 0
           ? 0
-          : category.tours.filter((tour) => tour.publishStatus === 'publish' &&
-            tour.tourDates?.some(tourDate => new Date(tourDate.startDate) >= today)).length;
+          : category.tours.filter(
+              (tour) =>
+                tour.publishStatus === 'publish' &&
+                tour.tourDates?.some((tourDate) => new Date(tourDate.startDate) >= today),
+            ).length;
 
       // Add tour counts from subcategories
       if (category.subCategories && category.subCategories.length > 0) {
@@ -194,20 +188,14 @@ export class HomepageService implements IHomepageService {
       .leftJoinAndSelect('category.tours', 'categoryTours')
       .where('tourDates.startDate <= :today', { today })
       .andWhere('tour.publishStatus = :publishStatus', { publishStatus: PublishStatus.PUBLISH })
-      .andWhere(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select('user.id')
-          .from('users', 'user')
-          .where('user.role = :role')
-          .getQuery();
+      .andWhere((qb) => {
+        const subQuery = qb.subQuery().select('user.id').from('users', 'user').where('user.role = :role').getQuery();
         return `tour.insertUserId IN ${subQuery}`;
       })
       .setParameter('role', 'ADMINISTRATOR')
       .orderBy('tourDates.startDate', 'DESC')
       .take(6)
       .getMany();
-
 
     const toursWithMostRecentDate = tours.map((tour) => {
       const mostRecentDate = tour.tourDates.reduce((latest, current) => {
@@ -267,20 +255,14 @@ export class HomepageService implements IHomepageService {
       .leftJoinAndSelect('blog.category', 'category')
       .where('blog.publishDate <= :today', { today })
       .andWhere('blog.publishStatus = :publishStatus', { publishStatus: PublishStatus.PUBLISH })
-      .andWhere(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select('user.id')
-          .from('users', 'user')
-          .where('user.role = :role')
-          .getQuery();
+      .andWhere((qb) => {
+        const subQuery = qb.subQuery().select('user.id').from('users', 'user').where('user.role = :role').getQuery();
         return `blog.insertUserId IN ${subQuery}`;
       })
       .setParameter('role', 'ADMINISTRATOR')
       .orderBy('blog.publishDate', 'DESC')
       .take(6)
       .getMany();
-
 
     const blogList = blogs.map((b) => {
       const blog = new BlogDto();
@@ -308,18 +290,12 @@ export class HomepageService implements IHomepageService {
 
     const dailyPaths = await repo
       .createQueryBuilder('dailyPath')
-      .where(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select('user.id')
-          .from('users', 'user')
-          .where('user.role = :role')
-          .getQuery();
+      .where((qb) => {
+        const subQuery = qb.subQuery().select('user.id').from('users', 'user').where('user.role = :role').getQuery();
         return `dailyPath.insertUserId IN ${subQuery}`;
       })
       .setParameter('role', 'ADMINISTRATOR')
       .getMany();
-
 
     return plainToInstance(DailyPathDto, dailyPaths, {
       excludeExtraneousValues: true,
@@ -335,18 +311,12 @@ export class HomepageService implements IHomepageService {
     const staticPage = await repo
       .createQueryBuilder('staticPage')
       .where('staticPage.pageType = :pageType', { pageType })
-      .andWhere(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select('user.id')
-          .from('users', 'user')
-          .where('user.role = :role')
-          .getQuery();
+      .andWhere((qb) => {
+        const subQuery = qb.subQuery().select('user.id').from('users', 'user').where('user.role = :role').getQuery();
         return `staticPage.insertUserId IN ${subQuery}`;
       })
       .setParameter('role', 'ADMINISTRATOR')
       .getOne();
-
 
     return plainToInstance(StaticPageDto, staticPage, {
       excludeExtraneousValues: true,
@@ -389,13 +359,8 @@ export class HomepageService implements IHomepageService {
 
     const faqs = await repo
       .createQueryBuilder('faq')
-      .where(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select('user.id')
-          .from('users', 'user')
-          .where('user.role = :role')
-          .getQuery();
+      .where((qb) => {
+        const subQuery = qb.subQuery().select('user.id').from('users', 'user').where('user.role = :role').getQuery();
         return `faq.insertUserId IN ${subQuery}`;
       })
       .setParameter('role', 'ADMINISTRATOR')
@@ -423,13 +388,8 @@ export class HomepageService implements IHomepageService {
       .createQueryBuilder('slider')
       .leftJoinAndSelect('slider.image', 'image') // 'image' ilişkisini ekliyoruz
       .where('slider.isActive = :isActive', { isActive: true })
-      .andWhere(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select('user.id')
-          .from('users', 'user')
-          .where('user.role = :role')
-          .getQuery();
+      .andWhere((qb) => {
+        const subQuery = qb.subQuery().select('user.id').from('users', 'user').where('user.role = :role').getQuery();
         return `slider.insertUserId IN ${subQuery}`;
       })
       .setParameter('role', 'ADMINISTRATOR')
@@ -446,6 +406,28 @@ export class HomepageService implements IHomepageService {
     });
 
     return plainToInstance(SliderDto, sliderList, {
+      excludeExtraneousValues: true,
+      enableCircularCheck: true,
+    });
+  }
+
+  public async getCatalogs(): Promise<CatalogDto[]> {
+    const catalogRepo = await this.unitOfWork.getRepository(Catalog);
+
+    const catalogs = await catalogRepo
+      .createQueryBuilder('catalog')
+      .where('catalog.isDeleted = :isDeleted', { isDeleted: false })
+      .andWhere((qb) => {
+        const subQuery = qb.subQuery().select('user.id').from('users', 'user').where('user.role = :role').getQuery();
+        return `catalog.insertUserId IN ${subQuery}`;
+      })
+      .setParameter('role', 'ADMINISTRATOR')
+      .orderBy('catalog.order', 'ASC')
+      .getMany();
+
+    console.log({ catalogs });
+
+    return plainToInstance(CatalogDto, catalogs, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
     });
