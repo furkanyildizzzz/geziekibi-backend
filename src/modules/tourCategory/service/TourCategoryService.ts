@@ -21,8 +21,7 @@ export class TourCategoryService implements ITourCategoryService {
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
     @inject(INTERFACE_TYPE.IImageService) private readonly imageService: IImageService,
-
-  ) { }
+  ) {}
 
   public async getAll(): Promise<TourCategorySuccessDto[]> {
     const tourCategories = await this.repository.getAll(['parent', 'primaryImages']);
@@ -36,7 +35,7 @@ export class TourCategoryService implements ITourCategoryService {
 
   public async getById(id: string): Promise<TourCategorySuccessDto> {
     const tourCategory = await this.repository.getById(Number(id), ['parent', 'subCategories', 'primaryImages']);
-    if (!tourCategory) throw new NotFoundException(`Tour Category with id:${id} not found`);
+    if (!tourCategory) throw new NotFoundException('tour_category_not_found', { id });
     return plainToInstance(TourCategorySuccessDto, tourCategory, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -45,7 +44,7 @@ export class TourCategoryService implements ITourCategoryService {
 
   public async getBySeoLink(seoLink: string): Promise<TourCategorySuccessDto> {
     const tourCategory = await this.repository.getBySeoLink(seoLink);
-    if (!tourCategory) throw new NotFoundException(`Tour Category with seoLink:${seoLink} not found`);
+    if (!tourCategory) throw new NotFoundException('tour_category_seo_link_not_found', { seoLink });
     return plainToInstance(TourCategorySuccessDto, tourCategory, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -55,7 +54,7 @@ export class TourCategoryService implements ITourCategoryService {
   public async createTourCategory(tourCategoryData: CreateTourCategoryDto): Promise<TourCategorySuccessDto> {
     let newTourCategory = new TourCategory();
     const tourCategory = await this.repository.getByName(tourCategoryData.name);
-    if (tourCategory) throw new BadRequestException(`Tour Category '${tourCategoryData.name}' is already exists`);
+    if (tourCategory) throw new BadRequestException('tour_category_already_exists', { name: tourCategoryData.name });
     newTourCategory.name = tourCategoryData.name;
     newTourCategory.seoLink = await this.seoLinkService.generateUniqueSeoLink(
       tourCategoryData.name,
@@ -66,35 +65,36 @@ export class TourCategoryService implements ITourCategoryService {
     if (tourCategoryData.parentId > 0) {
       const parentTourCategory = await this.repository.getById(tourCategoryData.parentId);
       if (!parentTourCategory)
-        throw new NotFoundException(`Parent Tour Category with id:${tourCategoryData.parentId} not found`);
+        throw new NotFoundException('parent_category_not_found', { id: tourCategoryData.parentId });
       newTourCategory.parent = parentTourCategory;
     }
 
-    if (!tourCategoryData.primaryImages.length) {
-      throw new BadRequestException(`Please provide a primary image`);
+    if (!tourCategoryData.primaryImages || !tourCategoryData.primaryImages.length) {
+      // throw new BadRequestException(`Please provide a primary image`);
+      throw new BadRequestException(`primary_image_missing`);
     }
 
     newTourCategory.description = tourCategoryData.description;
 
     newTourCategory = await this.repository.create(newTourCategory);
-      //#region Images
+    //#region Images
 
-      const primaryImages = await this.imageService.saveImages(
-        'tourCategory',
-        newTourCategory.id,
-        tourCategoryData.primaryImages,
-        [],
-        'tourCategory'
-      );
+    const primaryImages = await this.imageService.saveImages(
+      'tourCategory',
+      newTourCategory.id,
+      tourCategoryData.primaryImages,
+      [],
+      'tourCategory',
+    );
 
-      newTourCategory.primaryImages = primaryImages
+    newTourCategory.primaryImages = primaryImages;
 
     return plainToInstance(TourCategorySuccessDto, tourCategory, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
     });
   }
-  
+
   @Transactional()
   public async updateTourCategory(
     id: string,
@@ -102,12 +102,12 @@ export class TourCategoryService implements ITourCategoryService {
   ): Promise<TourCategorySuccessDto> {
     try {
       const tourCategory = await this.repository.getById(Number(id));
-      if (!tourCategory) throw new NotFoundException(`Tour Category with id:'${id}' is not found`);
+      if (!tourCategory) throw new NotFoundException('tour_category_not_found', { id });
 
       if (tourCategory.name !== tourCategoryData.name) {
         const tourCategoryByName = await this.repository.getByName(tourCategoryData.name);
         if (tourCategoryByName)
-          throw new BadRequestException(`Tour Category '${tourCategoryData.name}' is already exists`);
+          throw new BadRequestException('tour_category_already_exists', { name: tourCategoryData.name });
       }
       tourCategory.name = tourCategoryData.name;
       tourCategory.seoLink = await this.seoLinkService.generateUniqueSeoLink(
@@ -119,14 +119,14 @@ export class TourCategoryService implements ITourCategoryService {
       if (tourCategoryData.parentId) {
         const parentTourCategory = await this.repository.getById(tourCategoryData.parentId);
         if (!parentTourCategory)
-          throw new NotFoundException(`Parent Tour Category with id:${tourCategoryData.parentId} not found`);
+          throw new NotFoundException('parent_category_not_found', { id: tourCategoryData.parentId });
         tourCategory.parent = parentTourCategory;
       } else {
         tourCategory.parent = null;
       }
 
       if (!tourCategoryData.uploadedPrimaryImages.length && !tourCategoryData.primaryImages.length) {
-        throw new BadRequestException(`Please provide a primary image`);
+        throw new BadRequestException(`primary_image_missing`);
       }
       tourCategory.description = tourCategoryData.description;
 
@@ -137,11 +137,11 @@ export class TourCategoryService implements ITourCategoryService {
         'tourCategory',
         tourCategory.id,
         tourCategoryData.primaryImages,
-        tourCategoryData.uploadedPrimaryImages.map(s => s.id),
-        'tourCategory'
+        tourCategoryData.uploadedPrimaryImages.map((s) => s.id),
+        'tourCategory',
       );
 
-      tourCategory.primaryImages = primaryImages
+      tourCategory.primaryImages = primaryImages;
 
       // const ImageRepository = await this.unitOfWork.getRepository(Image);
       // const now = new Date();
@@ -201,7 +201,7 @@ export class TourCategoryService implements ITourCategoryService {
   }
   public async deleteTourCategory(id: string): Promise<void> {
     const tourCategory = await this.repository.getById(Number(id));
-    if (!tourCategory) throw new NotFoundException(`Tour Category with id:'${id}' is not found`);
+    if (!tourCategory) throw new NotFoundException('tour_category_not_found', { id });
     await this.repository.delete(Number(id));
   }
 }

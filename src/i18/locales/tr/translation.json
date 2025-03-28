@@ -1,0 +1,17 @@
+{
+  "bad_request": "Geçersiz İstek",
+  "unauthorized": "Yetkisiz Erişim",
+  "forbidden": "Yasak",
+  "conflict": "Çakışma",
+  "not_found": "Bulunamadı",
+  "request_timeout": "İstek Zaman Aşımı",
+  "internal_server_error": "Dahili Sunucu Hatası",
+  "method_not_allowed": "Yöntem İzin Verilmiyor",
+  "tour_category_not_found": "ID'si {{id}} olan tur kategorisi bulunamadı",
+  "tour_category_seo_link_not_found": "SeoLink ile {{seoLink}} tur kategorisi bulunamadı",
+  "tour_category_already_exists": "Tur Kategorisi '{{name}}' zaten mevcut",
+  "parent_category_not_found": "ID'si {{id}} olan üst tur kategorisi bulunamadı",
+  "primary_image_missing": "Lütfen bir ana resim sağlayın",
+  "tour_category_update_failed": "ID'si {{id}} olan tur kategorisi güncellenemedi",
+  "tour_category_create_failed": "Tur kategorisi oluşturulamadı"
+}

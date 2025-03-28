@@ -1,11 +1,14 @@
 import { EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent } from 'typeorm';
 import { AsyncLocalStorage } from 'async_hooks';
 import { BaseEntity } from 'orm/entities/BaseEntity';
-import { Role } from 'orm/entities/users/types';
+import { Language, Role } from 'orm/entities/users/types';
 
-export const asyncLocalStorage = new AsyncLocalStorage<{ id: number, role: Role }>();
+export const asyncLocalStorage = new AsyncLocalStorage<{ id: number; role: Role; language: Language }>();
 
-export const setCurrentUser = async (user: { id: number, role: Role }, callback:  () => Promise<void>) => {
+export const setCurrentUser = async (
+  user: { id: number; role: Role; language: Language },
+  callback: () => Promise<void>,
+) => {
   asyncLocalStorage.run(user, async () => {
     await callback(); // Burada bağlam kaybolmamalı
   });

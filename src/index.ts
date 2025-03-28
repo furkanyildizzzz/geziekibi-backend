@@ -22,6 +22,9 @@ import { authMiddleware } from 'middleware/authMiddleware';
 import { userContextMiddleware } from 'middleware/userContextMiddleware';
 import axios from 'axios';
 
+import i18nextMiddleware from 'i18next-http-middleware'; // i18next middleware
+import i18next from './i18/i18next';
+
 const allowedOrigins = [
   'https://www.geziekibi-panel.com.tr',
   'https://geziekibi-test.vercel.app',
@@ -85,6 +88,8 @@ server.setConfig(async (app) => {
   app.use(getLanguage);
   app.use(authMiddleware);
   app.use(userContextMiddleware);
+
+  app.use(i18nextMiddleware.handle(i18next));
 
   cloudinaryConfig();
 

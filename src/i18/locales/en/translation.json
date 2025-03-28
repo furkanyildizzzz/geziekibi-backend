@@ -1,0 +1,17 @@
+{
+  "bad_request": "Bad Request",
+  "unauthorized": "Unauthorized",
+  "forbidden": "Forbidden",
+  "conflict": "Conflict",
+  "not_found": "Not Found",
+  "request_timeout": "Request Timeout",
+  "internal_server_error": "Internal Server Error",
+  "method_not_allowed": "Method Not Allowed",
+  "tour_category_not_found": "Tour Category with id: {{id}} not found",
+  "tour_category_seo_link_not_found": "Tour Category with seoLink: {{seoLink}} not found",
+  "tour_category_already_exists": "Tour Category '{{name}}' already exists",
+  "parent_category_not_found": "Parent Tour Category with id: {{id}} not found",
+  "primary_image_missing": "Please provide a primary image",
+  "tour_category_update_failed": "Failed to update Tour Category with id: {{id}}",
+  "tour_category_create_failed": "Failed to create Tour Category"
+}

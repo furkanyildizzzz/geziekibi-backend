@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { Role } from 'orm/entities/users/types';
+import { Language, Role } from 'orm/entities/users/types';
 import { CustomError } from 'shared/errors/CustomError';
 
 declare global {
@@ -8,7 +8,8 @@ declare global {
     interface Request {
       user?: {
         id: number;
-        role: Role
+        role: Role;
+        language: Language;
         // ... other user properties
       };
     }
@@ -52,7 +53,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
       const customError = new CustomError(401, 'UNAUTHORIZED', 'Invalid token');
       return next(customError);
     }
-    req.user = { id: decoded.id, role: decoded.role };
+    req.user = { id: decoded.id, role: decoded.role, language: 'tr' };
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
