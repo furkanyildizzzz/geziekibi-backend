@@ -34,7 +34,7 @@ export class CatalogService implements ICatalogService {
 
   public async getById(id: string): Promise<Catalog> {
     const tourCategory = await this.repository.getById(Number(id));
-    if (!tourCategory) throw new NotFoundException(`Catalog with id:${id} not found`);
+    if (!tourCategory) throw new NotFoundException(`catalog_not_found`, { id });
     return plainToInstance(Catalog, tourCategory, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -43,7 +43,7 @@ export class CatalogService implements ICatalogService {
 
   public async getBySeoLink(seoLink: string): Promise<Catalog> {
     const tourCategory = await this.repository.getBySeoLink(seoLink);
-    if (!tourCategory) throw new NotFoundException(`Catalog with seoLink:${seoLink} not found`);
+    if (!tourCategory) throw new NotFoundException(`catalog_seo_link_not_found`, { seoLink });
     return plainToInstance(Catalog, tourCategory, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -52,7 +52,7 @@ export class CatalogService implements ICatalogService {
 
   public async getByPublicId(publicId: string): Promise<Catalog> {
     const tourCategory = await this.repository.getByPublicId(publicId);
-    if (!tourCategory) throw new NotFoundException(`Catalog with publicId:${publicId} not found`);
+    if (!tourCategory) throw new NotFoundException(`catalog_public_id_not_found`, { publicId });
     return plainToInstance(Catalog, tourCategory, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -92,18 +92,16 @@ export class CatalogService implements ICatalogService {
         return newCatalog;
       } catch (error) {
         console.log({ error });
-        throw new InternalServerErrorException(
-          `Something went wrong while uploading ${file.originalname} to cloudinary.`,
-        );
+        throw new InternalServerErrorException("catalog_upload_failed", { fileName: file.originalname });
       }
     }
-    throw new BadRequestException('No file provided');
+    throw new BadRequestException('no_file_provided');
   }
 
   public async updateCatalog(id: string, catalogData: UpdateCatalogDto): Promise<Catalog> {
     try {
       const catalog = await this.repository.getById(Number(id));
-      if (!catalog) throw new NotFoundException(`Catalog with id:'${id}' is not found`);
+      if (!catalog) throw new NotFoundException(`catalog_not_found`, { id });
 
       catalog.originalName = catalogData.originalName;
       catalog.publishDate = new Date(catalogData.publishDate);
@@ -124,7 +122,7 @@ export class CatalogService implements ICatalogService {
 
   public async deleteCatalog(id: string): Promise<void> {
     const tourCategory = await this.repository.getById(Number(id));
-    if (!tourCategory) throw new NotFoundException(`Catalog with id:'${id}' is not found`);
+    if (!tourCategory) throw new NotFoundException(`catalog_not_found`, { id });
     await this.repository.delete(Number(id));
   }
 }

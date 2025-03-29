@@ -72,7 +72,7 @@ export class TourService implements ITourService {
       "galleryImages",
       "primaryImages"
     ]);
-    if (!tour) throw new NotFoundException(`Tour with id:${id} not found`);
+    if (!tour) throw new NotFoundException(`tour_id_not_found`, { id });
     console.log({ tour: tour })
     return plainToInstance(TourDto, tour, {
       excludeExtraneousValues: true,
@@ -82,7 +82,7 @@ export class TourService implements ITourService {
 
   public async getBySeoLink(seoLink: string): Promise<TourDto> {
     const tour = await this.repository.getBySeoLink(seoLink);
-    if (!tour) throw new NotFoundException(`Tour with seoLink:${seoLink} not found`);
+    if (!tour) throw new NotFoundException(`tour_seoLink_not_found`, { seoLink });
     return plainToInstance(TourDto, tour, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -94,7 +94,7 @@ export class TourService implements ITourService {
 
     const category = await this.categoryRepository.getById(tourData.category.id);
     if (!category) {
-      throw new NotFoundException(`Tour Category with id:${tourData.category.id} not found`);
+      throw new NotFoundException(`category_not_found`, { id: tourData.category.id });
     }
 
     let tags: Tag[] | undefined;
@@ -102,7 +102,7 @@ export class TourService implements ITourService {
       tags = await this.tagRepository.findByIds(tourData.tags.map((t) => t.id));
 
       if (tags.length !== tourData.tags.length) {
-        throw new NotFoundException("One or more tags not found");
+        throw new NotFoundException("tags_not_found");
       }
     }
 
@@ -110,12 +110,12 @@ export class TourService implements ITourService {
     if (tourData.tourServices && Array.isArray(tourData.tourServices) && tourData.tourServices.length > 0) {
       tourServices = await this.serviceRepository.findByIds(tourData.tourServices.map((t) => t.service.id));
       if (tourServices.length !== tourData.tourServices.length) {
-        throw new NotFoundException("One or more services not found");
+        throw new NotFoundException("services_not_found");
       }
     }
 
     if (!tourData.primaryImages.length) {
-      throw new BadRequestException(`Please provide a primary image`);
+      throw new BadRequestException(`primary_image_required`);
     }
 
     try {
@@ -195,7 +195,7 @@ export class TourService implements ITourService {
         const pathIds = d.dailyPaths.map((s) => s.id);
         const dailyPaths = await this.tourDailyPathRepository.findByIds(pathIds);
         if (!dailyPaths || dailyPaths.length != pathIds.length) {
-          throw new BadRequestException('One or more daily paths not found');
+          throw new BadRequestException('daily_paths_not_found');
         }
         newTourDaily.dailyPaths = dailyPaths;
         dailyForms.push(newTourDaily);
@@ -204,7 +204,7 @@ export class TourService implements ITourService {
       tour.dailyForms = dailyForms;
 
       tour = await this.repository.create(tour);
-      
+
       //#region Images
       const primaryImages = await this.imageService.saveImages(
         'tour',
@@ -232,7 +232,7 @@ export class TourService implements ITourService {
       });
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException("internal_server_error", { error: error.message });
     }
   }
 
@@ -241,12 +241,12 @@ export class TourService implements ITourService {
 
     const tour = await this.repository.getById(Number(id));
     if (!tour) {
-      throw new NotFoundException(`Tour with id:${id} not found`);
+      throw new NotFoundException(`tour_id_not_found`, { id });
     }
 
     const category = await this.categoryRepository.getById(tourData.category.id);
     if (!category) {
-      throw new NotFoundException(`Tour Category with id:${tourData.category.id} not found`);
+      throw new NotFoundException(`category_not_found`, { id: tourData.category.id });
     }
 
     let tags: Tag[] | undefined;
@@ -254,7 +254,7 @@ export class TourService implements ITourService {
       tags = await this.tagRepository.findByIds(tourData.tags.map((t) => t.id));
 
       if (tags.length !== tourData.tags.length) {
-        throw new NotFoundException("One or more tags not found");
+        throw new NotFoundException("tags_not_found");
       }
     }
 
@@ -262,12 +262,12 @@ export class TourService implements ITourService {
     if (tourData.tourServices && Array.isArray(tourData.tourServices) && tourData.tourServices.length > 0) {
       tourServices = await this.serviceRepository.findByIds(tourData.tourServices.map((t) => t.service.id));
       if (tourServices.length !== tourData.tourServices.length) {
-        throw new NotFoundException("One or more services not found");
+        throw new NotFoundException("services_not_found");
       }
     }
 
     if (!tourData.uploadedPrimaryImages || (!tourData.uploadedPrimaryImages.length && !tourData.primaryImages.length)) {
-      throw new BadRequestException(`Please provide a primary image`);
+      throw new BadRequestException(`primary_image_required`);
     }
 
     try {
@@ -447,13 +447,13 @@ export class TourService implements ITourService {
         // Extract incoming path IDs and validate
         const pathIds = d.dailyPaths.map((s) => s.id);
         if (pathIds.length === 0) {
-          throw new BadRequestException('No daily paths provided');
+          throw new BadRequestException('no_daily_paths_provided');
         }
         const dailyPaths = await this.tourDailyPathRepository.getByIds(pathIds); // Fetch paths by IDs.
 
         // Throw an error if any path is missing.
         if (!dailyPaths || dailyPaths.length != pathIds.length) {
-          throw new NotFoundException('One or more daily paths not found');
+          throw new NotFoundException('daily_paths_not_found');
         }
 
         // Assign the validated paths to the TourDaily entity.
@@ -497,13 +497,13 @@ export class TourService implements ITourService {
       });
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException("internal_server_error", {error: error.message});
     }
   }
 
   public async deleteTour(id: string): Promise<void> {
     const tour = await this.repository.getById(Number(id));
-    if (!tour) throw new NotFoundException(`Tour with id:'${id}' is not found`);
+    if (!tour) throw new NotFoundException(`tour_id_not_found`, { id });
     await this.repository.delete(Number(id));
   }
 
@@ -511,7 +511,7 @@ export class TourService implements ITourService {
     if (file) {
       return await this.imageService.uploadBodyImage("tourBodyImage", file)
     } else {
-      throw new BadRequestException('No file provided');
+      throw new BadRequestException('no_file_provided');
     }
   }
 }

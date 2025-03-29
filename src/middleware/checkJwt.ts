@@ -10,7 +10,7 @@ export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
   if (!token) {
     const authHeader = req.get('Authorization');
     if (!authHeader) {
-      const customError = new CustomError(400, 'BAD REQUEST', 'Authorization header not provided');
+      const customError = new CustomError(400, 'BAD REQUEST', 'authorization_header_not_provided');
       return next(customError);
     }
 
@@ -22,7 +22,7 @@ export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
     ['iat', 'exp'].forEach((keyToRemove) => delete jwtPayload[keyToRemove]);
     req.jwtPayload = jwtPayload as JwtPayload;
   } catch (err) {
-    const customError = new CustomError(401, 'Raw', 'JWT error', null, err);
+    const customError = new CustomError(401, 'Raw', 'jwt_error', null, err);
     return next(customError);
   }
 
@@ -31,7 +31,7 @@ export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
     res.setHeader('token', `${newToken}`);
     return next();
   } catch (err) {
-    const customError = new CustomError(400, 'Raw', "Token can't be created", null, err);
+    const customError = new CustomError(400, 'Raw', "can_not_create_token", null, err);
     return next(customError);
   }
 };

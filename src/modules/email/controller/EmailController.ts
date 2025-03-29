@@ -32,7 +32,7 @@ export class EmailController {
   public async getTemplateByKey(req: Request, res: Response, next: NextFunction) {
     const enumKey = req.params.key as EmailTemplateEnum; // 🔹 Enum'a cast ettik
     if (!Object.values(EmailTemplateEnum).includes(enumKey)) {
-      throw new NotFoundException('Invalid email template key');
+      throw new NotFoundException('email_template_key_invalid');
     }
     const template = await this.service.getTemplateByKey(enumKey);
     return res.customSuccess(200, 'Email template found', template);
@@ -44,7 +44,7 @@ export class EmailController {
     const { key, to, params } = req.body;
     const enumKey = key as EmailTemplateEnum; // 🔹 Enum'a cast ettik
     if (!Object.values(EmailTemplateEnum).includes(enumKey)) {
-      throw new NotFoundException('Invalid email template key');
+      throw new NotFoundException('email_template_key_invalid');
     }
     const result = await this.service.sendEmail(to, enumKey, params);
     return res.customSuccess(200, 'Email sent successfully', result);
@@ -57,14 +57,14 @@ export class EmailController {
 
     // 🔹 Enum doğrulaması yap
     if (!Object.values(EmailTemplateEnum).includes(key)) {
-      throw new NotFoundException('Invalid email template key');
+      throw new NotFoundException('email_template_key_invalid');
     }
 
     const { subject, body } = req.body;
 
     // 🔹 `subject` ve `body` boş olamaz, kontrol et
     if (!subject || !body) {
-      throw new BadRequestException('Subject and body are required.');
+      throw new BadRequestException('email_template_subject_body_required');
     }
 
     // 🔹 Email şablonunu güncelle

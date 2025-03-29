@@ -35,7 +35,7 @@ export class FaqService implements IFaqService {
   public async getById(id: string): Promise<FaqSuccessDTO> {
     const faq = await this.repository.getById(Number(id));
     if (faq) return faq as FaqSuccessDTO;
-    throw new NotFoundException('Faq not found');
+    throw new NotFoundException('faq_id_not_found', {id});
   }
 
   @Transactional()
@@ -50,7 +50,7 @@ export class FaqService implements IFaqService {
   @Transactional()
   async updateFaq(id: string, faqData: CreateFaqDto): Promise<FAQ> {
     const faq = await this.repository.getById(Number(id));
-    if (!faq) throw new NotFoundException(`Faq with id:'${id}' is not found`);
+    if (!faq) throw new NotFoundException(`faq_id_not_found`, {id});
     faq.Question = faqData.Question;
     faq.Answer = faqData.Answer;
     faq.Order = faqData.Order;
@@ -59,7 +59,7 @@ export class FaqService implements IFaqService {
 
   async deleteFaq(id: string): Promise<void> {
     const faq = await this.repository.getById(Number(id));
-    if (!faq) throw new NotFoundException(`Faq with id:'${id}' is not found`);
+    if (!faq) throw new NotFoundException(`faq_id_not_found`, {id});
     await this.repository.delete(Number(id));
   }
 

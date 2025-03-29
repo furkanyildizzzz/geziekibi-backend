@@ -36,7 +36,7 @@ export class BlogCategoryService implements IBlogCategoryService {
 
   public async getById(id: string): Promise<BlogCategorySuccessDto> {
     const blogCategory = await this.repository.getById(Number(id), ['parent', 'primaryImages']);
-    if (!blogCategory) throw new NotFoundException(`Blog Category with id:${id} not found`);
+    if (!blogCategory) throw new NotFoundException(`blog_category_not_found`, { id });
     return plainToInstance(BlogCategorySuccessDto, blogCategory, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -45,7 +45,7 @@ export class BlogCategoryService implements IBlogCategoryService {
 
   public async getBySeoLink(seoLink: string): Promise<BlogCategorySuccessDto> {
     const blogCategory = await this.repository.getBySeoLink(seoLink);
-    if (!blogCategory) throw new NotFoundException(`Blog Category with seoLink:${seoLink} not found`);
+    if (!blogCategory) throw new NotFoundException(`blog_category_seo_link_not_found`, { seoLink });
     return plainToInstance(BlogCategorySuccessDto, blogCategory, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -57,7 +57,7 @@ export class BlogCategoryService implements IBlogCategoryService {
     try {
       let newBlogCategory = new BlogCategory();
       const blogCategory = await this.repository.getByName(blogCategoryData.name);
-      if (blogCategory) throw new BadRequestException(`Blog Category '${blogCategoryData.name}' is already exists`);
+      if (blogCategory) throw new BadRequestException(`blog_category_already_exists`, { name: blogCategoryData.name });
       newBlogCategory.name = blogCategoryData.name;
       newBlogCategory.seoLink = await this.seoLinkService.generateUniqueSeoLink(
         blogCategoryData.name,
@@ -68,12 +68,12 @@ export class BlogCategoryService implements IBlogCategoryService {
       if (blogCategoryData.parentId > 0) {
         const parentBlogCategory = await this.repository.getById(blogCategoryData.parentId);
         if (!parentBlogCategory)
-          throw new NotFoundException(`Parent Blog Category with id:${blogCategoryData.parentId} not found`);
+          throw new NotFoundException(`parent_blog_category_not_found`, { id: blogCategoryData.parentId });
         newBlogCategory.parent = parentBlogCategory;
       }
 
       if (!blogCategoryData.primaryImages.length) {
-        throw new BadRequestException(`Please provide a primary image`);
+        throw new BadRequestException(`primary_image_required`);
       }
 
       newBlogCategory.description = blogCategoryData.description;
@@ -108,12 +108,12 @@ export class BlogCategoryService implements IBlogCategoryService {
   ): Promise<BlogCategorySuccessDto> {
     try {
       const blogCategory = await this.repository.getById(Number(id));
-      if (!blogCategory) throw new NotFoundException(`Blog Category with id:'${id}' is not found`);
+      if (!blogCategory) throw new NotFoundException(`blog_category_not_found`, { id });
 
       if (blogCategory.name !== blogCategoryData.name) {
         const blogCategoryByName = await this.repository.getByName(blogCategoryData.name);
         if (blogCategoryByName)
-          throw new BadRequestException(`Blog Category '${blogCategoryData.name}' is already exists`);
+          throw new BadRequestException(`blog_category_already_exists`, { name: blogCategoryData.name });
       }
       blogCategory.name = blogCategoryData.name;
       blogCategory.seoLink = await this.seoLinkService.generateUniqueSeoLink(
@@ -125,14 +125,14 @@ export class BlogCategoryService implements IBlogCategoryService {
       if (blogCategoryData.parentId) {
         const parentBlogCategory = await this.repository.getById(blogCategoryData.parentId);
         if (!parentBlogCategory)
-          throw new NotFoundException(`Parent Blog Category with id:${blogCategoryData.parentId} not found`);
+          throw new NotFoundException(`parent_blog_category_not_found`, { id: blogCategoryData.parentId });
         blogCategory.parent = parentBlogCategory;
       } else {
         blogCategory.parent = null;
       }
 
       if (!blogCategoryData.uploadedPrimaryImages.length && !blogCategoryData.primaryImages.length) {
-        throw new BadRequestException(`Please provide a primary image`);
+        throw new BadRequestException(`primary_image_required`);
       }
       blogCategory.description = blogCategoryData.description;
 
@@ -155,12 +155,12 @@ export class BlogCategoryService implements IBlogCategoryService {
 
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException(`internal_server_error`, { error: error.message });
     }
   }
   public async deleteBlogCategory(id: string): Promise<void> {
     const blogCategory = await this.repository.getById(Number(id));
-    if (!blogCategory) throw new NotFoundException(`Blog Category with id:'${id}' is not found`);
+    if (!blogCategory) throw new NotFoundException(`blog_category_not_found`, { id });
     await this.repository.delete(Number(id));
   }
 }

@@ -25,12 +25,12 @@ export class AuthService implements IAuthService {
       const user = await this.repository.getByEmail(email);
 
       if (!user) {
-        const customError = new BadRequestException('Incorrect email or password');
+        const customError = new BadRequestException('incorrect_email_or_password');
         throw customError;
       }
 
       if (!user.checkIfPasswordMatch(password)) {
-        const customError = new BadRequestException('Incorrect email or password');
+        const customError = new BadRequestException('incorrect_email_or_password');
         throw customError;
       }
 
@@ -49,7 +49,7 @@ export class AuthService implements IAuthService {
         response.user = user;
         return response;
       } catch (err) {
-        const customError = new BadRequestException(`Token can't be created`);
+        const customError = new BadRequestException(`token_creation_failed`);
         throw customError;
       }
     } catch (err) {
@@ -65,7 +65,7 @@ export class AuthService implements IAuthService {
       const user = await this.repository.getByEmail(email);
 
       if (user) {
-        const customError = new BadRequestException(`Email '${user.email}' already exists`);
+        const customError = new BadRequestException(`email_already_exists`,{email:user.email});
         throw customError;
       }
 
@@ -80,7 +80,7 @@ export class AuthService implements IAuthService {
 
         await this.repository.save(newUser);
       } catch (err) {
-        const customError = new InternalServerErrorException(`User '${email}' can't be created. Error: ${err.message}`);
+        const customError = new InternalServerErrorException(`user_creation_failed`,{email: email, error:err.message});
         throw customError;
       }
     } catch (err) {
@@ -90,6 +90,6 @@ export class AuthService implements IAuthService {
   }
 
   getAccessToken(refreshToken: RefreshTokenDto): Promise<TokenResponse> {
-    throw new Error('Method not implemented.');
+    throw new Error('method_not_implemented');
   }
 }

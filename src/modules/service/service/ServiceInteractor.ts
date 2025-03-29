@@ -27,7 +27,7 @@ export class ServiceInteractor implements IServiceInteractor {
 
   public async getById(id: string): Promise<ServiceSuccessDto> {
     const tourService = await this.repository.getById(Number(id));
-    if (!tourService) throw new NotFoundException(`Tour Service with id:${id} not found`);
+    if (!tourService) throw new NotFoundException(`service_id_not_found`, { id });
     return plainToInstance(ServiceSuccessDto, tourService, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -38,7 +38,7 @@ export class ServiceInteractor implements IServiceInteractor {
   public async createService(serviceData: CreateServiceDto): Promise<ServiceSuccessDto> {
     const newService = new Service();
     const service = await this.repository.getByName(serviceData.name);
-    if (service) throw new BadRequestException(`Service '${service.name}' already exists`);
+    if (service) throw new BadRequestException(`service_already_exists`, { name: serviceData.name });
     newService.name = serviceData.name;
     newService.description = serviceData.description;
     await this.repository.create(newService);
@@ -51,11 +51,11 @@ export class ServiceInteractor implements IServiceInteractor {
   @Transactional()
   public async updateService(id: string, serviceData: CreateServiceDto): Promise<ServiceSuccessDto> {
     const service = await this.repository.getById(Number(id));
-    if (!service) throw new NotFoundException(`Service with id:'${id}' is not found`);
+    if (!service) throw new NotFoundException(`service_id_not_found`, { id });
 
     if (service.name !== serviceData.name) {
       const serviceByName = await this.repository.getByName(serviceData.name);
-      if (serviceByName) throw new BadRequestException(`Service '${serviceData.name}' is already exists`);
+      if (serviceByName) throw new BadRequestException(`service_already_exists`, { name: serviceData.name });
     }
     service.name = serviceData.name;
     service.description = serviceData.description;
@@ -68,7 +68,7 @@ export class ServiceInteractor implements IServiceInteractor {
 
   public async deleteService(id: string): Promise<void> {
     const service = await this.repository.getById(Number(id));
-    if (!service) throw new NotFoundException(`Service with id:'${id}' is not found`);
+    if (!service) throw new NotFoundException(`service_id_not_found`, { id });
     await this.repository.delete(Number(id));
   }
 

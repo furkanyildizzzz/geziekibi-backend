@@ -32,19 +32,19 @@ export class TagService implements ITagService {
   public async getById(id: string): Promise<TagSuccessDTO> {
     const tag = await this.repository.getById(Number(id));
     if (tag) return tag as TagSuccessDTO;
-    throw new NotFoundException('Tag not found');
+    throw new NotFoundException('tag_id_not_found', { id });
   }
 
   public async getBySeoLink(seoLink: string): Promise<TagSuccessDTO> {
     const tag = await this.repository.getBySeoLink(seoLink);
     if (tag) return tag as TagSuccessDTO;
-    throw new NotFoundException('Tag not found');
+    throw new NotFoundException('tag_seo_link_not_found', { seoLink });
   }
 
   @Transactional()
   async createTag(tagData: CreateTagDto): Promise<Tag> {
     const tag = await this.repository.getByName(tagData.name);
-    if (tag) throw new BadRequestException(`Tag '${tag.name}' is already exists`);
+    if (tag) throw new BadRequestException(`tag_name_exists`, { name: tagData.name });
 
     const newTag = new Tag();
     newTag.name = tagData.name;
@@ -57,10 +57,10 @@ export class TagService implements ITagService {
   async updateTag(id: string, tagData: CreateTagDto): Promise<Tag> {
     try {
       const tag = await this.repository.getById(Number(id));
-      if (!tag) throw new NotFoundException(`Tag with id:'${id}' is not found`);
+      if (!tag) throw new NotFoundException('tag_id_not_found', { id });
 
       const existingTag = await this.repository.getByName(tagData.name);
-      if (existingTag) throw new NotFoundException(`Tag with name:'${tagData.name}' is already exists`);
+      if (existingTag) throw new NotFoundException(`tag_name_exists`, { name: tagData.name });
 
       tag.name = tagData.name;
       tag.seoLink = await this.seoLinkService.generateUniqueSeoLink(tagData.name, 'tag', tag.id);
@@ -72,7 +72,7 @@ export class TagService implements ITagService {
 
   async deleteTag(id: string): Promise<void> {
     const tag = await this.repository.getById(Number(id));
-    if (!tag) throw new NotFoundException(`Tag with id:'${id}' is not found`);
+    if (!tag) throw new NotFoundException('tag_id_not_found', { id });
     await this.repository.delete(Number(id));
   }
 

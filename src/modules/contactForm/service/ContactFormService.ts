@@ -50,7 +50,7 @@ export class ContactFormService implements IContactFormService {
         excludeExtraneousValues: true,
         enableCircularCheck: true,
       });
-    throw new NotFoundException('ContactForm not found');
+    throw new NotFoundException('contact_form_id_not_found', { id });
   }
 
   @Transactional()
@@ -72,7 +72,7 @@ export class ContactFormService implements IContactFormService {
 
   async deleteContactForm(id: string): Promise<void> {
     const contactForm = await this.repository.getById(Number(id));
-    if (!contactForm) throw new NotFoundException(`ContactForm with id:'${id}' is not found`);
+    if (!contactForm) throw new NotFoundException('contact_form_id_not_found', { id });
     await this.repository.delete(Number(id));
   }
 
@@ -83,7 +83,7 @@ export class ContactFormService implements IContactFormService {
   @Transactional()
   async responseContactForm(id: string, answerFormData: ResponseContactFormDTO): Promise<ContactFormSuccessDTO> {
     const contactForm = (await this.repository.getById(Number(id))) || new ContactForm();
-    if (!contactForm) throw new NotFoundException(`ContactForm with id:'${id}' is not found`);
+    if (!contactForm) throw new NotFoundException('contact_form_id_not_found', { id });
 
     try {
       contactForm.response = answerFormData.response;
@@ -102,7 +102,7 @@ export class ContactFormService implements IContactFormService {
       });
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException("internal_server_error", { error: error.message });
     }
   }
 }

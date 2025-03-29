@@ -14,7 +14,7 @@ export class AuthController {
   @httpPost('/register', DtoValidationMiddleware(SignUpCredentialsDto))
   public async signup(@requestBody() body: SignUpCredentialsDto, req: Request, res: Response) {
     const msg = await this.authService.signUp(body);
-    return res.customSuccess(200, 'User registered successfully', msg);
+    return res.customSuccess(200, "user_registered_successfully", msg);
   }
 
   @httpPost('/signin', DtoValidationMiddleware(SignInCredentialsDto))
@@ -28,13 +28,13 @@ export class AuthController {
       path: '/', // Tüm endpointlerde erişilebilir
     });
 
-    return res.customSuccess(200, 'Login successfully', instanceToPlain(user));
+    return res.customSuccess(200, 'login_successfully', instanceToPlain(user));
   }
 
   @httpPost('/logout')
   public async logout(req: Request, res: Response) {
     res.clearCookie('token', { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-    return res.customSuccess(200, 'Logged out successfully');
+    return res.customSuccess(200, 'logged_out_successfully');
   }
 
   //   @httpPost('/refresh-token', INTERFACE_TYPE.AuthenticationMiddleware)

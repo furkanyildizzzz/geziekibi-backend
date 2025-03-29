@@ -43,7 +43,7 @@ export class BlogService implements IBlogService {
 
   public async getById(id: string): Promise<BlogDto> {
     const blog = await this.repository.getById(Number(id), ['tags', 'category', 'primaryImages']);
-    if (!blog) throw new NotFoundException(`Blog with id:${id} not found`);
+    if (!blog) throw new NotFoundException(`blog_not_found`, { id });
     return plainToInstance(BlogDto, blog, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -52,7 +52,7 @@ export class BlogService implements IBlogService {
 
   public async getBySeoLink(seoLink: string): Promise<BlogDto> {
     const blog = await this.repository.getBySeoLink(seoLink);
-    if (!blog) throw new NotFoundException(`Blog with seoLink:${seoLink} not found`);
+    if (!blog) throw new NotFoundException(`blog_seo_not_found`, { seoLink });
     return plainToInstance(BlogDto, blog, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -63,7 +63,7 @@ export class BlogService implements IBlogService {
   public async createBlog(blogData: CreateBlogDto): Promise<BlogDto> {
 
     const category = await this.categoryRepository.getById(blogData.category.id);
-    if (!category) throw new NotFoundException(`Blog Category with id:${blogData.category.id} not found`);
+    if (!category) throw new NotFoundException(`blog_category_not_found`, { id: blogData.category.id });
 
     let tags: Tag[] | undefined;
 
@@ -71,12 +71,12 @@ export class BlogService implements IBlogService {
       tags = await this.tagRepository.findByIds(blogData.tags.map((t) => t.id));
 
       if (tags.length !== blogData.tags.length) {
-        throw new NotFoundException("One or more tags not found");
+        throw new NotFoundException("tags_not_found");
       }
     }
 
     if (!blogData.primaryImages.length) {
-      throw new BadRequestException(`Please provide a primary image`);
+      throw new BadRequestException(`primary_image_required`);
     }
 
     try {
@@ -111,29 +111,29 @@ export class BlogService implements IBlogService {
       });
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException("internal_server_error", { error: error.message });
     }
   }
 
   @Transactional()
   public async updateBlog(id: string, blogData: CreateBlogDto): Promise<BlogDto> {
     const blog = await this.repository.getById(Number(id));
-    if (!blog) throw new NotFoundException(`Blog with id:${id} not found`);
+    if (!blog) throw new NotFoundException(`blog_not_found`, { id });
 
     const category = await this.categoryRepository.getById(blogData.category.id);
-    if (!category) throw new NotFoundException(`Blog Category with id:${blogData.category.id} not found`);
+    if (!category) throw new NotFoundException(`blog_category_not_found`, { id: blogData.category.id });
 
     let tags: Tag[] | undefined;
     if (blogData.tags && Array.isArray(blogData.tags) && blogData.tags.length > 0) {
       tags = await this.tagRepository.findByIds(blogData.tags.map((t) => t.id));
 
       if (tags.length !== blogData.tags.length) {
-        throw new NotFoundException("One or more tags not found");
+        throw new NotFoundException("tags_not_found");
       }
     }
 
     if (!blogData.uploadedPrimaryImages.length && !blogData.primaryImages.length) {
-      throw new BadRequestException(`Please provide a primary image`);
+      throw new BadRequestException(`primary_image_required`);
     }
 
     try {
@@ -168,13 +168,13 @@ export class BlogService implements IBlogService {
       });
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException("internal_server_error", { error: error.message });
     }
   }
 
   public async deleteBlog(id: string): Promise<void> {
     const blog = await this.repository.getById(Number(id));
-    if (!blog) throw new NotFoundException(`Blog with id:'${id}' is not found`);
+    if (!blog) throw new NotFoundException(`blog_not_found`, { id });
     await this.repository.delete(Number(id));
   }
 
@@ -182,7 +182,7 @@ export class BlogService implements IBlogService {
     if (file) {
       return await this.imageService.uploadBodyImage("blogBodyImage", file)
     } else {
-      throw new BadRequestException('No file provided');
+      throw new BadRequestException('file_not_provided');
     }
   }
 }

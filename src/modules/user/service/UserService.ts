@@ -20,7 +20,7 @@ export class UserService implements IUserService {
   constructor(
     @inject(INTERFACE_TYPE.IUserRepository) private readonly repository: IUserRepository,
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
-  ) {}
+  ) { }
 
   public async getAll(): Promise<UserListDto[]> {
     const users = await this.repository.getAll();
@@ -34,7 +34,7 @@ export class UserService implements IUserService {
 
   public async getById(id: string): Promise<UserDto> {
     const user = await this.repository.getById(Number(id));
-    if (!user) throw new NotFoundException(`User with id:${id} not found`);
+    if (!user) throw new NotFoundException(`user_not_found`, { id });
     return plainToInstance(UserDto, user, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -43,7 +43,7 @@ export class UserService implements IUserService {
 
   public async getBySeoLink(seoLink: string): Promise<UserDto> {
     const user = await this.repository.getBySeoLink(seoLink);
-    if (!user) throw new NotFoundException(`User with seoLink:${seoLink} not found`);
+    if (!user) throw new NotFoundException(`user_seo_link_not_found`, { seoLink });
     return plainToInstance(UserDto, user, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -52,7 +52,7 @@ export class UserService implements IUserService {
 
   public async getUserEditProfile(id: number): Promise<UserProfileDto> {
     const user = await this.repository.getById(Number(id));
-    if (!user) throw new NotFoundException(`User with id:${id} not found`);
+    if (!user) throw new NotFoundException(`user_not_found`, { id });
     return plainToInstance(UserProfileDto, user, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -62,7 +62,7 @@ export class UserService implements IUserService {
   public async updateUserProfile(id: number, userData: UserEditProfileDto): Promise<UserProfileDto> {
     const userAddressRepository = await this.unitOfWork.getRepository(UserAddress);
     const user = await this.repository.getById(Number(id));
-    if (!user) throw new NotFoundException(`User with id:${id} not found`);
+    if (!user) throw new NotFoundException(`user_not_found`, { id });
 
     try {
       const userAddress =
@@ -89,13 +89,13 @@ export class UserService implements IUserService {
       });
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException("internal_server_error", { error: error.message });
     }
   }
 
   public async changePassword(id: number, data: ChangePasswordDto): Promise<void> {
     const user = await this.repository.getById(Number(id));
-    if (!user) throw new NotFoundException(`User with id:${id} not found`);
+    if (!user) throw new NotFoundException(`user_not_found`, { id });
 
     try {
       user.password = data.newPassword;
@@ -108,12 +108,12 @@ export class UserService implements IUserService {
   }
 
   public async deleteUser(id: number): Promise<void> {
-    throw new Error('Method not implemented.');
+    throw new Error('method_not_implemented');
   }
 
   public async uploadProfileImage(id: number, files: Express.Multer.File[]): Promise<Image> {
     const user = await this.repository.getById(Number(id));
-    if (!user) throw new NotFoundException(`User with id:${id} not found`);
+    if (!user) throw new NotFoundException(`user_not_found`, { id });
 
     if (files && files['profileImage'] && files['profileImage'].length) {
       const newImage = new Image();
@@ -136,13 +136,13 @@ export class UserService implements IUserService {
           console.log({ imageUrl: result.url });
         })
         .catch((error) => {
-          throw new InternalServerErrorException(error.message);
+          throw new InternalServerErrorException("internal_server_error", { error: error.message });
         });
       user.profileImage = newImage;
       await this.repository.update(id, user);
       return newImage;
     }
-    throw new BadRequestException('No profile image file found');
+    throw new BadRequestException("user_no_profile_image_found");
   }
 
   public async deleteProfileImage(data: DeleteProfileImageDto): Promise<void> {

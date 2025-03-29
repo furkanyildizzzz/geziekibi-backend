@@ -58,9 +58,7 @@ export class ImageService implements IImageService {
                 await this.imageRepository.create(newImage);
                 savedImages.push(newImage);
             } catch (err) {
-                throw new InternalServerErrorException(
-                    `Something went wrong while uploading ${file.originalname} to cloudinary`
-                );
+                throw new InternalServerErrorException(`image_upload_failed`, { filename: file.originalname });
             }
         }
 
@@ -83,26 +81,24 @@ export class ImageService implements IImageService {
                 });
 
         } catch (err) {
-            throw new InternalServerErrorException(
-                `Something went wrong while uploading ${file.originalname} to cloudinary`
-            );
+            throw new InternalServerErrorException(`image_upload_failed`, { filename: file.originalname });
         }
     }
 
-    public async uploadStream (buffer: Buffer, folderName: string): Promise<UploadApiResponse> {
-      return new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            folder: `${process.env.NODE_ENV}/${folderName}`,
-            use_filename: true,
-            upload_preset: 'ml_default',
-          },
-          (error: Error, result: UploadApiResponse) => {
-            if (result) resolve(result);
-            else reject(error);
-          },
-        );
-        streamifier.createReadStream(buffer).pipe(uploadStream);
-      });
+    public async uploadStream(buffer: Buffer, folderName: string): Promise<UploadApiResponse> {
+        return new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                {
+                    folder: `${process.env.NODE_ENV}/${folderName}`,
+                    use_filename: true,
+                    upload_preset: 'ml_default',
+                },
+                (error: Error, result: UploadApiResponse) => {
+                    if (result) resolve(result);
+                    else reject(error);
+                },
+            );
+            streamifier.createReadStream(buffer).pipe(uploadStream);
+        });
     };
 }

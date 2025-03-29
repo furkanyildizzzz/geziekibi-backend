@@ -34,7 +34,7 @@ export class HomepageSliderService implements IHomepageSliderService {
 
   public async getById(id: string): Promise<HomepageSliderSuccessDto> {
     const homepageSlider = await this.repository.getById(Number(id), ['image']);
-    if (!homepageSlider) throw new NotFoundException(`Homepage Slider with id:${id} not found`);
+    if (!homepageSlider) throw new NotFoundException(`homepage_slider_id_not_found`, {id});
     return plainToInstance(HomepageSliderSuccessDto, homepageSlider, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -49,7 +49,7 @@ export class HomepageSliderService implements IHomepageSliderService {
     try {
 
       if (!files || !files['homepageSlider'] || !files['homepageSlider'].length) {
-        throw new BadRequestException(`Please provide an image`);
+        throw new BadRequestException(`homepage_slider_image_required`);
       }
 
       let newHomepageSlider = new HomepageSlider();
@@ -107,7 +107,7 @@ export class HomepageSliderService implements IHomepageSliderService {
   ): Promise<HomepageSliderSuccessDto> {
     try {
       const homepageSlider = await this.repository.getById(Number(id));
-      if (!homepageSlider) throw new NotFoundException(`Homepage Slider with id:'${id}' is not found`);
+      if (!homepageSlider) throw new NotFoundException(`homepage_slider_id_not_found`, {id});
       console.log(homepageSlider);
       console.log(homepageSliderData.isActive);
       homepageSlider.order = homepageSliderData.order ?? homepageSlider.order; // Use existing value if undefined
@@ -157,7 +157,7 @@ export class HomepageSliderService implements IHomepageSliderService {
   }
   public async deleteHomepageSlider(id: string): Promise<void> {
     const homepageSlider = await this.repository.getById(Number(id));
-    if (!homepageSlider) throw new NotFoundException(`Homepage Slider with id:'${id}' is not found`);
+    if (!homepageSlider) throw new NotFoundException(`homepage_slider_id_not_found`, {id});
     await this.repository.delete(Number(id));
   }
 }

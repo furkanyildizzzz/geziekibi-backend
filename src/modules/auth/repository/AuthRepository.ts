@@ -29,6 +29,6 @@ export class AuthRepository implements IAuthRepository {
     }
   }
   getById(id: number): Promise<User | void> {
-    throw new Error('Method not implemented.');
+    throw new Error('method_not_implemented');
   }
 }

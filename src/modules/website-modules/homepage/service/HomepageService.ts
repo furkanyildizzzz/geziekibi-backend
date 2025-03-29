@@ -32,7 +32,7 @@ export class HomepageService implements IHomepageService {
   constructor(
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.IEmailService) private readonly emailService: EmailService,
-  ) {}
+  ) { }
 
   public async getFeaturedTours(): Promise<FeaturedTourDto[]> {
     const tourRepo = await this.unitOfWork.getRepository(Tour);
@@ -135,10 +135,10 @@ export class HomepageService implements IHomepageService {
         category.tours === undefined || category.tours.length === 0
           ? 0
           : category.tours.filter(
-              (tour) =>
-                tour.publishStatus === 'publish' &&
-                tour.tourDates?.some((tourDate) => new Date(tourDate.startDate) >= today),
-            ).length;
+            (tour) =>
+              tour.publishStatus === 'publish' &&
+              tour.tourDates?.some((tourDate) => new Date(tourDate.startDate) >= today),
+          ).length;
 
       // Add tour counts from subcategories
       if (category.subCategories && category.subCategories.length > 0) {
@@ -348,7 +348,7 @@ export class HomepageService implements IHomepageService {
 
       return true;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException("internal_server_error", { error: error.message });
     }
   }
 

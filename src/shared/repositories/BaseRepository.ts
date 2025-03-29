@@ -97,7 +97,7 @@ export class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> 
             return entity;
         } catch (error) {
             console.log({ error });
-            throw new InternalServerErrorException(error.message);
+            throw new InternalServerErrorException("internal_server_error", { error: error.message });
         }
     }
 
@@ -135,7 +135,7 @@ export class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> 
             return queryBuilder.getMany();
         } catch (error) {
             console.log({ error });
-            throw new InternalServerErrorException(error.message);
+            throw new InternalServerErrorException("internal_server_error", { error: error.message });
         }
     }
 
@@ -151,7 +151,7 @@ export class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> 
         const repo = await this.getRepository();
         const user = asyncLocalStorage.getStore();
         if (!user) {
-            throw new UnauthorizedException("Unauthorized: User ID not found.");
+            throw new UnauthorizedException("unauthorized");
         }
         // Kullanıcıya ait mi kontrol et, eğer admin değilse
         if (user.role != 'ADMINISTRATOR') {
@@ -160,7 +160,7 @@ export class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> 
                 .getOne();
 
             if (!existingEntity) {
-                throw new ForbiddenException("Forbidden: You do not have permission to update this record.");
+                throw new ForbiddenException("forbidden");
             }
         }
         await repo.update(id, entity);
@@ -171,7 +171,7 @@ export class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> 
         const repo = await this.getRepository();
         const user = asyncLocalStorage.getStore();
         if (!user) {
-            throw new UnauthorizedException("Unauthorized: User ID not found.");
+            throw new UnauthorizedException("unauthorized");
         }
         // Kullanıcıya ait mi kontrol et, eğer admin değilse
         if (user.role != 'ADMINISTRATOR') {
@@ -193,7 +193,7 @@ export class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> 
         const user = asyncLocalStorage.getStore();
 
         if (!user) {
-            throw new UnauthorizedException("Unauthorized: User ID not found.");
+            throw new UnauthorizedException("unauthorized");
         }
 
         // Kullanıcıya ait mi kontrol et, eğer admin değilse
@@ -203,7 +203,7 @@ export class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> 
                 .getOne();
 
             if (!existingEntity) {
-                throw new ForbiddenException("Forbidden: You do not have permission to delete this record.");
+                throw new ForbiddenException("forbidden");
             }
         }
 
@@ -215,7 +215,7 @@ export class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> 
         const user = asyncLocalStorage.getStore();
 
         if (!user) {
-            throw new UnauthorizedException("Unauthorized: User ID not found.");
+            throw new UnauthorizedException("unauthorized");
         }
 
         // Kullanıcıya ait olmayan kayıtları filtrele, eğer admin değilse
@@ -227,7 +227,7 @@ export class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> 
             const ownedIds = ownedEntities.map(e => e.id);
 
             if (ownedIds.length === 0) {
-                throw new ForbiddenException("Forbidden: You do not have permission to delete these records.");
+                throw new ForbiddenException("forbidden");
             }
         }
 

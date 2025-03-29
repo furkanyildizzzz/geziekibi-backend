@@ -36,7 +36,7 @@ export class StaticPageService implements IStaticPageService {
 
   public async getById(id: string): Promise<StaticPageDto> {
     const staticPage = await this.repository.getById(Number(id));
-    if (!staticPage) throw new NotFoundException(`StaticPage with id:${id} not found`);
+    if (!staticPage) throw new NotFoundException("static_page_id_not_found", { id });
     return plainToInstance(StaticPageDto, staticPage, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -45,7 +45,7 @@ export class StaticPageService implements IStaticPageService {
 
   public async getByPageType(pageType: StaticPageType): Promise<StaticPageDto> {
     const staticPage = await this.repository.getByType(pageType);
-    if (!staticPage) throw new NotFoundException(`StaticPage with type:${pageType} not found`);
+    if (!staticPage) throw new NotFoundException("static_page_type_not_found", { pageType });
     return plainToInstance(StaticPageDto, staticPage, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -75,7 +75,7 @@ export class StaticPageService implements IStaticPageService {
   @Transactional()
   public async updateStaticPage(id: string, staticPageData: CreateStaticPageDto): Promise<StaticPageDto> {
     const staticPage = await this.repository.getById(Number(id));
-    if (!staticPage) throw new NotFoundException(`StaticPage with id:${id} not found`);
+    if (!staticPage) throw new NotFoundException("static_page_id_not_found", { id });
 
     try {
       staticPage.title = staticPageData.title;
@@ -91,13 +91,13 @@ export class StaticPageService implements IStaticPageService {
       });
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException("internal_server_error", { error: error.message });
     }
   }
 
   public async deleteStaticPage(id: string): Promise<void> {
     const staticPage = await this.repository.getById(Number(id));
-    if (!staticPage) throw new NotFoundException(`StaticPage with id:'${id}' is not found`);
+    if (!staticPage) throw new NotFoundException("static_page_id_not_found", { id });
     await this.repository.delete(Number(id));
   }
 
@@ -121,7 +121,7 @@ export class StaticPageService implements IStaticPageService {
     if (file) {
       return await this.imageService.uploadBodyImage("staticPageBodyImage", file)
     } else {
-      throw new BadRequestException('No file provided');
+      throw new BadRequestException('no_file_provided');
     }
   }
 

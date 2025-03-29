@@ -154,7 +154,7 @@ export class TourServiceWeb implements ITourServiceWeb {
   }
   public async getBySeoLink(seoLink: string): Promise<TourDtoWeb> {
     const tour = await this.repository.getBySeoLink(seoLink);
-    if (!tour) throw new NotFoundException(`Tour with seoLink:${seoLink} not found`);
+    if (!tour) throw new NotFoundException(`tour_seoLink_not_found`, {seoLink});
     const { days, nights } = tourFunctions.calculateDaysAndNights(tour.startDate, tour.endDate);
     const daysAndNights = `${nights} gece/${days} gün`;
 
@@ -170,7 +170,7 @@ export class TourServiceWeb implements ITourServiceWeb {
 
   public async getCategoryBySeoLink(seoLink: string): Promise<CategoryDto> {
     const tourCategory = await this.categoryRepository.getBySeoLink(seoLink);
-    if (!tourCategory) throw new NotFoundException(`Tour with seoLink:${seoLink} not found`);
+    if (!tourCategory) throw new NotFoundException(`tour_category_seo_link_not_found`, {seoLink});
 
     return plainToInstance(CategoryDto, tourCategory, {
       excludeExtraneousValues: true,

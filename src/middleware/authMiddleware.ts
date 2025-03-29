@@ -35,7 +35,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
   if (!token) {
     const authHeader = req.get('Authorization');
     if (!authHeader) {
-      const customError = new CustomError(400, 'BAD REQUEST', 'Authorization header not provided');
+      const customError = new CustomError(400, 'BAD REQUEST', 'authorization_header_not_provided');
       return next(customError);
     }
 
@@ -43,27 +43,27 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
   }
 
   if (!token) {
-    const customError = new CustomError(401, 'UNAUTHORIZED', 'Authentication required');
+    const customError = new CustomError(401, 'UNAUTHORIZED', 'authentication_required');
     return next(customError);
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
     if (!decoded || typeof decoded !== 'object' || !decoded.id) {
-      const customError = new CustomError(401, 'UNAUTHORIZED', 'Invalid token');
+      const customError = new CustomError(401, 'UNAUTHORIZED', 'invalid_token');
       return next(customError);
     }
     req.user = { id: decoded.id, role: decoded.role, language: 'tr' };
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      const customError = new CustomError(401, 'UNAUTHORIZED', 'Token expired');
+      const customError = new CustomError(401, 'UNAUTHORIZED', 'token_expired');
       return next(customError);
     } else if (error instanceof jwt.JsonWebTokenError) {
-      const customError = new CustomError(401, 'UNAUTHORIZED', 'Invalid token');
+      const customError = new CustomError(401, 'UNAUTHORIZED', 'invalid_token');
       return next(customError);
     }
-    const customError = new CustomError(500, 'INTERNAL SERVER ERROR', 'Internal server error');
+    const customError = new CustomError(500, 'INTERNAL SERVER ERROR', 'internal_server_error');
     return next(customError);
   }
 };
