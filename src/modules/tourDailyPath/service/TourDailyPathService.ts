@@ -9,10 +9,11 @@ import { ITourDailyPathRepository } from '../interfaces/ITourDailyPathRepository
 import { CreateTourDailyPathDto } from '../dto/CreateTourDailyPathDto';
 import { DeleteMultipleTourDailyPathDto } from '../dto/DeleteMultipleTourDailyPathDto';
 import { Transactional } from 'shared/decorators/Transactional';
+import { UnitOfWork } from 'unitOfWork/unitOfWork';
 
 @injectable()
 export class TourDailyPathService implements ITourDailyPathService {
-  constructor(@inject(INTERFACE_TYPE.ITourDailyPathRepository) private readonly repository: ITourDailyPathRepository) { }
+  constructor(@inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork, @inject(INTERFACE_TYPE.ITourDailyPathRepository) private readonly repository: ITourDailyPathRepository) { }
 
   public async getAll(): Promise<TourDailyPathSuccessDto[]> {
     const tourPaths = await this.repository.getAll();
