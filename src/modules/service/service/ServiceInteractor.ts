@@ -10,10 +10,11 @@ import { DeleteMultipleServiceDto } from '../dto/DeleteMultipleServiceDto';
 import { plainToInstance } from 'class-transformer';
 import { TourService } from 'orm/entities/tour/TourService';
 import { Transactional } from 'shared/decorators/Transactional';
+import { UnitOfWork } from 'unitOfWork/unitOfWork';
 
 @injectable()
 export class ServiceInteractor implements IServiceInteractor {
-  constructor(@inject(INTERFACE_TYPE.IServiceRepository) private readonly repository: IServiceRepository) { }
+  constructor(@inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork, @inject(INTERFACE_TYPE.IServiceRepository) private readonly repository: IServiceRepository) { }
 
   public async getAll(): Promise<ServiceSuccessDto[]> {
     const tourServices = await this.repository.getAll();
