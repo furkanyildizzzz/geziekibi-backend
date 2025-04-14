@@ -45,8 +45,7 @@ export class TourService implements ITourService {
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
     @inject(INTERFACE_TYPE.IImageService) private readonly imageService: IImageService,
-
-  ) { }
+  ) {}
 
   public async getAll(): Promise<TourListDto[]> {
     const tours = await this.repository.getAll(['tags', 'tourDates', 'category', 'tourServices', 'primaryImages']);
@@ -60,20 +59,32 @@ export class TourService implements ITourService {
 
   public async getById(id: string): Promise<TourDto> {
     const tour = await this.repository.getById(Number(id), [
-      "category",
-      "tags",
-      "tourDates",
-      "tourDates.prices",
-      "tourServices",
-      "tourServices.service",
-      "dailyForms",
-      "dailyForms.dailyPaths",
-      "dailyForms.dailyVisitingPlaces",
-      "galleryImages",
-      "primaryImages"
+      'category',
+      'tags',
+      // 'tourDates',
+      // 'tourDates.prices',
+      // 'tourServices',
+      // 'tourServices.service',
+      // 'dailyForms',
+      // 'dailyForms.dailyPaths',
+      // 'dailyForms.dailyVisitingPlaces',
+      'galleryImages',
+      'primaryImages',
     ]);
+
     if (!tour) throw new NotFoundException(`tour_id_not_found`, { id });
-    console.log({ tour: tour })
+
+    // Derin ilişkileri gerekiyorsa manuel çek
+    tour.tourDates = (await this.tourDateRepository.getAll(['prices'], true, { tour: { id: tour.id } })) || [];
+
+    tour.tourServices = (await this.tourServiceRepository.getAll(['service'], true, { tour: { id: tour.id } })) || [];
+
+    tour.dailyForms =
+      (await this.tourDailyRepository.getAll(['dailyPaths', 'dailyVisitingPlaces'], true, {
+        tour: { id: tour.id },
+      })) || [];
+
+    console.log({ tour: tour });
     return plainToInstance(TourDto, tour, {
       excludeExtraneousValues: true,
       enableCircularCheck: true,
@@ -91,7 +102,6 @@ export class TourService implements ITourService {
 
   @Transactional()
   public async createTour(tourData: CreateTourDto): Promise<TourDto> {
-
     const category = await this.categoryRepository.getById(tourData.category.id);
     if (!category) {
       throw new NotFoundException(`category_not_found`, { id: tourData.category.id });
@@ -102,7 +112,7 @@ export class TourService implements ITourService {
       tags = await this.tagRepository.findByIds(tourData.tags.map((t) => t.id));
 
       if (tags.length !== tourData.tags.length) {
-        throw new NotFoundException("tags_not_found");
+        throw new NotFoundException('tags_not_found');
       }
     }
 
@@ -110,7 +120,7 @@ export class TourService implements ITourService {
     if (tourData.tourServices && Array.isArray(tourData.tourServices) && tourData.tourServices.length > 0) {
       tourServices = await this.serviceRepository.findByIds(tourData.tourServices.map((t) => t.service.id));
       if (tourServices.length !== tourData.tourServices.length) {
-        throw new NotFoundException("services_not_found");
+        throw new NotFoundException('services_not_found');
       }
     }
 
@@ -211,20 +221,14 @@ export class TourService implements ITourService {
         tour.id,
         tourData.primaryImages,
         [],
-        'primaryForTour'
+        'primaryForTour',
       );
 
-      tour.primaryImages = primaryImages
+      tour.primaryImages = primaryImages;
 
-      const galleryImages = await this.imageService.saveImages(
-        'tour',
-        tour.id,
-        tourData.galleryImages,
-        [],
-        'tour'
-      );
+      const galleryImages = await this.imageService.saveImages('tour', tour.id, tourData.galleryImages, [], 'tour');
 
-      tour.galleryImages = galleryImages
+      tour.galleryImages = galleryImages;
 
       return plainToInstance(TourDto, tour, {
         excludeExtraneousValues: true,
@@ -232,13 +236,12 @@ export class TourService implements ITourService {
       });
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException("internal_server_error", { error: error.message });
+      throw new InternalServerErrorException('internal_server_error', { error: error.message });
     }
   }
 
   @Transactional()
   public async updateTour(id: string, tourData: EditTourDto): Promise<TourDto> {
-
     const tour = await this.repository.getById(Number(id));
     if (!tour) {
       throw new NotFoundException(`tour_id_not_found`, { id });
@@ -254,7 +257,7 @@ export class TourService implements ITourService {
       tags = await this.tagRepository.findByIds(tourData.tags.map((t) => t.id));
 
       if (tags.length !== tourData.tags.length) {
-        throw new NotFoundException("tags_not_found");
+        throw new NotFoundException('tags_not_found');
       }
     }
 
@@ -262,7 +265,7 @@ export class TourService implements ITourService {
     if (tourData.tourServices && Array.isArray(tourData.tourServices) && tourData.tourServices.length > 0) {
       tourServices = await this.serviceRepository.findByIds(tourData.tourServices.map((t) => t.service.id));
       if (tourServices.length !== tourData.tourServices.length) {
-        throw new NotFoundException("services_not_found");
+        throw new NotFoundException('services_not_found');
       }
     }
 
@@ -287,9 +290,7 @@ export class TourService implements ITourService {
       const tagIds = tourData.tags.map((s) => s.id);
       tour.tags = tags.filter((t) => tagIds.includes(t.id));
 
-      const filteredTourServices = tourData.tourServices.filter(
-        (s) => s.type !== ServiceType.INHERIT
-      );
+      const filteredTourServices = tourData.tourServices.filter((s) => s.type !== ServiceType.INHERIT);
 
       const newTourServices = await Promise.all(
         filteredTourServices.map(async (s) => {
@@ -306,21 +307,20 @@ export class TourService implements ITourService {
             service,
             type: s.type as ServiceType,
           });
-        })
+        }),
       );
 
       tour.tourServices = newTourServices;
 
-
-      const incomingTourDateIds = tourData.tourDates.filter(d => d.id > 0).map(d => d.id);
+      const incomingTourDateIds = tourData.tourDates.filter((d) => d.id > 0).map((d) => d.id);
       // Mevcut tarihleri ve ilişkili fiyatları getir
-      console.log({ incomingTourDateIds })
-      const existingTourDates = await this.tourDateRepository.getByIds(incomingTourDateIds, ['prices']) || [];
-      console.log("I am here")
+      console.log({ incomingTourDateIds });
+      const existingTourDates = (await this.tourDateRepository.getByIds(incomingTourDateIds, ['prices'])) || [];
+      console.log('I am here');
       // Silinmesi gereken tarihleri belirle
       const tourDateIdsWillBeDeleted = existingTourDates
-        .filter(d => !incomingTourDateIds.includes(d.id))
-        .map(d => d.id);
+        .filter((d) => !incomingTourDateIds.includes(d.id))
+        .map((d) => d.id);
 
       // Silme işlemi
       if (tourDateIdsWillBeDeleted.length) {
@@ -329,8 +329,8 @@ export class TourService implements ITourService {
 
       // Yeni ve güncellenmiş tarihleri işle
       const tourDates = await Promise.all(
-        tourData.tourDates.map(async d => {
-          const tourDate = d.id ? existingTourDates.find(s => s.id === d.id) ?? new TourDate() : new TourDate();
+        tourData.tourDates.map(async (d) => {
+          const tourDate = d.id ? existingTourDates.find((s) => s.id === d.id) ?? new TourDate() : new TourDate();
 
           Object.assign(tourDate, {
             startDate: new Date(d.startDate),
@@ -340,19 +340,19 @@ export class TourService implements ITourService {
           });
 
           // Mevcut fiyatları al ve güncellenecekleri belirle
-          const incomingTourPriceIds = d.prices.filter(p => p.id > 0).map(p => p.id);
+          const incomingTourPriceIds = d.prices.filter((p) => p.id > 0).map((p) => p.id);
           const existingTourPrices = tourDate.prices || [];
           const tourPriceIdsWillBeDeleted = existingTourPrices
-            .filter(p => !incomingTourPriceIds.includes(p.id))
-            .map(p => p.id);
+            .filter((p) => !incomingTourPriceIds.includes(p.id))
+            .map((p) => p.id);
 
           if (tourPriceIdsWillBeDeleted.length) {
             await this.tourPriceRepository.deleteMultiple(tourPriceIdsWillBeDeleted);
           }
 
           // Yeni fiyatları oluştur
-          tourDate.prices = d.prices.map(p => {
-            const tourPrice = p.id ? existingTourPrices.find(s => s.id === p.id) ?? new TourPrice() : new TourPrice();
+          tourDate.prices = d.prices.map((p) => {
+            const tourPrice = p.id ? existingTourPrices.find((s) => s.id === p.id) ?? new TourPrice() : new TourPrice();
             return Object.assign(tourPrice, {
               name: p.name,
               currency: p.currency as Currency,
@@ -362,11 +362,10 @@ export class TourService implements ITourService {
           });
 
           return tourDate;
-        })
+        }),
       );
 
       tour.tourDates = tourDates;
-
 
       // const tourPrices: TourPrice[] = [];
       // for (let index = 0; index < tourData.prices.length; index++) {
@@ -391,7 +390,7 @@ export class TourService implements ITourService {
         //   (await tourDailyRepository.findOne({ where: { id: d.id }, relations: ['dailyVisitingPlaces'] })) ||
         //   new TourDaily();
 
-        const tourDaily = await this.tourDailyRepository.getById(d.id, ['dailyVisitingPlaces']) || new TourDaily()
+        const tourDaily = (await this.tourDailyRepository.getById(d.id, ['dailyVisitingPlaces'])) || new TourDaily();
 
         // Update tourdaily.dailyVisitingPlaces
         if (!tourDaily.dailyVisitingPlaces) {
@@ -475,21 +474,21 @@ export class TourService implements ITourService {
         'tour',
         tour.id,
         tourData.primaryImages,
-        tourData.uploadedPrimaryImages.map(s => s.id),
-        'primaryForTour'
+        tourData.uploadedPrimaryImages.map((s) => s.id),
+        'primaryForTour',
       );
 
-      tour.primaryImages = primaryImages
+      tour.primaryImages = primaryImages;
 
       const galleryImages = await this.imageService.saveImages(
         'tour',
         tour.id,
         tourData.galleryImages,
-        tourData.uploadedGalleryImages.map(s => s.id),
-        'tour'
+        tourData.uploadedGalleryImages.map((s) => s.id),
+        'tour',
       );
 
-      tour.galleryImages = galleryImages
+      tour.galleryImages = galleryImages;
 
       return plainToInstance(TourDto, tour, {
         excludeExtraneousValues: true,
@@ -497,7 +496,7 @@ export class TourService implements ITourService {
       });
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException("internal_server_error", {error: error.message});
+      throw new InternalServerErrorException('internal_server_error', { error: error.message });
     }
   }
 
@@ -509,7 +508,7 @@ export class TourService implements ITourService {
 
   public async uploadBodyImage(file: Express.Multer.File): Promise<string> {
     if (file) {
-      return await this.imageService.uploadBodyImage("tourBodyImage", file)
+      return await this.imageService.uploadBodyImage('tourBodyImage', file);
     } else {
       throw new BadRequestException('no_file_provided');
     }
