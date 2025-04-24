@@ -27,6 +27,7 @@ import i18next from './i18/i18next';
 
 const allowedOrigins = [
   'https://www.geziekibi-panel.com.tr',
+  'https://www.geziekibi.com.tr',
   'https://geziekibi-test.vercel.app',
   'http://localhost:3000',
   'http://localhost:3004',
