@@ -248,7 +248,7 @@ export class TourServiceWeb implements ITourServiceWeb {
 
       return {
         ...tour,
-        tourDates: [{ ...mostRecentDate, prices: [mostRecentDate.prices.sort((a, b) => a.id - b.id)[0]] }], // Include only the most recent date
+        tourDates: [{ ...mostRecentDate, prices: [mostRecentDate?.prices?.sort((a, b) => a.id - b.id)[0]] }], // Include only the most recent date
       };
     });
 
@@ -271,7 +271,7 @@ export class TourServiceWeb implements ITourServiceWeb {
       featuredTour.seoLink = tour.seoLink;
       featuredTour.startDate = tour.startDate;
       featuredTour.endDate = tour.endDate;
-      featuredTour.pricePerPerson = tour.tourDates[0].prices[0].price;
+      featuredTour.pricePerPerson = tour.tourDates[0]?.prices[0]?.price;
       featuredTour.currency = tour.tourDates[0]?.prices[0]?.currency;
       featuredTour.tourDates = tour.tourDates;
       featuredTour.uploadedPrimaryImages = tour.primaryImages;
