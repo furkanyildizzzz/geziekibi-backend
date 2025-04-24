@@ -4,7 +4,9 @@ function calculateDaysAndNights(startDate: Date, endDate: Date): { days: number;
   const end = new Date(endDate);
 
   if (start > end) {
-    throw new Error('Start date must be before or equal to end date');
+    // throw new Error('Start date must be before or equal to end date');
+    console.log('calculateDaysAndNights: Start date must be before or equal to end date');
+    return { days: 0, nights: 0 };
   }
 
   // Calculate the difference in days (inclusive)

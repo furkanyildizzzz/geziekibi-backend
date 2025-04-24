@@ -38,7 +38,7 @@ export class TourServiceWeb implements ITourServiceWeb {
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.ISeoLinkService) private readonly seoLinkService: ISeoLinkService,
     @inject(INTERFACE_TYPE.ITourCategoryRepository) private readonly categoryRepository: ITourCategoryRepository,
-  ) { }
+  ) {}
 
   public async getAll(categoryId): Promise<FeaturedTourDto[]> {
     const tourRepo = await this.unitOfWork.getRepository(Tour);
@@ -70,36 +70,27 @@ export class TourServiceWeb implements ITourServiceWeb {
       whereCondition.category = { id: In(categoryIds) }; // Use TypeORM's In operator
     }
 
-    // Query with the dynamically built where condition
-    // const tours = await tourRepo.find({
-    //   where: whereCondition,
-    //   order: {
-    //     tourDates: {
-    //       startDate: 'DESC',
-    //     },
-    //   },
-    //   relations: ['tourDates', 'tourDates.prices', 'primaryImages', 'category'],
-    // });
-
     const query = tourRepo
       .createQueryBuilder('tour')
       .leftJoin('users', 'insertUser', 'insertUser.id = tour.insertUserId')
       .leftJoin('users', 'updateUser', 'updateUser.id = tour.updateUserId')
       .where('(insertUser.role = :adminRole OR updateUser.role = :adminRole)', { adminRole: 'ADMINISTRATOR' })
       .andWhere('tour.publishStatus = :publishStatus', { publishStatus: PublishStatus.PUBLISH })
-      .andWhere('tourDates.startDate >= :today', { today })
+      // .andWhere('tourDates.startDate >= :today', { today })
+      .andWhere('tour.publishDate <= :today', { today })
       .leftJoinAndSelect('tour.tourDates', 'tourDates')
       .leftJoinAndSelect('tourDates.prices', 'prices') // TourDates içindeki Prices ilişkisini ekledik
       .leftJoinAndSelect('tour.primaryImages', 'primaryImages')
       .leftJoinAndSelect('tour.category', 'category')
-      .orderBy('tourDates.startDate', 'DESC')
+      .orderBy('tourDates.startDate', 'DESC');
 
     if (categoryIds.length > 0) {
       query.andWhere('tour.category.id IN (:...categoryIds)', { categoryIds });
     }
+    console.log('getall', query.getQueryAndParameters());
     const tours = await query.getMany();
 
-    if (tours.length == 0) return []
+    if (tours.length == 0) return [];
 
     const toursWithMostRecentDate = tours.map((tour) => {
       const mostRecentDate = tour.tourDates.reduce((latest, current) => {
@@ -108,7 +99,7 @@ export class TourServiceWeb implements ITourServiceWeb {
 
       return {
         ...tour,
-        tourDates: [{ ...mostRecentDate, prices: [mostRecentDate.prices[0]] }], // Include only the most recent date
+        tourDates: [{ ...mostRecentDate, prices: [mostRecentDate?.prices.sort((a, b) => a.id - b.id)[0]] }], // Include only the most recent date
       };
     });
 
@@ -118,7 +109,7 @@ export class TourServiceWeb implements ITourServiceWeb {
     const categoryIdsAndTourCount = await categoryRepo
       .createQueryBuilder('category')
       .leftJoin('category.tours', 'tour')
-      .where('tour.id IN (:...tourIds)', { tourIds: toursWithMostRecentDate.map(t => t.id) })
+      .where('tour.id IN (:...tourIds)', { tourIds: toursWithMostRecentDate.map((t) => t.id) })
       .select('category.id', 'id')
       .addSelect('COUNT(tour.id)', 'tourCount')
       .groupBy('category.id')
@@ -131,20 +122,22 @@ export class TourServiceWeb implements ITourServiceWeb {
       featuredTour.seoLink = tour.seoLink;
       featuredTour.startDate = tour.startDate;
       featuredTour.endDate = tour.endDate;
-      featuredTour.pricePerPerson = tour.tourDates[0].prices[0].price;
+      featuredTour.pricePerPerson = tour.tourDates[0]?.prices[0]?.price;
+      featuredTour.currency = tour.tourDates[0]?.prices[0]?.currency;
       featuredTour.tourDates = tour.tourDates;
       featuredTour.uploadedPrimaryImages = tour.primaryImages;
       featuredTour.category = {
         ...tour.category,
         tourCount: categoryIdsAndTourCount.find((s) => (s.id = tour.category.id)).tourCount,
       };
+      if (tour.id == 24) console.log('startDate', tour.startDate, 'endDate', tour.endDate);
       const { days, nights } = tourFunctions.calculateDaysAndNights(tour.startDate, tour.endDate);
       const daysAndNights = `${nights} gece/${days} gün`;
       featuredTour.daysAndNights = daysAndNights;
 
       return featuredTour;
     });
-
+    console.log('featuredTours.length', featuredTours.length);
     if (featuredTours && featuredTours.length)
       return plainToInstance(FeaturedTourDto, featuredTours, {
         excludeExtraneousValues: true,
@@ -154,7 +147,7 @@ export class TourServiceWeb implements ITourServiceWeb {
   }
   public async getBySeoLink(seoLink: string): Promise<TourDtoWeb> {
     const tour = await this.repository.getBySeoLink(seoLink);
-    if (!tour) throw new NotFoundException(`tour_seoLink_not_found`, {seoLink});
+    if (!tour) throw new NotFoundException(`tour_seoLink_not_found`, { seoLink });
     const { days, nights } = tourFunctions.calculateDaysAndNights(tour.startDate, tour.endDate);
     const daysAndNights = `${nights} gece/${days} gün`;
 
@@ -170,7 +163,7 @@ export class TourServiceWeb implements ITourServiceWeb {
 
   public async getCategoryBySeoLink(seoLink: string): Promise<CategoryDto> {
     const tourCategory = await this.categoryRepository.getBySeoLink(seoLink);
-    if (!tourCategory) throw new NotFoundException(`tour_category_seo_link_not_found`, {seoLink});
+    if (!tourCategory) throw new NotFoundException(`tour_category_seo_link_not_found`, { seoLink });
 
     return plainToInstance(CategoryDto, tourCategory, {
       excludeExtraneousValues: true,
@@ -179,62 +172,6 @@ export class TourServiceWeb implements ITourServiceWeb {
   }
 
   public async searchTours(searchParams): Promise<FeaturedTourDto[]> {
-    // const tourRepo = await this.unitOfWork.getRepository(Tour);
-    // const categoryRepo = await this.unitOfWork.getRepository(TourCategory);
-
-    // const today = new Date();
-    // const whereConditions: any = {
-    //   tourDates: { startDate: MoreThanOrEqual(today) },
-    //   publishStatus: PublishStatus.PUBLISH,
-    // };
-
-    // // Add `startDate` condition if provided
-    // if (searchParams.startDate) {
-    //   whereConditions.tourDates = {
-    //     ...(whereConditions.tourDates || {}),
-    //     startDate: MoreThanOrEqual(searchParams.startDate),
-    //   };
-    // }
-
-    // // Add `destination` condition if provided
-    // if (searchParams.destination?.id) {
-    //   whereConditions.dailyForms = {
-    //     ...(whereConditions.dailyForms || {}),
-    //     dailyPaths: { id: Equal(searchParams.destination.id) },
-    //   };
-    // }
-
-    // // Find all category IDs including subcategories
-    // let categoryIds: number[] = [];
-    // if (searchParams.categoryId) {
-    //   const rootCategory = await categoryRepo.findOne({
-    //     where: { id: searchParams.categoryId },
-    //     relations: ['subCategories'], // Load subcategories
-    //   });
-
-    //   if (rootCategory) {
-    //     categoryIds = this.getAllCategoryIds(rootCategory);
-    //   }
-    // }
-    // // Add category filter if category IDs are present
-    // if (categoryIds.length > 0) {
-    //   whereConditions.category = { id: In(categoryIds) }; // Use TypeORM's In operator
-    // }
-
-    // console.log({ whereConditions })
-
-    // //Execute query with dynamic conditions
-    // const tours = await tourRepo.find({
-    //   where: whereConditions,
-    //   order: {
-    //     tourDates: {
-    //       startDate: 'DESC',
-    //     },
-    //   },
-    //   relations: ['tourDates', 'tourDates.prices', 'primaryImages', 'category', 'dailyForms', 'dailyForms.dailyPaths'],
-    // });
-
-
     const tourRepo = await this.unitOfWork.getRepository(Tour);
     const categoryRepo = await this.unitOfWork.getRepository(TourCategory);
 
@@ -250,7 +187,8 @@ export class TourServiceWeb implements ITourServiceWeb {
       .leftJoinAndSelect('tour.dailyForms', 'dailyForms')
       .leftJoinAndSelect('dailyForms.dailyPaths', 'dailyPaths')
       .where('tour.publishStatus = :publishStatus', { publishStatus: PublishStatus.PUBLISH })
-      .andWhere('tourDates.startDate >= :today', { today });
+      .andWhere('tour.publishDate <= :today', { today });
+    // .andWhere('tourDates.startDate >= :today', { today });
 
     // ✅ Dinamik `where` koşulları burada ekleniyor
 
@@ -288,15 +226,12 @@ export class TourServiceWeb implements ITourServiceWeb {
     }
 
     // Kullanıcı yetkisine göre filtreleme (subquery)
-    queryBuilder = queryBuilder.andWhere(qb => {
-      const subQuery = qb
-        .subQuery()
-        .select('user.id')
-        .from('users', 'user')
-        .where('user.role = :role')
-        .getQuery();
-      return `tour.insertUserId IN ${subQuery}`;
-    }).setParameter('role', 'ADMINISTRATOR');
+    queryBuilder = queryBuilder
+      .andWhere((qb) => {
+        const subQuery = qb.subQuery().select('user.id').from('users', 'user').where('user.role = :role').getQuery();
+        return `tour.insertUserId IN ${subQuery}`;
+      })
+      .setParameter('role', 'ADMINISTRATOR');
 
     // Sıralama ekleniyor
     queryBuilder = queryBuilder.orderBy('tourDates.startDate', 'DESC');
@@ -304,7 +239,7 @@ export class TourServiceWeb implements ITourServiceWeb {
     // Sonuçları getir
     const tours = await queryBuilder.getMany();
 
-    if (tours.length == 0) return []
+    if (tours.length == 0) return [];
 
     const toursWithMostRecentDate = tours.map((tour) => {
       const mostRecentDate = tour.tourDates.reduce((latest, current) => {
@@ -313,7 +248,7 @@ export class TourServiceWeb implements ITourServiceWeb {
 
       return {
         ...tour,
-        tourDates: [{ ...mostRecentDate, prices: [mostRecentDate.prices[0]] }], // Include only the most recent date
+        tourDates: [{ ...mostRecentDate, prices: [mostRecentDate.prices.sort((a, b) => a.id - b.id)[0]] }], // Include only the most recent date
       };
     });
 
@@ -323,7 +258,7 @@ export class TourServiceWeb implements ITourServiceWeb {
     const categoryIdsAndTourCount = await categoryRepo
       .createQueryBuilder('category')
       .leftJoin('category.tours', 'tour')
-      .where('tour.id IN (:...tourIds)', { tourIds: toursWithMostRecentDate.map(t => t.id) })
+      .where('tour.id IN (:...tourIds)', { tourIds: toursWithMostRecentDate.map((t) => t.id) })
       .select('category.id', 'id')
       .addSelect('COUNT(tour.id)', 'tourCount')
       .groupBy('category.id')
@@ -337,6 +272,7 @@ export class TourServiceWeb implements ITourServiceWeb {
       featuredTour.startDate = tour.startDate;
       featuredTour.endDate = tour.endDate;
       featuredTour.pricePerPerson = tour.tourDates[0].prices[0].price;
+      featuredTour.currency = tour.tourDates[0]?.prices[0]?.currency;
       featuredTour.tourDates = tour.tourDates;
       featuredTour.uploadedPrimaryImages = tour.primaryImages;
       featuredTour.category = {
@@ -350,8 +286,7 @@ export class TourServiceWeb implements ITourServiceWeb {
       return featuredTour;
     });
 
-    console.log({ featuredTours })
-
+    console.log({ featuredTours });
 
     if (featuredTours && featuredTours.length)
       return plainToInstance(FeaturedTourDto, featuredTours, {

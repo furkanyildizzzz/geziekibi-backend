@@ -32,7 +32,7 @@ export class HomepageService implements IHomepageService {
   constructor(
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.IEmailService) private readonly emailService: EmailService,
-  ) { }
+  ) {}
 
   public async getFeaturedTours(): Promise<FeaturedTourDto[]> {
     const tourRepo = await this.unitOfWork.getRepository(Tour);
@@ -51,7 +51,7 @@ export class HomepageService implements IHomepageService {
 
     const today = new Date();
 
-    const tours = await tourRepo
+    const query = await tourRepo
       .createQueryBuilder('tour')
       .leftJoinAndSelect('tour.tourDates', 'tourDates')
       .leftJoinAndSelect('tourDates.prices', 'prices')
@@ -60,14 +60,17 @@ export class HomepageService implements IHomepageService {
       .leftJoinAndSelect('category.tours', 'categoryTours')
       .where('tourDates.startDate <= :today', { today })
       .andWhere('tour.publishStatus = :publishStatus', { publishStatus: PublishStatus.PUBLISH })
+      .andWhere('tour.publishDate <= :today', { today })
       .andWhere((qb) => {
         const subQuery = qb.subQuery().select('user.id').from('users', 'user').where('user.role = :role').getQuery();
         return `tour.insertUserId IN ${subQuery}`;
       })
       .setParameter('role', 'ADMINISTRATOR')
       .orderBy('tourDates.startDate', 'DESC')
-      .take(3)
-      .getMany();
+      .take(3);
+
+    console.log('getfeaturedtours', query.getQueryAndParameters());
+    const tours = await query.getMany();
 
     const toursWithMostRecentDate = tours.map((tour) => {
       const mostRecentDate = tour.tourDates.reduce((latest, current) => {
@@ -76,7 +79,7 @@ export class HomepageService implements IHomepageService {
 
       return {
         ...tour,
-        dates: [{ ...mostRecentDate, prices: [mostRecentDate.prices[0]] }], // Include only the most recent date
+        dates: [{ ...mostRecentDate, prices: [mostRecentDate?.prices.sort((a, b) => a.id - b.id)[0]] }], // Include only the most recent date
       };
     });
 
@@ -87,7 +90,8 @@ export class HomepageService implements IHomepageService {
       featuredTour.seoLink = tour.seoLink;
       featuredTour.startDate = tour.startDate;
       featuredTour.endDate = tour.endDate;
-      featuredTour.pricePerPerson = tour.dates[0].prices[0].price;
+      featuredTour.pricePerPerson = tour.dates[0]?.prices[0]?.price;
+      featuredTour.currency = tour.dates[0]?.prices[0]?.currency;
       featuredTour.tourDates = tour.dates;
       featuredTour.uploadedPrimaryImages = tour.primaryImages;
       featuredTour.category = { ...tour.category, tourCount: tour.category.tours.length };
@@ -122,9 +126,11 @@ export class HomepageService implements IHomepageService {
       .leftJoinAndSelect('tours.tourDates', 'tourDates')
       .leftJoinAndSelect('subCategories.tours', 'subTours')
       .leftJoinAndSelect('subTours.tourDates', 'subTourDates')
+      .andWhere('tour.publishDate <= :today', { today })
+      .orWhere('subTours.publishDate <= :today', { today }) // publishDate koşulu subTours için
       .where((qb) => {
         const subQuery = qb.subQuery().select('user.id').from('users', 'user').where('user.role = :role').getQuery();
-        return `tours.insertUserId IN ${subQuery}`;
+        return `tours.insertUserId IN ${subQuery} OR subTours.insertUserId IN ${subQuery}`; // Her iki tur tablosu için koşul
       })
       .setParameter('role', 'ADMINISTRATOR')
       .getMany();
@@ -135,10 +141,10 @@ export class HomepageService implements IHomepageService {
         category.tours === undefined || category.tours.length === 0
           ? 0
           : category.tours.filter(
-            (tour) =>
-              tour.publishStatus === 'publish' &&
-              tour.tourDates?.some((tourDate) => new Date(tourDate.startDate) >= today),
-          ).length;
+              (tour) => tour.publishStatus === 'publish',
+              // &&
+              // tour.tourDates?.some((tourDate) => new Date(tourDate.startDate) >= today),
+            ).length;
 
       // Add tour counts from subcategories
       if (category.subCategories && category.subCategories.length > 0) {
@@ -179,7 +185,7 @@ export class HomepageService implements IHomepageService {
 
     const today = new Date();
 
-    const tours = await tourRepo
+    const query = await tourRepo
       .createQueryBuilder('tour')
       .leftJoinAndSelect('tour.tourDates', 'tourDates')
       .leftJoinAndSelect('tourDates.prices', 'prices')
@@ -188,14 +194,17 @@ export class HomepageService implements IHomepageService {
       .leftJoinAndSelect('category.tours', 'categoryTours')
       .where('tourDates.startDate <= :today', { today })
       .andWhere('tour.publishStatus = :publishStatus', { publishStatus: PublishStatus.PUBLISH })
+      .andWhere('tour.publishDate <= :today', { today })
       .andWhere((qb) => {
         const subQuery = qb.subQuery().select('user.id').from('users', 'user').where('user.role = :role').getQuery();
         return `tour.insertUserId IN ${subQuery}`;
       })
       .setParameter('role', 'ADMINISTRATOR')
       .orderBy('tourDates.startDate', 'DESC')
-      .take(6)
-      .getMany();
+      .take(6);
+
+    console.log('getfeaturedtours', query.getQueryAndParameters());
+    const tours = await query.getMany();
 
     const toursWithMostRecentDate = tours.map((tour) => {
       const mostRecentDate = tour.tourDates.reduce((latest, current) => {
@@ -204,7 +213,7 @@ export class HomepageService implements IHomepageService {
 
       return {
         ...tour,
-        dates: [{ ...mostRecentDate, prices: [mostRecentDate.prices[0]] }], // Include only the most recent date
+        dates: [{ ...mostRecentDate, prices: [mostRecentDate?.prices.sort((a, b) => a.id - b.id)[0]] }], // Include only the most recent date
       };
     });
 
@@ -215,7 +224,8 @@ export class HomepageService implements IHomepageService {
       featuredTour.seoLink = tour.seoLink;
       featuredTour.startDate = tour.startDate;
       featuredTour.endDate = tour.endDate;
-      featuredTour.pricePerPerson = tour.dates[0].prices[0].price;
+      featuredTour.pricePerPerson = tour.dates[0]?.prices[0]?.price;
+      featuredTour.currency = tour.dates[0]?.prices[0]?.currency;
       featuredTour.tourDates = tour.dates;
       featuredTour.uploadedPrimaryImages = tour.primaryImages;
       featuredTour.category = { ...tour.category, tourCount: tour.category.tours.length };
@@ -348,7 +358,7 @@ export class HomepageService implements IHomepageService {
 
       return true;
     } catch (error) {
-      throw new InternalServerErrorException("internal_server_error", { error: error.message });
+      throw new InternalServerErrorException('internal_server_error', { error: error.message });
     }
   }
 
