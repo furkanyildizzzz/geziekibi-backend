@@ -28,7 +28,7 @@ const AppDataSource = new DataSource({
   type: 'postgres',
   name: 'default',
   //url: `${process.env.PG_URL}`,
-  host: process.env.NODE_ENV === 'dev' ? 'host.docker.internal' : process.env.PG_HOST,
+  host: process.env.NODE_ENV === 'dev' ? process.env.PG_HOST : process.env.PG_HOST, //'host.docker.internal'
   port: Number(process.env.PG_PORT || 5432),
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,

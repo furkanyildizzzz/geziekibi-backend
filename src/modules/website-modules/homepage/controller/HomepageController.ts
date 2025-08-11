@@ -67,4 +67,9 @@ export class HomepageController {
     const sliders = await this.service.getCatalogs();
     return res.customSuccess(200, 'Catalogs', sliders);
   }
+  @httpGet('/travelCalendar')
+  public async getTravelCalendar(req: Request, res: Response, next: NextFunction) {
+    const travelCalendar = await this.service.getTravelCalendar();
+    return res.customSuccess(200, 'Travel Calendar', travelCalendar);
+  }
 }

@@ -8,7 +8,7 @@ import { IsNull, LessThan, LessThanOrEqual } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import tourFunctions from 'shared/utils/tourFunctions';
 import { TourCategory } from 'orm/entities/tour/TourCategory';
-import { EmailTemplateEnum, PublishStatus, StaticPageType } from 'shared/utils/enum';
+import { Currency, EmailTemplateEnum, PublishStatus, StaticPageType } from 'shared/utils/enum';
 import { BlogDto } from '../dto/BlogDto';
 import { Blog } from 'orm/entities/blog/Blog';
 import { DailyPathDto } from '../dto/DailyPathDto';
@@ -26,13 +26,14 @@ import { HomepageSlider } from 'orm/entities/homepageSlider/HomepageSlider';
 import { EmailService } from 'shared/services/EmailService';
 import { CatalogDto } from '../dto/CatalogDto';
 import { Catalog } from 'orm/entities/catalog/Catalog';
+import { MonthDTO, TourDTO, TravelCalendarDto, YearDTO } from '../dto/TravelCalendarDto';
 
 @injectable()
 export class HomepageService implements IHomepageService {
   constructor(
     @inject(INTERFACE_TYPE.UnitOfWork) private readonly unitOfWork: UnitOfWork,
     @inject(INTERFACE_TYPE.IEmailService) private readonly emailService: EmailService,
-  ) {}
+  ) { }
 
   public async getFeaturedTours(): Promise<FeaturedTourDto[]> {
     const tourRepo = await this.unitOfWork.getRepository(Tour);
@@ -141,10 +142,10 @@ export class HomepageService implements IHomepageService {
         category.tours === undefined || category.tours.length === 0
           ? 0
           : category.tours.filter(
-              (tour) => tour.publishStatus === 'publish',
-              // &&
-              // tour.tourDates?.some((tourDate) => new Date(tourDate.startDate) >= today),
-            ).length;
+            (tour) => tour.publishStatus === 'publish',
+            // &&
+            // tour.tourDates?.some((tourDate) => new Date(tourDate.startDate) >= today),
+          ).length;
 
       // Add tour counts from subcategories
       if (category.subCategories && category.subCategories.length > 0) {
@@ -442,4 +443,107 @@ export class HomepageService implements IHomepageService {
       enableCircularCheck: true,
     });
   }
+
+  public async getTravelCalendar(): Promise<TravelCalendarDto> {
+    const tourRepo = await this.unitOfWork.getRepository(Tour);
+    const today = new Date();
+
+    const tours = await tourRepo
+      .createQueryBuilder('tour')
+      .leftJoinAndSelect('tour.tourDates', 'tourDates')
+      .leftJoinAndSelect('tourDates.prices', 'prices')
+      // .leftJoinAndSelect('tour.primaryImages', 'primaryImages')
+      // .leftJoinAndSelect('tour.category', 'category')
+      // .leftJoinAndSelect('category.tours', 'categoryTours')
+      .where('tourDates.startDate >= :today', { today })
+      // .andWhere('tour.publishStatus = :publishStatus', { publishStatus: PublishStatus.PUBLISH })
+      // .andWhere('tour.publishDate <= :today', { today })
+      .andWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('user.id')
+          .from('users', 'user')
+          .where('user.role = :role')
+          .getQuery();
+        return `tour.insertUserId IN ${subQuery}`;
+      })
+      .setParameter('role', 'ADMINISTRATOR')
+      .orderBy('tourDates.startDate', 'ASC')
+      .getMany();
+
+    console.log(tours)
+
+    // 1️⃣ Verileri Year / Month gruplarına ayır
+    const groupedByYear = new Map<number, Map<number, Tour[]>>();
+
+    for (const tour of tours) {
+      for (const date of tour.tourDates) {
+        const year = date.startDate.getFullYear();
+        const month = date.startDate.getMonth() + 1;
+
+        if (!groupedByYear.has(year)) {
+          groupedByYear.set(year, new Map<number, Tour[]>());
+        }
+
+        if (!groupedByYear.get(year)!.has(month)) {
+          groupedByYear.get(year)!.set(month, []);
+        }
+
+        groupedByYear.get(year)!.get(month)!.push(tour);
+      }
+    }
+
+    // 2️⃣ DTO yapısına dönüştür
+    const yearsDto: YearDTO[] = [];
+
+    for (const [year, monthsMap] of groupedByYear) {
+      const monthsDto: MonthDTO[] = [];
+
+      for (const [month, monthTours] of monthsMap) {
+        const toursDto: TourDTO[] = monthTours.map((tour) => {
+          const earliestDate = tour.tourDates.sort(
+            (a, b) => a.startDate.getTime() - b.startDate.getTime()
+          )[0];
+
+          const priceObj = earliestDate?.prices.sort((a, b) => a.id - b.id)[0];
+
+          return {
+            departureDate: earliestDate?.startDate.toISOString(),
+            returnDate: earliestDate?.endDate.toISOString(),
+            durationDays: tourFunctions.calculateDaysAndNights(
+              earliestDate.startDate,
+              earliestDate.endDate
+            ).days,
+            tourName: tour.title,
+            seoLink: tour.seoLink,
+            price: {
+              amount: priceObj?.price ?? 0,
+              currency: priceObj?.currency ?? Currency.TRY
+            }
+          };
+        });
+
+        monthsDto.push({
+          month,
+          tours: toursDto
+        });
+      }
+
+      yearsDto.push({
+        year,
+        months: monthsDto
+      });
+    }
+
+    // 3️⃣ TravelCalendarDto oluştur
+    const calendar: TravelCalendarDto = {
+      years: yearsDto,
+    };
+
+    return plainToInstance(TravelCalendarDto, calendar, {
+      excludeExtraneousValues: true,
+      enableCircularCheck: true
+    });
+  }
+
 }

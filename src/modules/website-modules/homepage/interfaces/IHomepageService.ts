@@ -8,6 +8,7 @@ import { CreateContactFormDto } from '../dto/CreateContactFormDto';
 import { FAQsDto } from '../dto/FAQsDto';
 import { SliderDto } from '../dto/SliderDto';
 import { CatalogDto } from '../dto/CatalogDto';
+import { TravelCalendarDto } from '../dto/TravelCalendarDto';
 
 export interface IHomepageService {
   getFeaturedTours(): Promise<FeaturedTourDto[]>;
@@ -20,4 +21,5 @@ export interface IHomepageService {
   getFAQs(): Promise<FAQsDto[]>;
   getHomepageSliders(): Promise<SliderDto[]>;
   getCatalogs(): Promise<CatalogDto[]>;
+  getTravelCalendar(): Promise<TravelCalendarDto>;
 }
